@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+  <table name="players" type="normal">
+  <columns>
+    <column name="id"          type="number(12)"    nullable="n"/>
+    <column name="url"         type="varchar2(128)" nullable="n"/>
+    <column name="code"        type="varchar2(8)"   nullable="n"/>
+    <column name="full_name"   type="varchar2(128)" nullable="n"/>
+    <column name="birth_date"  type="date"/>
+    <column name="turned_pro"  type="number(4)"/>
+    <column name="weight"      type="number(4)" comments="kg"/>
+    <column name="height"      type="number(4)" comments="sm"/>
+    <column name="birthplace"  type="varchar2(128)"/>
+    <column name="residence"   type="varchar2(128)"/>
+    <column name="plays"       type="varchar2(128)"/>
+    <column name="coach"       type="varchar2(128)"/>
+    <column name="first_name"  type="varchar2(128)"/>
+    <column name="last_name"   type="varchar2(128)"/>
+    <column name="citizenship" type="varchar2(128)"/>
+  </columns>
+  <constraints>
+    <constraint name="pk_players"  type="primary key" columns_list="id"/>
+    <constraint name="unq_players$code" type="unique" columns_list="code"/>
+    <constraint name="unq_players$url" type="unique" columns_list="url"/>
+  </constraints>
+</table>

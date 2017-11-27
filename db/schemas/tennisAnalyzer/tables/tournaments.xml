@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+  <table name="tournaments" type="normal">
+  <columns>
+    <column name="id"                type="number(12)" nullable="n"/>
+    <column name="name"              type="varchar2(128)"/>
+    <column name="city"              type="varchar2(128)"/>
+    <column name="country"           type="varchar2(128)"/>
+    <column name="year"              type="number(4)"/>
+    <column name="week"              type="number(2)"/>
+    <column name="sgl_draw_link"     type="varchar2(256)"/>
+    <column name="dbl_draw_link"     type="varchar2(256)"/>
+    <column name="type_id"           type="number(12)"/>
+    <column name="surface_id"        type="number(12)"/>
+    <column name="start_dtm"         type="date"/>
+    <column name="finish_dtm"        type="date"/>
+    <column name="sgl_draw_qty"      type="number(4)"/>
+    <column name="dbl_draw_qty"      type="number(4)"/>
+    <column name="series_id"         type="number(12)"/>
+    <column name="prize_money"       type="number(10)"/>
+    <column name="prize_currency"    type="varchar2(16)"/>
+    <column name="sgl_result_link"   type="varchar2(256)"/>
+    <column name="dbl_result_link"   type="varchar2(256)"/>
+    <column name="sgl_q_result_link" type="varchar2(256)"/>
+    <column name="code"              type="number(4)"/>
+  </columns>
+  <constraints>
+    <constraint name="pk_tournaments"  type="primary key" columns_list="id"/>
+    <constraint name="unq_tour$code$year" type="unique" columns_list="code, year"/>
+    <constraint name="fk_tournaments$series"  type="foreign key" columns_list="series_id"  foreign_table="tournament_series" foreign_columns_list="id"/>
+    <constraint name="fk_tournaments$surface" type="foreign key" columns_list="surface_id" foreign_table="surfaces"          foreign_columns_list="id"/>
+    <constraint name="fk_tournaments$type"    type="foreign key" columns_list="type_id"    foreign_table="tournament_types"  foreign_columns_list="id"/>
+  </constraints>
+</table>
