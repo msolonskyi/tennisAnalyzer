@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <table name="log" type="normal" comments="log table">
   <columns>
-    <column name="dtm"     type="timestamp(6)"   nullable="n" default="systimestamp"/>
+    <column name="dtm"     type="timestamp(6)"   nullable="n" default_value="systimestamp"/>
     <column name="text"    type="varchar2(4000)" nullable="n"/>
     <column name="program" type="varchar2(256)"  nullable="n"/>
     <column name="type"    type="varchar2(1)"    nullable="n" default_value="'I'" comments="I - info, W - warning, E - error"/>
