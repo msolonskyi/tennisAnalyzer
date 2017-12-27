@@ -4,7 +4,7 @@
     <column name="id"                type="number(12)" nullable="n"/>
     <column name="name"              type="varchar2(128)"/>
     <column name="code"              type="number(4)"/>
-    <column name="link"              type="varchar2(256)"/>
+    <column name="url"               type="varchar2(256)"/>
     <column name="slug"              type="varchar2(128)"/>
     <column name="city"              type="varchar2(128)"/>
     <column name="country"           type="varchar2(128)"/>

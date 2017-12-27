@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+  <table name="match_scores" type="normal">
+  <columns>
+    <column name="id"                   type="number(12)" nullable="n"/>
+    <column name="tournaments_id"       type="number(12)" nullable="n"/>
+    <column name="stats_url"            type="varchar2(256)"/>
+    <column name="stadie_id"            type="number(12)" nullable="n"/>
+    <column name="match_order"          type="number(4)"/>
+    <column name="winner_id"            type="number(12)" nullable="n"/>
+    <column name="loser_id"             type="number(12)" nullable="n"/>
+    <column name="winner_seed"          type="varchar2(8)"/>
+    <column name="loser_seed"           type="varchar2(8)"/>
+    <column name="match_score_raw"      type="varchar2(32)"/>
+    <column name="winner_sets_won"      type="number(4)"/>
+    <column name="loser_sets_won"       type="number(4)"/>
+    <column name="winner_games_won"     type="number(4)"/>
+    <column name="loser_games_won"      type="number(4)"/>
+    <column name="winner_tiebreaks_won" type="number(4)"/>
+    <column name="loser_tiebreaks_won"  type="number(4)"/>
+  </columns>
+  <constraints>
+    <constraint name="pk_match_scores"  type="primary key" columns_list="id"/>
+    <constraint name="unq_match_scores" type="unique" columns_list="tournaments_id, stadie_id, winner_id, loser_id"/>
+    <constraint name="fk_match_scores$tournaments_id" type="foreign key" columns_list="tournaments_id" foreign_table="tournaments" foreign_columns_list="id"/>
+    <constraint name="fk_match_scores$stadie_id"      type="foreign key" columns_list="stadie_id"      foreign_table="stadies"     foreign_columns_list="id"/>
+    <constraint name="fk_match_scores$winner_id"      type="foreign key" columns_list="winner_id"      foreign_table="players"     foreign_columns_list="id"/>
+    <constraint name="fk_match_scores$loser_id"       type="foreign key" columns_list="loser_id"       foreign_table="players"     foreign_columns_list="id"/>
+  </constraints>
+</table>
