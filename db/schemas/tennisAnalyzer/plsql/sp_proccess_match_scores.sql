@@ -13,6 +13,9 @@ begin
          'http://www.atpworldtour.com/en/players/' || m.winner_slug || '/' || m.winner_player_id || '/overview' as url, m.winner_slug as slug, m.winner_player_id as code
   from stg_match_scores m
   where m.winner_player_id not in (select p.code from players p);
+  --
+  vn_qty := sql%rowcount;
+  pkg_log.sp_log_message(pv_module => cv_module_name, pv_text => 'add new players (winners)', pn_qty => vn_qty);
   -- losers
   insert into players(first_name, last_name, url, slug, code)
   select distinct substr(m.loser_name, 1, instr(m.loser_name, ' ', -1) - 1) as first_name,
@@ -21,8 +24,11 @@ begin
   from stg_match_scores m
   where m.loser_player_id not in (select p.code from players p);
   --
+  vn_qty := sql%rowcount;
+  pkg_log.sp_log_message(pv_module => cv_module_name, pv_text => 'add new players (losers)', pn_qty => vn_qty);
+  --
   merge into match_scores d
-  using(select t.id as tournaments_id,
+  using(select t.id as tournament_id,
                m.match_stats_url_suffix as stats_url,
                s.id as stadie_id,
                m.match_order,
@@ -43,10 +49,10 @@ begin
           and upper(trim(m.tourney_round_name)) = upper(s.name(+))
           and m.winner_player_id = w.code
           and m.loser_player_id = l.code) s
-  on (s.tournaments_id || '-' || s.winner_id || '-' || s.loser_id || '-' || s.stats_url = d.tournaments_id || '-' || d.winner_id || '-' || d.loser_id || '-' || d.stats_url)
+  on (s.tournament_id || '-' || s.stadie_id || '-' || s.winner_id || '-' || s.loser_id || '-' || s.stats_url = d.tournament_id || '-' || d.stadie_id || '-' || d.winner_id || '-' || d.loser_id || '-' || d.stats_url)
   when not matched then
-    insert (tournaments_id, stats_url, stadie_id, match_order, winner_id, loser_id, winner_seed, loser_seed, match_score_raw, winner_sets_won, loser_sets_won, winner_games_won, loser_games_won, winner_tiebreaks_won, loser_tiebreaks_won)
-    values (s.tournaments_id, s.stats_url, s.stadie_id, s.match_order, s.winner_id, s.loser_id, s.winner_seed, s.loser_seed, s.match_score_raw, s.winner_sets_won, s.loser_sets_won, s.winner_games_won, s.loser_games_won, s.winner_tiebreaks_won, s.loser_tiebreaks_won)
+    insert (tournament_id, stats_url, stadie_id, match_order, winner_id, loser_id, winner_seed, loser_seed, match_score_raw, winner_sets_won, loser_sets_won, winner_games_won, loser_games_won, winner_tiebreaks_won, loser_tiebreaks_won)
+    values (s.tournament_id, s.stats_url, s.stadie_id, s.match_order, s.winner_id, s.loser_id, s.winner_seed, s.loser_seed, s.match_score_raw, s.winner_sets_won, s.loser_sets_won, s.winner_games_won, s.loser_games_won, s.winner_tiebreaks_won, s.loser_tiebreaks_won)
   when matched then
     update set
       match_order          = s.match_order,
