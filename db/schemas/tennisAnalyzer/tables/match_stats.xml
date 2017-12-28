@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+  <table name="match_stats" type="normal">
+  <columns>
+    <column name="id"                             type="number(12)" nullable="n"/>
+    <column name="match_score_id"                 type="number(12)" nullable="n"/>
+    <column name="match_time"                     type="varchar2(10)"/>
+    <column name="match_duration"                 type="number(4)"/>
+    <column name="win_aces"                       type="number(4)"/>
+    <column name="win_double_faults"              type="number(4)"/>
+    <column name="win_first_serves_in"            type="number(4)"/>
+    <column name="win_first_serves_total"         type="number(4)"/>
+    <column name="win_first_serve_points_won"     type="number(4)"/>
+    <column name="win_first_serve_points_total"   type="number(4)"/>
+    <column name="win_second_serve_points_won"    type="number(4)"/>
+    <column name="win_second_serve_points_total"  type="number(4)"/>
+    <column name="win_break_points_saved"         type="number(4)"/>
+    <column name="win_break_points_serve_total"   type="number(4)"/>
+    <column name="win_service_points_won"         type="number(4)"/>
+    <column name="win_service_points_total"       type="number(4)"/>
+    <column name="win_first_serve_return_won"     type="number(4)"/>
+    <column name="win_first_serve_return_total"   type="number(4)"/>
+    <column name="win_second_serve_return_won"    type="number(4)"/>
+    <column name="win_second_serve_return_total"  type="number(4)"/>
+    <column name="win_break_points_converted"     type="number(4)"/>
+    <column name="win_break_points_return_total"  type="number(4)"/>
+    <column name="win_service_games_played"       type="number(4)"/>
+    <column name="win_return_games_played"        type="number(4)"/>
+    <column name="win_return_points_won"          type="number(4)"/>
+    <column name="win_return_points_total"        type="number(4)"/>
+    <column name="win_total_points_won"           type="number(4)"/>
+    <column name="win_total_points_total"         type="number(4)"/>
+    <column name="los_aces"                       type="number(4)"/>
+    <column name="los_double_faults"              type="number(4)"/>
+    <column name="los_first_serves_in"            type="number(4)"/>
+    <column name="los_first_serves_total"         type="number(4)"/>
+    <column name="los_first_serve_points_won"     type="number(4)"/>
+    <column name="los_first_serve_points_total"   type="number(4)"/>
+    <column name="los_second_serve_points_won"    type="number(4)"/>
+    <column name="los_second_serve_points_total"  type="number(4)"/>
+    <column name="los_break_points_saved"         type="number(4)"/>
+    <column name="los_break_points_serve_total"   type="number(4)"/>
+    <column name="los_service_points_won"         type="number(4)"/>
+    <column name="los_service_points_total"       type="number(4)"/>
+    <column name="los_first_serve_return_won"     type="number(4)"/>
+    <column name="los_first_serve_return_total"   type="number(4)"/>
+    <column name="los_second_serve_return_won"    type="number(4)"/>
+    <column name="los_second_serve_return_total"  type="number(4)"/>
+    <column name="los_break_points_converted"     type="number(4)"/>
+    <column name="los_break_points_return_total"  type="number(4)"/>
+    <column name="los_service_games_played"       type="number(4)"/>
+    <column name="los_return_games_played"        type="number(4)"/>
+    <column name="los_return_points_won"          type="number(4)"/>
+    <column name="los_return_points_total"        type="number(4)"/>
+    <column name="los_total_points_won"           type="number(4)"/>
+    <column name="los_total_points_total"         type="number(4)"/>
+  </columns>
+  <constraints>
+    <constraint name="pk_match_stats"  type="primary key" columns_list="id"/>
+    <constraint name="unq_match_stats" type="unique" columns_list="match_score_id"/>
+    <constraint name="fk_match_stats$match_score_id" type="foreign key" columns_list="match_score_id" foreign_table="match_scores" foreign_columns_list="id"/>
+  </constraints>
+</table>
