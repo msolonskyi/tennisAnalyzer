@@ -8,4 +8,6 @@ insert into TOURNAMENT_SERIES (id, name, code)
 values (4, 'ATP Challenger Tour', 'ch');
 insert into TOURNAMENT_SERIES (id, name, code)
 values (5, 'ITF Futures', 'fu');
+insert into TOURNAMENT_SERIES (id, name, code)
+values (6, 'Olympic Games', 'og');
 commit;

@@ -1,6 +1,27 @@
+update stg_players
+set flag_code = 'SGP'
+where flag_code = 'SIN'
+/
+
+update stg_players
+set flag_code = 'LBN'
+where flag_code = 'LIB'
+/
+
+update stg_tournaments
+   set tourney_fin_commit = '$4200000'
+where tourney_url_suffix = '/en/scores/archive/munich/604/1999/results'
+/
+
+delete stg_tournaments
+where tourney_url_suffix in ('/en/scores/archive/atp-doubles-challenge-cup/602/1999/results', '/en/scores/archive/atp-doubles-challenge-cup/602/2001/results', '/en/scores/archive/atp-doubles-challenge-cup/602/2000/results')
+/
+
 update stg_tournaments
 set tourney_id = 6120,
-    tourney_url_suffix = '/en/scores/archive/nice/6120/1975/results'
+    tourney_url_suffix = '/en/scores/archive/nice/6120/' || tourney_year || '/results',
+    tourney_slug = 'nice',
+    tourney_year_id = '6120-' || tourney_year
 where tourney_id is null
   and tourney_name = 'Nice'
 /
