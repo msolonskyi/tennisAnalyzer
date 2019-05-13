@@ -1,0 +1,11 @@
+﻿<?xml version="1.0"?>
+  <table name="countries" type="normal">
+  <columns>
+    <column name="code" type="varchar2(3)"  nullable="n"/>
+    <column name="name" type="varchar2(64)" nullable="n"/>
+  </columns>
+  <constraints>
+    <constraint name="pk_countries"  type="primary key" columns_list="code"/>
+    <constraint name="unq_countries" type="unique" columns_list="name"/>
+  </constraints>
+</table>
