@@ -7,40 +7,30 @@ begin
   --
   merge into players d
   using(select first_name, last_name, player_url as url, player_slug as slug, player_id as code, to_date(birthdate, 'yyyy.mm.dd') birth_date,
-               birthplace, turned_pro, weight_kg as weight, height_cm as height, residence, handedness, backhand, flag_code as  citizenship
+               birthplace, turned_pro, weight_kg as weight, height_cm as height, residence, handedness, backhand, flag_code as citizenship,
+               ora_hash(first_name ||'|'|| last_name ||'|'|| player_url ||'|'|| player_slug ||'|'|| player_id ||'|'|| to_date(birthdate, 'yyyy.mm.dd') ||'|'|| birthplace ||'|'|| turned_pro ||'|'|| weight_kg ||'|'|| height_cm ||'|'|| residence ||'|'|| handedness ||'|'|| backhand ||'|'|| flag_code) as delta_hash
         from stg_players) s
   on (s.code = d.code)
   when not matched then
-      insert (first_name, last_name, url, slug, code, birth_date, birthplace, turned_pro, weight, height, residence, handedness, backhand, citizenship)
+      insert (d.first_name, d.last_name, d.url, d.slug, d.code, d.birth_date, d.birthplace, d.turned_pro, d.weight, d.height, d.residence, d.handedness, d.backhand, d.citizenship)
       values (s.first_name, s.last_name, s.url, s.slug, s.code, s.birth_date, s.birthplace, s.turned_pro, s.weight, s.height, s.residence, s.handedness, s.backhand, s.citizenship)
   when matched then
     update set
-      first_name  = s.first_name,
-      last_name   = s.last_name,
-      url         = s.url,
-      slug        = s.slug,
-      birth_date  = s.birth_date,
-      birthplace  = s.birthplace,
-      turned_pro  = s.turned_pro,
-      weight      = s.weight,
-      height      = s.height,
-      residence   = s.residence,
-      handedness  = s.handedness,
-      backhand    = s.backhand,
-      citizenship = s.citizenship
-    where nvl(d.first_name, pkg_utils.c_null_varchar_substitution)  != coalesce(s.first_name, pkg_utils.c_null_varchar_substitution) or
-          nvl(d.last_name, pkg_utils.c_null_varchar_substitution)   != coalesce(s.last_name, pkg_utils.c_null_varchar_substitution)  or
-          nvl(d.url, pkg_utils.c_null_varchar_substitution)         != coalesce(s.url, pkg_utils.c_null_varchar_substitution)        or
-          nvl(d.slug, pkg_utils.c_null_varchar_substitution)        != coalesce(s.slug, pkg_utils.c_null_varchar_substitution)       or
-          nvl(d.birth_date, pkg_utils.c_null_date_substitution)     != coalesce(s.birth_date, pkg_utils.c_null_date_substitution)    or
-          nvl(d.birthplace, pkg_utils.c_null_varchar_substitution)  != coalesce(s.birthplace, pkg_utils.c_null_varchar_substitution) or
-          nvl(d.turned_pro, pkg_utils.c_null_number_substitution)   != coalesce(s.turned_pro, pkg_utils.c_null_number_substitution)  or
-          nvl(d.weight, pkg_utils.c_null_number_substitution)       != coalesce(s.weight, pkg_utils.c_null_number_substitution)      or
-          nvl(d.height, pkg_utils.c_null_number_substitution)       != coalesce(s.height, pkg_utils.c_null_number_substitution)      or
-          nvl(d.residence, pkg_utils.c_null_varchar_substitution)   != coalesce(s.residence, pkg_utils.c_null_varchar_substitution)  or
-          nvl(d.handedness, pkg_utils.c_null_varchar_substitution)  != coalesce(s.handedness, pkg_utils.c_null_varchar_substitution) or
-          nvl(d.backhand, pkg_utils.c_null_varchar_substitution)    != coalesce(s.backhand, pkg_utils.c_null_varchar_substitution)   or
-          nvl(d.citizenship, pkg_utils.c_null_varchar_substitution) != coalesce(s.citizenship, pkg_utils.c_null_varchar_substitution);
+      d.first_name  = s.first_name,
+      d.last_name   = s.last_name,
+      d.url         = s.url,
+      d.slug        = s.slug,
+      d.birth_date  = s.birth_date,
+      d.birthplace  = s.birthplace,
+      d.turned_pro  = s.turned_pro,
+      d.weight      = s.weight,
+      d.height      = s.height,
+      d.residence   = s.residence,
+      d.handedness  = s.handedness,
+      d.backhand    = s.backhand,
+      d.citizenship = nvl(s.citizenship, d.citizenship), 
+      d.delta_hash  = s.delta_hash
+    where d.delta_hash != s.delta_hash;
   --
   vn_qty := sql%rowcount;
   --

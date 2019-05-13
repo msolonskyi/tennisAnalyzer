@@ -7,7 +7,6 @@
     <column name="url"               type="varchar2(256)"/>
     <column name="slug"              type="varchar2(128)"/>
     <column name="city"              type="varchar2(128)"/>
-    <column name="country"           type="varchar2(128)"/>
     <column name="year"              type="number(4)"/>
     <column name="week"              type="number(2)"/>
     <column name="sgl_draw_link"     type="varchar2(256)"/>
@@ -23,12 +22,15 @@
     <column name="prize_currency"    type="varchar2(16)"/>
     <column name="sgl_result_link"   type="varchar2(256)"/>
     <column name="dbl_result_link"   type="varchar2(256)"/>
+    <column name="country_code"      type="varchar2(3)"/>
+    <column name="delta_hash"        type="number" nullable="n"/>
   </columns>
   <constraints>
-    <constraint name="pk_tournaments"  type="primary key" columns_list="id"/>
-    <constraint name="unq_tour$code$year" type="unique" columns_list="code, year"/>
-    <constraint name="fk_tournaments$series"  type="foreign key" columns_list="series_id"  foreign_table="tournament_series" foreign_columns_list="id"/>
-    <constraint name="fk_tournaments$surface" type="foreign key" columns_list="surface_id" foreign_table="surfaces"          foreign_columns_list="id"/>
-    <constraint name="fk_tournaments$type"    type="foreign key" columns_list="type_id"    foreign_table="tournament_types"  foreign_columns_list="id"/>
+    <constraint name="pk_tournaments"          type="primary key" columns_list="id"/>
+    <constraint name="unq_tour$code$year"      type="unique" columns_list="code, year"/>
+    <constraint name="fk_tournaments$series"   type="foreign key" columns_list="series_id"    foreign_table="tournament_series" foreign_columns_list="id"/>
+    <constraint name="fk_tournaments$surface"  type="foreign key" columns_list="surface_id"   foreign_table="surfaces"          foreign_columns_list="id"/>
+    <constraint name="fk_tournaments$type"     type="foreign key" columns_list="type_id"      foreign_table="tournament_types"  foreign_columns_list="id"/>
+    <constraint name="fk_players$country_code" type="foreign key" columns_list="country_code" foreign_table="countries"         foreign_columns_list="code"/>
   </constraints>
 </table>

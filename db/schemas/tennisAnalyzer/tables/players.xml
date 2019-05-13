@@ -2,6 +2,7 @@
   <table name="players" type="normal">
   <columns>
     <column name="id"          type="number(12)"    nullable="n"/>
+    <column name="delta_hash"  type="number"        nullable="n"/>
     <column name="first_name"  type="varchar2(128)"/>
     <column name="last_name"   type="varchar2(128)"/>
     <column name="url"         type="varchar2(128)" nullable="n"/>
@@ -15,11 +16,12 @@
     <column name="residence"   type="varchar2(128)"/>
     <column name="handedness"  type="varchar2(128)"/>
     <column name="backhand"    type="varchar2(128)"/>
-    <column name="citizenship" type="varchar2(128)"/>
+    <column name="citizenship" type="varchar2(3)"/>
   </columns>
   <constraints>
     <constraint name="pk_players"  type="primary key" columns_list="id"/>
     <constraint name="unq_players$code" type="unique" columns_list="code"/>
     <constraint name="unq_players$url" type="unique" columns_list="url"/>
+    <constraint name="fk_players$citizenship" type="foreign key" columns_list="citizenship" foreign_table="countries" foreign_columns_list="code"/>
   </constraints>
 </table>
