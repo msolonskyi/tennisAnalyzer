@@ -2,10 +2,12 @@
   <table name="match_scores" type="normal">
   <columns>
     <column name="id"                   type="number(12)" nullable="n"/>
+    <column name="delta_hash"           type="number"     nullable="n"/>
     <column name="tournament_id"        type="number(12)" nullable="n"/>
     <column name="stats_url"            type="varchar2(256)"/>
     <column name="stadie_id"            type="number(12)" nullable="n"/>
     <column name="match_order"          type="number(4)"/>
+    <column name="match_ret"            type="varchar2(10)"/>
     <column name="winner_id"            type="number(12)" nullable="n"/>
     <column name="loser_id"             type="number(12)" nullable="n"/>
     <column name="winner_seed"          type="varchar2(8)"/>

@@ -1,0 +1,26 @@
+﻿<?xml version="1.0"?>
+  <table name="stg_match_scores" type="normal">
+  <columns>
+    <column name="tourney_year_id"      type="varchar2(15)"/>
+    <column name="tourney_round_name"   type="varchar2(20)"/>
+    <column name="tourney_url"          type="varchar2(200)"/>
+    <column name="round_order"          type="number"/>
+    <column name="match_order"          type="number"/>
+    <column name="match_id"             type="varchar2(40)"/>
+    <column name="match_score"          type="varchar2(40)"/>
+    <column name="match_stats_url"      type="varchar2(200)"/>
+    <column name="match_ret"            type="varchar2(10)"/>
+    <column name="winner_url"           type="varchar2(200)"/>
+    <column name="winner_code"          type="varchar2(200)"/>
+    <column name="winner_seed"          type="varchar2(5)"/>
+    <column name="winner_sets_won"      type="number"/>
+    <column name="winner_games_won"     type="number"/>
+    <column name="winner_tiebreaks_won" type="number"/>
+    <column name="loser_url"            type="varchar2(200)"/>
+    <column name="loser_code"           type="varchar2(200)"/>
+    <column name="loser_seed"           type="varchar2(5)"/>
+    <column name="loser_sets_won"       type="number"/>
+    <column name="loser_games_won"      type="number"/>
+    <column name="loser_tiebreaks_won"  type="number"/>
+  </columns>
+</table>
