@@ -2,6 +2,7 @@
   <table name="match_stats" type="normal">
   <columns>
     <column name="id"                             type="number(12)" nullable="n"/>
+    <column name="delta_hash"                     type="number" nullable="n"/>
     <column name="match_score_id"                 type="number(12)" nullable="n"/>
     <column name="match_time"                     type="varchar2(10)"/>
     <column name="match_duration"                 type="number(4)"/>
