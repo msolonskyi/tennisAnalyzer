@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+  <table name="stg_tournaments" type="normal">
+  <columns>
+    <column name="tourney_year"         type="number"/>
+    <column name="series"               type="varchar2(32)"/>
+    <column name="tourney_name"         type="varchar2(120)"/>
+    <column name="tourney_id"           type="number"/>
+    <column name="tourney_slug"         type="varchar2(30)"/>
+    <column name="tourney_location"     type="varchar2(40)"/>
+    <column name="tourney_dates"        type="varchar2(32)"/>
+    <column name="tourney_singles_draw" type="number"/>
+    <column name="tourney_doubles_draw" type="number"/>
+    <column name="tourney_conditions"   type="varchar2(10)"/>
+    <column name="tourney_surface"      type="varchar2(10)"/>
+    <column name="tourney_fin_commit"   type="varchar2(25)"/>
+    <column name="tourney_url"          type="varchar2(200)"/>
+    <column name="tourney_year_id"      type="varchar2(15)"/>
+  </columns>
+</table>
