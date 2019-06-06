@@ -29,11 +29,7 @@ def parse_tournaments(year, tournament_type):
         tourney_dates    = tourney_dates_array[i].strip()
         try:
             tourney_dates_split = tourney_dates.strip().split('.')
-            tourney_month       = int(tourney_dates_split[1])
-            tourney_day         = int(tourney_dates_split[2])
         except Exception as e:
-            tourney_month = ''
-            tourney_day   = ''
             logzero.logger.error('parsing tourney_dates: '+ str(e))
 
         tourney_singles_draw = tourney_singles_draw_array[i].strip()
@@ -66,7 +62,7 @@ def parse_tournaments(year, tournament_type):
         tourney_year_id = str(year) + '-' + tourney_id
 
         if tourney_id != '602': # doubles
-            output.append([year, tournament_type, tourney_name, tourney_id, tourney_slug, tourney_location, tourney_dates, tourney_month, tourney_day, tourney_singles_draw, tourney_doubles_draw, tourney_conditions, tourney_surface, tourney_fin_commit, tourney_url, tourney_year_id])
+            output.append([year, tournament_type, tourney_name, tourney_id, tourney_slug, tourney_location, tourney_dates, tourney_singles_draw, tourney_doubles_draw, tourney_conditions, tourney_surface, tourney_fin_commit, tourney_url, tourney_year_id])
     logzero.logger.info(year + ' ' + '{:<4}'.format(tournament_type) + ' ' + '{:>3}'.format(str(tourney_count)))
     return output
 
@@ -77,7 +73,9 @@ logzero.logfile("./load_tournaments.log", loglevel=logzero.logging.INFO)
 # Tournament types
 tournament_types = ('gs', '1000', 'atp', 'ch')
 
-logzero.logger.info ('start')
+logzero.logger.info ('')
+logzero.logger.info ('==========')
+logzero.logger.info ('start.')
 
 # parsing command line
 if len(sys.argv) >= 2:
@@ -99,13 +97,13 @@ con = cx_Oracle.connect(connection_string, encoding = "UTF-8")
 for year in range(year_from, year_to + 1):
     cur = con.cursor()
     # truncate
-    logzero.logger.info ('Truncating table PRE_STG_TOURNAMENTS...')
-    cur.execute('truncate table pre_stg_tournaments')
-    logzero.logger.info ('Truncating table PRE_STG_TOURNAMENTS...Done')
+    logzero.logger.info ('Truncating table STG_TOURNAMENTS...')
+    cur.execute('truncate table stg_tournaments')
+    logzero.logger.info ('Truncating table STG_TOURNAMENTS...Done')
     for tpe in tournament_types:
         tourney_data = parse_tournaments(str(year), tpe)
         # insert
-        cur.executemany("insert into pre_stg_tournaments(tourney_year, series, tourney_name, tourney_id, tourney_slug, tourney_location, tourney_dates, tourney_month, tourney_day, tourney_singles_draw, tourney_doubles_draw, tourney_conditions, tourney_surface, tourney_fin_commit, tourney_url_suffix, tourney_year_id) values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16)",
+        cur.executemany("insert into stg_tournaments(tourney_year, series, tourney_name, tourney_id, tourney_slug, tourney_location, tourney_dates, tourney_singles_draw, tourney_doubles_draw, tourney_conditions, tourney_surface, tourney_fin_commit, tourney_url, tourney_year_id) values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14)",
                         tourney_data)
         con.commit()
 
@@ -117,8 +115,11 @@ for year in range(year_from, year_to + 1):
 #        csv_file.close()
     # run data processing
     logzero.logger.info ('Processing data...')
-    cur.callproc('sp_process_pre_stg_tourn')
+    cur.callproc('sp_process_tournaments')
     logzero.logger.info ('Processing data...Done')
     cur.close()
 
 con.close()
+
+logzero.logger.info ('completed successfully.')
+logzero.logger.info ('==========')
