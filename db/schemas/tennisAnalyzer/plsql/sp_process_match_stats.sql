@@ -1,4 +1,4 @@
-create or replace procedure sp_proccess_match_stats
+create or replace procedure sp_process_match_stats
 is
   cv_module_name constant varchar2(200) := 'process match stats';
   vn_qty         number;
@@ -18,7 +18,7 @@ begin
                m.*
         from stg_match_stats m, match_scores w
         where m.match_time || m.match_duration || m.win_aces || m.win_double_faults || m.win_first_serves_in || m.win_first_serves_total || m.win_first_serve_points_won || m.win_first_serve_points_total || m.win_second_serve_points_won || m.win_second_serve_points_total || m.win_break_points_saved || m.win_break_points_serve_total || m.win_service_points_won || m.win_service_points_total || m.win_first_serve_return_won || m.win_first_serve_return_total || m.win_second_serve_return_won || m.win_second_serve_return_total || m.win_break_points_converted || m.win_break_points_return_total || m.win_service_games_played || m.win_return_games_played || m.win_return_points_won || m.win_return_points_total || m.win_total_points_won || m.win_total_points_total || m.los_aces || m.los_double_faults || m.los_first_serves_in || m.los_first_serves_total || m.los_first_serve_points_won || m.los_first_serve_points_total || m.los_second_serve_points_won || m.los_second_serve_points_total || m.los_break_points_saved || m.los_break_points_serve_total || m.los_service_points_won || m.los_service_points_total || m.los_first_serve_return_won || m.los_first_serve_return_total || m.los_second_serve_return_won || m.los_second_serve_return_total || m.los_break_points_converted || m.los_break_points_return_total || m.los_service_games_played || m.los_return_games_played || m.los_return_points_won || m.los_return_points_total || m.los_total_points_won || m.los_total_points_total is not null
-          and m.match_stats_url_suffix = w.stats_url) s
+          and m.match_stats_url = w.stats_url) s
   on (s.match_score_id = d.match_score_id)
   when not matched then
     insert (match_score_id, match_time, match_duration, win_aces, win_double_faults, win_first_serves_in, win_first_serves_total, win_first_serve_points_won, win_first_serve_points_total, win_second_serve_points_won, win_second_serve_points_total, win_break_points_saved, win_break_points_serve_total, win_service_points_won, win_service_points_total, win_first_serve_return_won, win_first_serve_return_total, win_second_serve_return_won, win_second_serve_return_total, win_break_points_converted, win_break_points_return_total, win_service_games_played, win_return_games_played, win_return_points_won, win_return_points_total, win_total_points_won, win_total_points_total, los_aces, los_double_faults, los_first_serves_in, los_first_serves_total, los_first_serve_points_won, los_first_serve_points_total, los_second_serve_points_won, los_second_serve_points_total, los_break_points_saved, los_break_points_serve_total, los_service_points_won, los_service_points_total, los_first_serve_return_won, los_first_serve_return_total, los_second_serve_return_won, los_second_serve_return_total, los_break_points_converted, los_break_points_return_total, los_service_games_played, los_return_games_played, los_return_points_won, los_return_points_total, los_total_points_won, los_total_points_total)
@@ -133,5 +133,5 @@ exception
   when others then
     rollback;
     pkg_log.sp_log_message(pv_module => cv_module_name, pv_text => 'completed with error.', pv_clob => dbms_utility.format_error_stack || pkg_utils.CRLF || dbms_utility.format_error_backtrace, pv_type => 'E');
-end sp_proccess_match_stats;
+end sp_process_match_stats;
 /
