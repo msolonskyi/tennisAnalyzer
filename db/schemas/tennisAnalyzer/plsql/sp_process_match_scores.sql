@@ -1,6 +1,6 @@
 create or replace procedure sp_process_match_scores
 is
-  cv_module_name constant varchar2(200) := 'process pre stg match scores';
+  cv_module_name constant varchar2(200) := 'process match scores';
   vn_qty         number;
 begin
   pkg_log.sp_log_message(pv_module => cv_module_name, pv_text => 'start');
@@ -8,7 +8,7 @@ begin
   -- adding new players
   -- winners
   insert into players(url, code, delta_hash)
-  select distinct 'http://www.atpworldtour.com' || s.winner_url as url, s.winner_code as code,
+  select distinct s.winner_url as url, s.winner_code as code,
          ora_hash(null || '-' || null || '-' || s.winner_url || '-' || null || '-' || s.winner_code || '-' || null || '-' || null || '-' || null || '-' || null || '-' || null || '-' || null || '-' || null || '-' || null || '-' || null) as delta_hash
   from stg_match_scores s
   where s.winner_code not in (select p.code from players p);
@@ -17,7 +17,7 @@ begin
   pkg_log.sp_log_message(pv_module => cv_module_name, pv_text => 'add new players (winners)', pn_qty => vn_qty);
   -- losers
   insert into players(url, code, delta_hash)
-  select distinct 'http://www.atpworldtour.com' || s.loser_url as url, s.loser_code as code,
+  select distinct s.loser_url as url, s.loser_code as code,
          ora_hash(null || '-' || null || '-' || s.loser_url || '-' || null || '-' || s.loser_code || '-' || null || '-' || null || '-' || null || '-' || null || '-' || null || '-' || null || '-' || null || '-' || null || '-' || null) as delta_hash
   from stg_match_scores s
   where s.loser_code not in (select p.code from players p);

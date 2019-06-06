@@ -1,0 +1,12 @@
+﻿<?xml version="1.0"?>
+  <table name="match_scores_adjustments" type="normal">
+  <columns>
+    <column name="match_id"   type="varchar2(32)"  nullable="n"/>
+    <column name="set_score"  type="varchar2(32)"/>
+    <column name="stats_url"  type="varchar2(256)"/>
+    <column name="to_skip"    type="varchar2(1)"/>
+  </columns>
+  <constraints>
+    <constraint name="pk_match_scores_adjustments"  type="primary key" columns_list="match_id"/>
+  </constraints>
+</table>
