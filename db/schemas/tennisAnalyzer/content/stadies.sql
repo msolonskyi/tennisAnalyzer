@@ -5,6 +5,8 @@ values (9, '2nd Round Qualifying');
 insert into STADIES (id, name)
 values (8, '3rd Round Qualifying');
 insert into STADIES (id, name)
+values (13, '3rd/4th Place Match');
+insert into STADIES (id, name)
 values (1, 'Finals');
 insert into STADIES (id, name)
 values (12, 'Olympic Bronze');
