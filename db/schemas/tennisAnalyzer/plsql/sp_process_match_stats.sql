@@ -27,6 +27,7 @@ begin
   when matched then
     update set
       d.match_time                    = s.match_time,
+      d.delta_hash                    = s.delta_hash,
       d.match_duration                = s.match_duration,
       d.win_aces                      = s.win_aces,
       d.win_double_faults             = s.win_double_faults,
