@@ -9,7 +9,7 @@ begin
   -- winners
   insert into players(url, code, delta_hash)
   select distinct s.winner_url as url, s.winner_code as code,
-         ora_hash(null || '-' || null || '-' || s.winner_url || '-' || null || '-' || s.winner_code || '-' || null || '-' || null || '-' || null || '-' || null || '-' || null || '-' || null || '-' || null || '-' || null || '-' || null) as delta_hash
+         ora_hash(null || '|' || null || '|' || s.winner_url || '|' || null || '|' || s.winner_code || '|' || null || '|' || null || '|' || null || '|' || null || '|' || null || '|' || null || '|' || null || '|' || null || '|' || null) as delta_hash
   from stg_match_scores s
   where s.winner_code not in (select p.code from players p);
   --
@@ -18,7 +18,7 @@ begin
   -- losers
   insert into players(url, code, delta_hash)
   select distinct s.loser_url as url, s.loser_code as code,
-         ora_hash(null || '-' || null || '-' || s.loser_url || '-' || null || '-' || s.loser_code || '-' || null || '-' || null || '-' || null || '-' || null || '-' || null || '-' || null || '-' || null || '-' || null || '-' || null) as delta_hash
+         ora_hash(null || '|' || null || '|' || s.loser_url || '|' || null || '|' || s.loser_code || '|' || null || '|' || null || '|' || null || '|' || null || '|' || null || '|' || null || '|' || null || '|' || null || '|' || null) as delta_hash
   from stg_match_scores s
   where s.loser_code not in (select p.code from players p);
   --
@@ -42,7 +42,7 @@ begin
                m.winner_tiebreaks_won,
                m.loser_tiebreaks_won,
                m.match_ret,
-               ora_hash(t.id || '-' || m.match_stats_url || '-' || s.id || '-' || m.match_order || '-' || w.id || '-' || l.id || '-' || m.winner_seed || '-' || m.loser_seed || '-' || m.match_score || '-' || m.winner_sets_won || '-' || m.loser_sets_won || '-' || m.winner_games_won || '-' || m.loser_games_won || '-' || m.winner_tiebreaks_won || '-' || m.loser_tiebreaks_won || '-' || m.match_ret) as delta_hash
+               ora_hash(t.id || '|' || m.match_stats_url || '|' || s.id || '|' || m.match_order || '|' || w.id || '|' || l.id || '|' || m.winner_seed || '|' || m.loser_seed || '|' || m.match_score || '|' || m.winner_sets_won || '|' || m.loser_sets_won || '|' || m.winner_games_won || '|' || m.loser_games_won || '|' || m.winner_tiebreaks_won || '|' || m.loser_tiebreaks_won || '|' || m.match_ret) as delta_hash
         from stg_match_scores m, tournaments t, stadies s,
              players w, players l
         where m.tourney_year_id = t.year || '-' || t.code

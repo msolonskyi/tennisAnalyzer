@@ -27,7 +27,7 @@ begin
                i.sgl_result_link,
                i.dbl_result_link,
                c.code as country_code,
-               ora_hash(i.name ||'|'|| i.code ||'|'|| i.url ||'|'|| i.slug ||'|'|| i.city ||'|'|| i.year ||'|'|| i.week ||'|'|| i.sgl_draw_link ||'|'|| i.dbl_draw_link ||'|'|| i.type_id ||'|'|| i.surface_id ||'|'|| i.start_dtm ||'|'|| i.finish_dtm ||'|'|| i.sgl_draw_qty ||'|'|| i.dbl_draw_qty ||'|'|| i.series_id ||'|'|| i.prize_money ||'|'|| i.prize_currency ||'|'|| i.sgl_result_link ||'|'|| i.dbl_result_link ||'|'|| c.code) as delta_hash
+               ora_hash(i.name || '|' || i.code || '|' || i.url || '|' || i.slug || '|' || i.city || '|' || i.year || '|' || i.week || '|' || i.sgl_draw_link || '|' || i.dbl_draw_link || '|' || i.type_id || '|' || i.surface_id || '|' || i.start_dtm || '|' || i.finish_dtm || '|' || i.sgl_draw_qty || '|' || i.dbl_draw_qty || '|' || i.series_id || '|' || i.prize_money || '|' || i.prize_currency || '|' || i.sgl_result_link || '|' || i.dbl_result_link || '|' || c.code) as delta_hash
         from (select tourney_name as name,
                      tourney_id as code,
                      t.tourney_url url,
