@@ -24,9 +24,14 @@
     <constraint name="pk_match_scores"  type="primary key" columns_list="id"/>
     <constraint name="unq_match_scores" type="unique" columns_list="tournament_id, stadie_id, winner_id, loser_id"/>
     <constraint name="unq_match_scores$stats_url" type="unique" columns_list="stats_url"/>
-    <constraint name="fk_match_scores$tournament_id" type="foreign key" columns_list="tournament_id" foreign_table="tournaments" foreign_columns_list="id"/>
+    <constraint name="fk_match_scores$tournament_id" type="foreign key" columns_list="tournament_id"  foreign_table="tournaments" foreign_columns_list="id"/>
     <constraint name="fk_match_scores$stadie_id"     type="foreign key" columns_list="stadie_id"      foreign_table="stadies"     foreign_columns_list="id"/>
     <constraint name="fk_match_scores$winner_id"     type="foreign key" columns_list="winner_id"      foreign_table="players"     foreign_columns_list="id"/>
     <constraint name="fk_match_scores$loser_id"      type="foreign key" columns_list="loser_id"       foreign_table="players"     foreign_columns_list="id"/>
   </constraints>
+  <indexes>
+    <index name="ind_match_scores$winner_id" type="normal" clause="winner_id"/>
+    <index name="ind_match_scores$loser_id" type="normal" clause="loser_id"/>
+    <index name="ind_match_scores$tournament_id" type="normal" clause="tournament_id"/>
+  </indexes>
 </table>
