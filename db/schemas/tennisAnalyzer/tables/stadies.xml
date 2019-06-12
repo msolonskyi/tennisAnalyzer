@@ -1,8 +1,9 @@
 <?xml version="1.0"?>
   <table name="stadies" type="normal">
   <columns>
-    <column name="id"   type="number(12)"  nullable="n"/>
+    <column name="id"   type="number(12)"   nullable="n"/>
     <column name="name" type="varchar2(64)" nullable="n"/>
+    <column name="pos"  type="number(2)"    nullable="n"/>
   </columns>
   <constraints>
     <constraint name="pk_stadies"  type="primary key" columns_list="id"/>
