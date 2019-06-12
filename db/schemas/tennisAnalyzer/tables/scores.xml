@@ -162,7 +162,7 @@
     <column name="los_avg_tiebreaks_all_current" type="number"/>
   </columns>
   <constraints>
-    <constraint name="pk_scores" type="primary key" columns_list="match_id"/>
+    <constraint name="pk_scores" type="primary key" columns_list="match_score_id"/>
     <constraint name="fk_scores$match_score_id" type="foreign key" columns_list="match_score_id" foreign_table="match_scores" foreign_columns_list="id"/>
   </constraints>
 </table>

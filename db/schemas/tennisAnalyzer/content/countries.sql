@@ -500,4 +500,6 @@ insert into COUNTRIES (code, name)
 values ('ZAM', 'Zambia');
 insert into COUNTRIES (code, name)
 values ('ZIM', 'Zimbabwe');
+insert into COUNTRIES (code, name)
+values ('NMI', 'Northern Mariana Islands');
 commit;

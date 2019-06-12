@@ -8,7 +8,7 @@ import logzero
 
 def player_detail(url):
 
-    tree = html.fromstring(requests.get(url).content)
+    tree = html.fromstring(requests.get(url + '?ajax=true').content)
     url_split = url.split("/")
 
     player_code = url_split[6]
@@ -31,8 +31,20 @@ def player_detail(url):
         flag_code = flag_code_array[0].strip()
     else:
         flag_code = ''
-    
+
+    # Lebanon
+    if flag_code == 'LIB':
+        flag_code = 'LBN'
     residence = ''
+    # Singapore
+    if flag_code == 'SIN':
+        flag_code = 'SGP'
+    # Singapore
+    if flag_code == 'bra':
+        flag_code = 'BRA'
+
+    residence = ''
+    
     birthplace = ''
 
     ## yyyy.mm.dd format
@@ -100,8 +112,8 @@ try:
 
     cur = con.cursor()
     if year is None:
-        sql = 'select url from players where first_name is null and rownum <= :chunk_size'
-        players = cur.execute(sql, {"chunk_size":CHUNK_SIZE}).fetchall()
+        sql = 'select url from players where first_name is null and rownum <= :chunk_size and code != :code '
+        players = cur.execute(sql, {"chunk_size":CHUNK_SIZE, "code":'p0f5'}).fetchall()
     else:
         sql = '''select url
 from (select d.url, count(*) qry
