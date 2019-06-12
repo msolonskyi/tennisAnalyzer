@@ -86,5 +86,6 @@ exception
   when others then
     rollback;
     pkg_log.sp_log_message(pv_module => cv_module_name, pv_text => 'completed with error.', pv_clob => dbms_utility.format_error_stack || pkg_utils.CRLF || dbms_utility.format_error_backtrace, pv_type => 'E');
+    raise;
 end sp_process_match_stats;
 /
