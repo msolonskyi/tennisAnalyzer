@@ -1,9 +1,10 @@
-create or replace procedure sp_process_scores
+create or replace procedure sp_process_scores_by_t(p_tournament_id tournaments.id%type)
 is
   cv_module_name constant varchar2(200) := 'process scores';
   vn_qty         number;
 begin
   pkg_log.sp_log_message(pv_module => cv_module_name, pv_text => 'start');
+  pkg_log.sp_log_message(pv_module => cv_module_name, pv_text => 'p_tournament_id: ' || p_tournament_id);
   --
   merge into scores d
   using(select v.*,
@@ -1210,6 +1211,7 @@ begin
               where m.winner_id = w.id
                 and m.loser_id = l.id
                 and m.tournament_id = t.id
+                and t.id = p_tournament_id
                 and m.stadie_id = st.id
                 and t.surface_id = su.id
                 and t.series_id = ts.id
@@ -1389,5 +1391,5 @@ exception
     rollback;
     pkg_log.sp_log_message(pv_module => cv_module_name, pv_text => 'completed with error.', pv_clob => dbms_utility.format_error_stack || pkg_utils.CRLF || dbms_utility.format_error_backtrace, pv_type => 'E');
     raise;
-end sp_process_scores;
+end sp_process_scores_by_t;
 /
