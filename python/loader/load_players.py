@@ -39,9 +39,12 @@ def player_detail(url):
     # Singapore
     if flag_code == 'SIN':
         flag_code = 'SGP'
-    # Singapore
+    #
     if flag_code == 'bra':
         flag_code = 'BRA'
+    # Romania
+    if flag_code == 'ROM':
+        flag_code = 'ROU'
 
     residence = ''
     
@@ -112,8 +115,8 @@ try:
 
     cur = con.cursor()
     if year is None:
-        sql = 'select url from players where first_name is null and rownum <= :chunk_size and code != :code '
-        players = cur.execute(sql, {"chunk_size":CHUNK_SIZE, "code":'p0f5'}).fetchall()
+        sql = 'select url from players where first_name is null and rownum <= :chunk_size'
+        players = cur.execute(sql, {"chunk_size":CHUNK_SIZE}).fetchall()
     else:
         sql = '''select url
 from (select d.url, count(*) qry

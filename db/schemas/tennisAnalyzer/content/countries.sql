@@ -502,4 +502,8 @@ insert into COUNTRIES (code, name)
 values ('ZIM', 'Zimbabwe');
 insert into COUNTRIES (code, name)
 values ('NMI', 'Northern Mariana Islands');
+insert into COUNTRIES (code, name)
+values ('CAL', 'New Caledonia');
+insert into COUNTRIES (code, name)
+values ('GUD', 'Guadeloupe');
 commit;
