@@ -1,15 +1,16 @@
 from constants import CONNECTION_STRING, CHUNK_SIZE, BORDER_QTY
 from lxml import html
+from ctypes import Array
 import cx_Oracle
 import sys
 import requests
 import logzero
 #import csv
 
-def player_detail(url):
+def player_detail(url: str) -> Array:
 
     tree = html.fromstring(requests.get(url + '?ajax=true').content)
-    url_split = url.split("/")
+    url_split = url.split('/')
 
     player_code = url_split[6]
     player_slug = url_split[5]
@@ -32,22 +33,16 @@ def player_detail(url):
     else:
         flag_code = ''
 
-    # Lebanon
-    if flag_code == 'LIB':
+    if flag_code == 'LIB': # Lebanon
         flag_code = 'LBN'
-    residence = ''
-    # Singapore
-    if flag_code == 'SIN':
+    elif flag_code == 'SIN': # Singapore
         flag_code = 'SGP'
-    #
-    if flag_code == 'bra':
+    elif flag_code == 'bra':
         flag_code = 'BRA'
-    # Romania
-    if flag_code == 'ROM':
+    elif flag_code == 'ROM': # Romania
         flag_code = 'ROU'
 
     residence = ''
-    
     birthplace = ''
 
     ## yyyy.mm.dd format
@@ -91,7 +86,7 @@ def player_detail(url):
 
 # main
 # logging support
-logzero.logfile("./load_players.log", loglevel=logzero.logging.INFO)
+logzero.logfile('load_players.log', loglevel=logzero.logging.INFO)
 
 logzero.logger.info('')
 logzero.logger.info('==========')
@@ -101,11 +96,11 @@ logzero.logger.info('start')
 if len(sys.argv) >= 2:
     #re-load for one year
     year = int(sys.argv[1])
-    logzero.logger.info(f"loading players for {year} year")
+    logzero.logger.info(f'loading players for {year} year')
 else:
     # load players with empty names only
     year = None
-    logzero.logger.info("loading players with empty names only")
+    logzero.logger.info('loading players with empty names only')
 
 logzero.logger.info('')
 try:
@@ -116,7 +111,7 @@ try:
     cur = con.cursor()
     if year is None:
         sql = 'select url from players where first_name is null and rownum <= :chunk_size'
-        players = cur.execute(sql, {"chunk_size":CHUNK_SIZE}).fetchall()
+        players = cur.execute(sql, {'chunk_size': CHUNK_SIZE}).fetchall()
     else:
         sql = '''select url
 from (select d.url, count(*) qry
@@ -134,7 +129,7 @@ from (select d.url, count(*) qry
       group by d.url
       having count(*) >= :qty) where rownum <= :chunk_size
 '''
-        players = cur.execute(sql, {"year":year, "qty":BORDER_QTY, "chunk_size":CHUNK_SIZE}).fetchall()
+        players = cur.execute(sql, {'year': year, 'qty': BORDER_QTY, 'chunk_size': CHUNK_SIZE}).fetchall()
     for url_tpl in players:
         players_data.append(player_detail(url_tpl[0]))
     #
@@ -144,8 +139,7 @@ from (select d.url, count(*) qry
                     players_data)
     con.commit()
     #
-    players_data_len = len(players_data)
-    logzero.logger.info(f'{players_data_len} row(s) inserted')
+    logzero.logger.info(f'{len(players_data)} row(s) inserted')
     #
     # run data processing
     logzero.logger.info('start data processing')

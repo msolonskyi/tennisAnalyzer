@@ -1,38 +1,39 @@
+from constants import CONNECTION_STRING, URL_PREFIX, DURATION_IN_DAYS
 from lxml import html
+from ctypes import Array
+from datetime import datetime
 import cx_Oracle
 import sys
 import requests
 import logzero
-import datetime
 #import csv
 
-def parse_tournament(url):
+def parse_tournament(url: str) -> Array:
     try:
-        url_prefix = "http://www.atpworldtour.com"
-
-        url_split = url.split("/")
+        url_split = url.split('/')
         tourney_id = url_split[7]
-        tourney_year = str(year)
+        if year is None:
+            tourney_year = str(datetime.today().year)
+        else:
+            tourney_year = str(year)
         tourney_year_id = tourney_year + '-' + tourney_id
         #
-        tree = html.fromstring(requests.get(url).text.replace('<sup>', '(').replace('</sup>', ')'))
+        tree = html.fromstring(requests.get(url + '?ajax=true').text.replace('<sup>', '(').replace('</sup>', ')'))
 
         tourney_round_name_array = tree.xpath("//table[contains(@class, 'day-table')]/thead/tr/th/text()")
         tourney_round_count = len(tourney_round_name_array)
 
         match_data = []
-        # Iterate through each round    
+        # Iterate through each round
         for i in range(0, tourney_round_count):
             round_order = i + 1
 
             tourney_round_name = tourney_round_name_array[i]
             if tourney_round_name == 'Final':
                 tourney_round_name = 'Finals'
-
-            if tourney_round_name == 'Quarterfinals':
+            elif tourney_round_name == 'Quarterfinals':
                 tourney_round_name = 'Quarter-Finals'
-
-            if tourney_round_name == 'Semifinals':
+            elif tourney_round_name == 'Semifinals':
                 tourney_round_name = 'Semi-Finals'
 
             round_match_count_array = tree.xpath("//table[contains(@class, 'day-table')]/tbody[" + str(i + 1) + "]/tr/td[contains(@class, 'day-table-name')][1]/a/text()")
@@ -43,39 +44,41 @@ def parse_tournament(url):
                 match_order = j + 1
 
                 # Winner
-                winner_url_array = tree.xpath("//table[contains(@class, 'day-table')]/tbody[" + str(i + 1) + "]/tr[" + str(j + 1) + "]/td[contains(@class, 'day-table-name')][1]/a/@href")
+                winner_url_array  = tree.xpath("//table[contains(@class, 'day-table')]/tbody[" + str(i + 1) + "]/tr[" + str(j + 1) + "]/td[contains(@class, 'day-table-name')][1]/a/@href")
                 winner_name_array = tree.xpath("//table[contains(@class, 'day-table')]/tbody[" + str(i + 1) + "]/tr[" + str(j + 1) + "]/td[contains(@class, 'day-table-name')][1]/text()")
                 try:
-                    winner_url = url_prefix + winner_url_array[0]
+                    winner_url = URL_PREFIX + winner_url_array[0]
                     winner_url_split = winner_url.split('/')
                     winner_code = winner_url_split[6]            
                 except Exception as e:
-                    if winner_name_array[0].replace('\n', '').replace('\r', '').replace('\t', '').strip() == 'Bye1':
+                    winner_name = winner_name_array[0].replace('\n', '').replace('\r', '').replace('\t', '').strip()
+                    if winner_name in ('Bye', 'Bye1', 'Bye2', 'Bye3'):
                         logzero.logger.info(url)
-                        logzero.logger.warning('winner_name_array[0]: ' + winner_name_array[0].replace('\n', '').replace('\r', '').replace('\t', '').strip() + '; Warning: ' + str(e))
+                        logzero.logger.warning(f'winner_name_array[0]: {winner_name}; Warning: {str(e)}')
                         continue
                     else:
                         logzero.logger.info(url)
-                        logzero.logger.error('winner_url: ' + winner_url + '; Error: ' + str(e))
+                        logzero.logger.error(f'winner_url: {winner_url}; Error: {str(e)}')
                 # Loser
                 loser_url_array = tree.xpath("//table[contains(@class, 'day-table')]/tbody[" + str(i + 1) + "]/tr[" + str(j + 1) + "]/td[contains(@class, 'day-table-name')][2]/a/@href")
                 loser_name_array = tree.xpath("//table[contains(@class, 'day-table')]/tbody[" + str(i + 1) + "]/tr[" + str(j + 1) + "]/td[contains(@class, 'day-table-name')][2]/text()")
                 try:
-                    loser_url = url_prefix + loser_url_array[0]
+                    loser_url = URL_PREFIX + loser_url_array[0]
                     loser_url_split = loser_url.split('/')
                     loser_code = loser_url_split[6]
                 except Exception as e:
-                    if loser_name_array[0].replace('\n', '').replace('\r', '').replace('\t', '').strip() in ('Bye', 'Bye1', 'Bye2', 'Bye3'):
+                    loser_name = loser_name_array[0].replace('\n', '').replace('\r', '').replace('\t', '').strip()
+                    if loser_name in ('Bye', 'Bye1', 'Bye2', 'Bye3'):
                         logzero.logger.info(url)
-                        logzero.logger.warning('loser_name_array[0]: ' + loser_name_array[0].replace('\n', '').replace('\r', '').replace('\t', '').strip() + '; Warning: ' + str(e))
+                        logzero.logger.warning(f'loser_name_array[0]: {loser_name}; Warning: {str(e)}')
                         continue
                     elif loser_url == 'http://www.atpworldtour.com#':
                         logzero.logger.info(url)
-                        logzero.logger.warning('loser_url: ' + loser_url + '; Warning: ' + str(e))
+                        logzero.logger.warning(f'loser_url: {loser_url}; Warning: {str(e)}')
                         continue
                     else:
                         logzero.logger.info(url)
-                        logzero.logger.error('loser_url: ' + loser_url + '; Error: ' + str(e))
+                        logzero.logger.error(f'loser_url: {loser_url}; Error: {str(e)}')
 
                 # Seeds
                 winner_seed_array = tree.xpath("//table[contains(@class, 'day-table')]/tbody[" + str(i + 1) + "]/tr[" + str(j + 1) + "]/td[contains(@class, 'day-table-seed')][1]/span/text()")
@@ -91,7 +94,7 @@ def parse_tournament(url):
                     loser_seed = ''
 
                 # Match id
-                match_id = tourney_year + "-" + tourney_id + "-" + winner_code + "-" + loser_code
+                match_id = tourney_year + '-' + tourney_id + '-' + winner_code + '-' + loser_code
 
                 if match_id in dic_match_scores_skip_adj: # skip this match
                     continue
@@ -99,7 +102,7 @@ def parse_tournament(url):
                 # Match score
                 if match_id in dic_match_scores_adj:
                     match_score = dic_match_scores_adj[match_id]
-                    logzero.logger.warning('adjustment of match_id: ' + match_id + '; match_score: ' + match_score)
+                    logzero.logger.warning(f'adjustment of match_id: {match_id}; match_score: {match_score}')
                 else:
                     match_score_array = tree.xpath("//table[contains(@class, 'day-table')]/tbody[" + str(i + 1) + "]/tr[" + str(j + 1) + "]/td[contains(@class, 'day-table-score')]/a/text()")
                     if len(match_score_array) > 0:
@@ -140,7 +143,7 @@ def parse_tournament(url):
                                 else:
                                     if int(set_score[0]) - int(set_score[1]) < 2:
                                         logzero.logger.info (url)
-                                        logzero.logger.error('(win) int(set_score[0]) - int(set_score[1]) < 2; match_id = ' +  match_id + ', set_score = ' + set_score)
+                                        logzero.logger.error(f'(win) int(set_score[0]) - int(set_score[1]) < 2; match_id: {match_id}; set_score: {set_score}')
                             elif set_score[0] < set_score[1]:
                                 loser_sets_won   += 1
                                 winner_games_won += int(set_score[0])
@@ -152,10 +155,10 @@ def parse_tournament(url):
                                 else:
                                     if int(set_score[1]) - int(set_score[0]) < 2:
                                         logzero.logger.info (url)
-                                        logzero.logger.error('(los) int(set_score[1]) - int(set_score[0]) < 2; match_id = ' +  match_id + ', set_score = ' + set_score)
+                                        logzero.logger.error(f'(los) int(set_score[1]) - int(set_score[0]) < 2; match_id: {match_id}; set_score: {set_score}')
                             else:
                                 logzero.logger.info (url)
-                                logzero.logger.error('len(set_score) == 2; set_score[0] == set_score[1]; match_id = ' +  match_id + ', set_score = ' + set_score)
+                                logzero.logger.error(f'len(set_score) == 2; set_score[0] == set_score[1]; match_id: {match_id}; set_score: {set_score}')
                         elif len(set_score) == 3:                          
                             if set_score == '810':
                                 loser_sets_won   += 1
@@ -178,10 +181,10 @@ def parse_tournament(url):
                                 winner_games_won += int(set_score[0:2])
                                 loser_games_won  += int(set_score[2:3])
                                 logzero.logger.info (url)
-                                logzero.logger.warning('len(set_score) == 3; tourney_id == 9210; match_id = ' +  match_id + ', set_score = ' + set_score)
+                                logzero.logger.warning(f'len(set_score) == 3; tourney_id == {tourney_id}; match_id: {match_id}; set_score: {set_score}')
                             else:
                                 logzero.logger.info (url)
-                                logzero.logger.error('len(set_score) == 3; match_id = ' +  match_id + ', set_score = ' + set_score)
+                                logzero.logger.error(f'len(set_score) == 3; match_id: {match_id}; set_score: {set_score}')
                         elif len(set_score) == 4:
                             if set_score[0:2] > set_score[2:4]:
                                 winner_sets_won  += 1
@@ -189,29 +192,29 @@ def parse_tournament(url):
                                 loser_games_won  += int(set_score[2:4])
                                 if int(set_score[0:2]) - int(set_score[2:4]) < 2:
                                     logzero.logger.info (url)
-                                    logzero.logger.error('(win) int(set_score[0:2]) - int(set_score[2:4]) < 2; match_id = ' +  match_id + ', set_score = ' + set_score)
+                                    logzero.logger.error(f'(win) int(set_score[0:2]) - int(set_score[2:4]) < 2; match_id: {match_id}; set_score: {set_score}')
                             elif set_score[2:4] > set_score[0:2]:
                                 loser_sets_won   += 1
                                 winner_games_won += int(set_score[0:2])
                                 loser_games_won  += int(set_score[2:4])
                                 if int(set_score[2:4]) - int(set_score[0:2]) < 2:
                                     logzero.logger.info (url)
-                                    logzero.logger.error('(los) int(set_score[2:4]) - int(set_score[0:2]) < 2; match_id = ' +  match_id + ', set_score = ' + set_score)
+                                    logzero.logger.error(f'(los) int(set_score[2:4]) - int(set_score[0:2]) < 2; match_id: {match_id}; set_score: {set_score}')
                             else:
                                 logzero.logger.info (url)
-                                logzero.logger.error('len(set_score) == 4; set_score[0:2] == set_score[2:4]; match_id = ' +  match_id + ', set_score[0:2] ' + set_score[0:2] + ', set_score[2:4] ' + set_score[2:4] + ', set_score = ' + set_score)
+                                logzero.logger.error(f'len(set_score) == 4; set_score[0:2] == set_score[2:4]; match_id: {match_id}; set_score[0:2]: {set_score[0:2]}; set_score[2:4]: {set_score[2:4]}; set_score: {set_score}')
                         else: #log
                             logzero.logger.info (url)
-                            logzero.logger.error('match_id = ' +  match_id + ', set_score = ' + set_score)
+                            logzero.logger.error(f'match_id: {match_id}; set_score: {set_score}')
 
                 # Match stats URL
                 if match_id in dic_match_scores_stats_url_adj:
                     match_stats_url = dic_match_scores_stats_url_adj[match_id]
-                    logzero.logger.warning('adjustment of match_id: ' + match_id + '; match_stats_url: ' + match_stats_url)
+                    logzero.logger.warning(f'adjustment of match_id: {match_id}; match_stats_url: {match_stats_url}')
                 else:
                     match_stats_url_array = tree.xpath("//table[contains(@class, 'day-table')]/tbody[" + str(i + 1) + "]/tr[" + str(j + 1) + "]/td[contains(@class, 'day-table-score')]/a/@href")
                     if len(match_stats_url_array) > 0:
-                        match_stats_url = url_prefix + match_stats_url_array[0].replace('\n', '').replace('\r', '').replace('\t', '').strip()
+                        match_stats_url = URL_PREFIX + match_stats_url_array[0].replace('\n', '').replace('\r', '').replace('\t', '').strip()
                     else:
                         match_stats_url = ''
 
@@ -220,36 +223,29 @@ def parse_tournament(url):
 
         return match_data
     except Exception as e:
-        logzero.logger.error('url: ' + str(url) + '; Error: ' + str(e))
+        logzero.logger.error(f'url: {url}; Error: {str(e)}')
 
 
 
 # main
 # logging support
-logzero.logfile("./load_matches.log", loglevel=logzero.logging.INFO)
+logzero.logfile('load_matches.log', loglevel=logzero.logging.INFO)
 
-logzero.logger.info ('')
-logzero.logger.info ('==========')
-logzero.logger.info ('start.')
+logzero.logger.info('')
+logzero.logger.info('==========')
+logzero.logger.info('start')
 
 # parsing command line
 if len(sys.argv) >= 2:
-    year_from = int(sys.argv[1])
-    logzero.logger.info("year_from: " + str(year_from))
-    year_to = int(sys.argv[2])
-    logzero.logger.info("year_to: " + str(year_to))
+    year = int(sys.argv[1])
 else:
-    year_from = int(datetime.datetime.today().year)
-    logzero.logger.info("year_from: " + str(year_from))
-    year_to = int(datetime.datetime.today().year)
-    logzero.logger.info("year_to: " + str(year_to))
+    year = None
 
 logzero.logger.info ('')
 
-connection_string = '/@'
-con = cx_Oracle.connect(connection_string, encoding = "UTF-8")
-
 try:
+    #load score adjustments
+    con = cx_Oracle.connect(CONNECTION_STRING, encoding="UTF-8")
     cur_adj = con.cursor()
     sql_adj = 'select match_id, set_score from match_scores_adjustments where set_score is not null'
     match_scores_adj = cur_adj.execute(sql_adj).fetchall()
@@ -274,52 +270,45 @@ try:
     for rec in match_scores_skip_adj:
         dic_match_scores_skip_adj[rec[0]] = rec[1]
 
-    for year in range(year_from, year_to + 1):
-        matches_data = []
-        #
-        cur = con.cursor()
-        if year_from != year_to:
-            # historical data
-            sql = 'select url from tournaments where year = :year'
-            tournaments = cur.execute(sql, {"year":year}).fetchall()
-            logzero.logger.info ('Parse ' + str(year) + '...')
-        else:
-            # last couple weeks
-            sql = 'select url from tournaments where start_dtm > sysdate - :duration'
-            duration = 12
-            tournaments = cur.execute(sql, {"duration":duration}).fetchall()
-            logzero.logger.info ('Parse last ' + str(duration) + ' days...')
-        for url in tournaments:
-            matches_data += parse_tournament(url[0])
+    matches_data = []
+    cur = con.cursor()
+    if year is None:
+        sql = 'select url from tournaments where start_dtm > sysdate - :duration'
+        tournaments = cur.execute(sql, {'duration': DURATION_IN_DAYS}).fetchall()
+        logzero.logger.info(f'loading matches for last {DURATION_IN_DAYS} days')
+    else:
+        # historical data
+        sql = 'select url from tournaments where year = :year'
+        tournaments = cur.execute(sql, {'year': year}).fetchall()
+        logzero.logger.info(f'loading matches for {year} year')
 
-        #
-        logzero.logger.info ('Truncating table STG_MATCH_SCORES...')
-        cur.execute('truncate table stg_match_scores')
-        logzero.logger.info ('Truncating table STG_MATCH_SCORES...Done')
-        #
-        cur.executemany("insert into stg_match_scores (tourney_year_id, tourney_round_name, tourney_url, round_order, match_order, match_id, match_score, match_stats_url, winner_url, winner_seed, winner_code, winner_sets_won, winner_games_won, winner_tiebreaks_won, loser_url, loser_code, loser_seed, loser_sets_won, loser_games_won, loser_tiebreaks_won, match_ret) values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, :21)",
-                        matches_data)
-        con.commit()
-        #
-        logzero.logger.info ('Inserted ' + str(len(matches_data)) + ' rows')
-        #
-        # run data processing
-        logzero.logger.info ('Processing data...')
-        cur.callproc('sp_process_match_scores')
-        logzero.logger.info ('Processing data...Done')
+    for url in tournaments:
+        matches_data += parse_tournament(url[0])
 
-        # store in CSV
-#        csv_file = open('matches_' + str(year) + '.csv', 'w', encoding='utf-8')
-#        writer = csv.writer(csv_file)
-#        for row in matches_data:
-#            writer.writerow(row)
-#        csv_file.close()
+    cur.execute('truncate table stg_match_scores')
+    #
+    cur.executemany('insert into stg_match_scores (tourney_year_id, tourney_round_name, tourney_url, round_order, match_order, match_id, match_score, match_stats_url, winner_url, winner_seed, winner_code, winner_sets_won, winner_games_won, winner_tiebreaks_won, loser_url, loser_code, loser_seed, loser_sets_won, loser_games_won, loser_tiebreaks_won, match_ret) values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, :21)',
+                    matches_data)
+    con.commit()
+    logzero.logger.info(f'{len(matches_data)} row(s) inserted')
 
-        cur.close()
+    # run data processing
+    logzero.logger.info('start data processing')
+    cur.callproc('sp_process_match_scores')
 
-    logzero.logger.info ('completed successfully.')
-    logzero.logger.info ('==========')
+# store in CSV
+#    csv_file = open('matches_' + str(year) + '.csv', 'w', encoding='utf-8')
+#    writer = csv.writer(csv_file)
+#    for row in matches_data:
+#        writer.writerow(row)
+#    csv_file.close()
+
+    logzero.logger.info('')
+    logzero.logger.info('completed successfully')
+    logzero.logger.info('==========')
+    logzero.logger.info('')
 except Exception as e:
-    logzero.logger.error('year: ' + str(year) + '; Error: ' + str(e))
+    logzero.logger.error(f'Error: {str(e)}')
 finally:
+    cur.close()
     con.close()
