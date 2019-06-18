@@ -18,7 +18,7 @@ def parse_tournament(url: str) -> Array:
             tourney_year = str(year)
         tourney_year_id = tourney_year + '-' + tourney_id
         #
-        tree = html.fromstring(requests.get(url + '?ajax=true').text.replace('<sup>', '(').replace('</sup>', ')'))
+        tree = html.fromstring(requests.get(url).text.replace('<sup>', '(').replace('</sup>', ')'))
 
         tourney_round_name_array = tree.xpath("//table[contains(@class, 'day-table')]/thead/tr/th/text()")
         tourney_round_count = len(tourney_round_name_array)

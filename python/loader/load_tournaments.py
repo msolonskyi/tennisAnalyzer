@@ -9,7 +9,6 @@ import logzero
 #import csv
 
 def parse_tournaments(year: str, tournament_type: str) -> Array:
-#    tree = html.fromstring(requests.get('http://www.atpworldtour.com/en/scores/results-archive?year=' + year + '&tournamentType=' + tournament_type + '&ajax=true').content)
     tree = html.fromstring(requests.get('http://www.atpworldtour.com/en/scores/results-archive?year=' + year + '&tournamentType=' + tournament_type).content)
 
     tourney_title_array        = tree.xpath("//span[contains(@class, 'tourney-title')]/text()")
@@ -27,6 +26,7 @@ def parse_tournaments(year: str, tournament_type: str) -> Array:
     for i in range(0, tourney_count):
         tourney_name     = tourney_title_array[i].strip()
         tourney_location = tourney_location_array[i].strip()
+        tourney_location = tourney_location.replace('Slovak Republic', 'Slovakia')
         tourney_dates    = tourney_dates_array[i].strip()
         try:
             tourney_dates_split = tourney_dates.strip().split('.')

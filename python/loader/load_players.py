@@ -9,7 +9,7 @@ import logzero
 
 def player_detail(url: str) -> Array:
 
-    tree = html.fromstring(requests.get(url + '?ajax=true').content)
+    tree = html.fromstring(requests.get(url).content)
     url_split = url.split('/')
 
     player_code = url_split[6]
