@@ -97,7 +97,7 @@ values ('CHI', 'Chile');
 insert into COUNTRIES (code, name)
 values ('CHN', 'China');
 insert into COUNTRIES (code, name)
-values ('TPE', 'Chinese Taipei[5]');
+values ('TPE', 'Chinese Taipei');
 insert into COUNTRIES (code, name)
 values ('COL', 'Colombia');
 insert into COUNTRIES (code, name)
