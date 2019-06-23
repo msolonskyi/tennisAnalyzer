@@ -1,6 +1,6 @@
 create or replace view vw_match_scores as
 select m.id as match_score_id,
-       t.year || '-' || t.code || '-' || w.code || '-' || l.code as match_id,
+       t.year || '-' || t.code || '-' || w.code || '-' || l.code || '-' || st.short_name as match_id,
        t.id as tournament_id,
        t.name as tournament_name,
        t.code as tournament_code,

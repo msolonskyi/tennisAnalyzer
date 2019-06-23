@@ -64,40 +64,12 @@
     <column name="stats_url"                     type="varchar2(256)"/>
     <column name="stadie_name"                   type="varchar2(64)"/>
     <column name="stadie_pos"                    type="number(2)"/>
-    <column name="win_h2h_qty_12w"               type="number"/>
-    <column name="los_h2h_qty_12w"               type="number"/>
-    <column name="win_win_qty_12w"               type="number"/>
-    <column name="win_los_qty_12w"               type="number"/>
-    <column name="los_win_qty_12w"               type="number"/>
-    <column name="los_los_qty_12w"               type="number"/>
-    <column name="win_avg_total_3s_12w"          type="number"/>
-    <column name="los_avg_total_3s_12w"          type="number"/>
-    <column name="win_avg_total_5s_12w"          type="number"/>
-    <column name="los_avg_total_5s_12w"          type="number"/>
-    <column name="win_avg_tiebreaks_12w"         type="number"/>
-    <column name="los_avg_tiebreaks_12w"         type="number"/>
-    <column name="win_h2h_qty_12w_current"       type="number"/>
-    <column name="los_h2h_qty_12w_current"       type="number"/>
-    <column name="win_win_qty_12w_current"       type="number"/>
-    <column name="win_los_qty_12w_current"       type="number"/>
-    <column name="los_win_qty_12w_current"       type="number"/>
-    <column name="los_los_qty_12w_current"       type="number"/>
-    <column name="win_avg_total_3s_12w_current"  type="number"/>
-    <column name="los_avg_total_3s_12w_current"  type="number"/>
-    <column name="win_avg_total_5s_12w_current"  type="number"/>
-    <column name="los_avg_total_5s_12w_current"  type="number"/>
-    <column name="win_avg_tiebreaks_12w_current" type="number"/>
-    <column name="los_avg_tiebreaks_12w_current" type="number"/>
     <column name="win_h2h_qty_52w"               type="number"/>
     <column name="los_h2h_qty_52w"               type="number"/>
     <column name="win_win_qty_52w"               type="number"/>
     <column name="win_los_qty_52w"               type="number"/>
     <column name="los_win_qty_52w"               type="number"/>
     <column name="los_los_qty_52w"               type="number"/>
-    <column name="win_avg_total_3s_52w"          type="number"/>
-    <column name="los_avg_total_3s_52w"          type="number"/>
-    <column name="win_avg_total_5s_52w"          type="number"/>
-    <column name="los_avg_total_5s_52w"          type="number"/>
     <column name="win_avg_tiebreaks_52w"         type="number"/>
     <column name="los_avg_tiebreaks_52w"         type="number"/>
     <column name="win_h2h_qty_52w_current"       type="number"/>
@@ -106,46 +78,14 @@
     <column name="win_los_qty_52w_current"       type="number"/>
     <column name="los_win_qty_52w_current"       type="number"/>
     <column name="los_los_qty_52w_current"       type="number"/>
-    <column name="win_avg_total_3s_52w_current"  type="number"/>
-    <column name="los_avg_total_3s_52w_current"  type="number"/>
-    <column name="win_avg_total_5s_52w_current"  type="number"/>
-    <column name="los_avg_total_5s_52w_current"  type="number"/>
     <column name="win_avg_tiebreaks_52w_current" type="number"/>
     <column name="los_avg_tiebreaks_52w_current" type="number"/>
-    <column name="win_h2h_qty_3y"                type="number"/>
-    <column name="los_h2h_qty_3y"                type="number"/>
-    <column name="win_win_qty_3y"                type="number"/>
-    <column name="win_los_qty_3y"                type="number"/>
-    <column name="los_win_qty_3y"                type="number"/>
-    <column name="los_los_qty_3y"                type="number"/>
-    <column name="win_avg_total_3s_3y"           type="number"/>
-    <column name="los_avg_total_3s_3y"           type="number"/>
-    <column name="win_avg_total_5s_3y"           type="number"/>
-    <column name="los_avg_total_5s_3y"           type="number"/>
-    <column name="win_avg_tiebreaks_3y"          type="number"/>
-    <column name="los_avg_tiebreaks_3y"          type="number"/>
-    <column name="win_h2h_qty_3y_current"        type="number"/>
-    <column name="los_h2h_qty_3y_current"        type="number"/>
-    <column name="win_win_qty_3y_current"        type="number"/>
-    <column name="win_los_qty_3y_current"        type="number"/>
-    <column name="los_win_qty_3y_current"        type="number"/>
-    <column name="los_los_qty_3y_current"        type="number"/>
-    <column name="win_avg_total_3s_3y_current"   type="number"/>
-    <column name="los_avg_total_3s_3y_current"   type="number"/>
-    <column name="win_avg_total_5s_3y_current"   type="number"/>
-    <column name="los_avg_total_5s_3y_current"   type="number"/>
-    <column name="win_avg_tiebreaks_3y_current"  type="number"/>
-    <column name="los_avg_tiebreaks_3y_current"  type="number"/>
     <column name="win_h2h_qty_all"               type="number"/>
     <column name="los_h2h_qty_all"               type="number"/>
     <column name="win_win_qty_all"               type="number"/>
     <column name="win_los_qty_all"               type="number"/>
     <column name="los_win_qty_all"               type="number"/>
     <column name="los_los_qty_all"               type="number"/>
-    <column name="win_avg_total_3s_all"          type="number"/>
-    <column name="los_avg_total_3s_all"          type="number"/>
-    <column name="win_avg_total_5s_all"          type="number"/>
-    <column name="los_avg_total_5s_all"          type="number"/>
     <column name="win_avg_tiebreaks_all"         type="number"/>
     <column name="los_avg_tiebreaks_all"         type="number"/>
     <column name="win_h2h_qty_all_current"       type="number"/>
@@ -154,10 +94,6 @@
     <column name="win_los_qty_all_current"       type="number"/>
     <column name="los_win_qty_all_current"       type="number"/>
     <column name="los_los_qty_all_current"       type="number"/>
-    <column name="win_avg_total_3s_all_current"  type="number"/>
-    <column name="los_avg_total_3s_all_current"  type="number"/>
-    <column name="win_avg_total_5s_all_current"  type="number"/>
-    <column name="los_avg_total_5s_all_current"  type="number"/>
     <column name="win_avg_tiebreaks_all_current" type="number"/>
     <column name="los_avg_tiebreaks_all_current" type="number"/>
   </columns>
