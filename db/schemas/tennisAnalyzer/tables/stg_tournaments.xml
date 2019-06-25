@@ -15,5 +15,6 @@
     <column name="tourney_fin_commit"   type="varchar2(25)"/>
     <column name="tourney_url"          type="varchar2(200)"/>
     <column name="tourney_year_id"      type="varchar2(15)"/>
+    <column name="batch_id"             type="number(12)"/>
   </columns>
 </table>

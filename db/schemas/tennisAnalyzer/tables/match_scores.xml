@@ -19,6 +19,7 @@
     <column name="loser_games_won"      type="number(4)"/>
     <column name="winner_tiebreaks_won" type="number(4)"/>
     <column name="loser_tiebreaks_won"  type="number(4)"/>
+    <column name="batch_id"             type="number(12)"/>
   </columns>
   <constraints>
     <constraint name="pk_match_scores"  type="primary key" columns_list="id"/>

@@ -52,5 +52,6 @@
     <column name="los_return_points_total"        type="number(4)"/>
     <column name="los_total_points_won"           type="number(4)"/>
     <column name="los_total_points_total"         type="number(4)"/>
+    <column name="batch_id"                       type="number(12)"/>
   </columns>
 </table>

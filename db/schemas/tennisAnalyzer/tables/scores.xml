@@ -96,6 +96,7 @@
     <column name="los_los_qty_all_current"       type="number"/>
     <column name="win_avg_tiebreaks_all_current" type="number"/>
     <column name="los_avg_tiebreaks_all_current" type="number"/>
+    <column name="batch_id"                      type="number(12)"/>
   </columns>
   <constraints>
     <constraint name="pk_scores" type="primary key" columns_list="match_score_id"/>

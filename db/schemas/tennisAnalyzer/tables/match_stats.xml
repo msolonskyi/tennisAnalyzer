@@ -54,6 +54,7 @@
     <column name="los_return_points_total"        type="number(4)"/>
     <column name="los_total_points_won"           type="number(4)"/>
     <column name="los_total_points_total"         type="number(4)"/>
+    <column name="batch_id"                       type="number(12)"/>
   </columns>
   <constraints>
     <constraint name="pk_match_stats"  type="primary key" columns_list="id"/>

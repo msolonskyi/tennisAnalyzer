@@ -17,6 +17,7 @@
     <column name="handedness"  type="varchar2(128)"/>
     <column name="backhand"    type="varchar2(128)"/>
     <column name="citizenship" type="varchar2(3)"/>
+    <column name="batch_id"    type="number(12)"/>
   </columns>
   <constraints>
     <constraint name="pk_players"  type="primary key" columns_list="id"/>

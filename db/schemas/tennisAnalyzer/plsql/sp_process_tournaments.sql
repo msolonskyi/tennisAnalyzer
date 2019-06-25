@@ -1,9 +1,9 @@
-﻿create or replace procedure sp_process_tournaments
+create or replace procedure sp_process_tournaments
 is
   cv_module_name constant varchar2(200) := 'process tournaments';
   vn_qty         number;
 begin
-  pkg_log.sp_log_message(pv_module => cv_module_name, pv_text => 'start');
+  pkg_log.sp_start_batch(pv_module => cv_module_name);
   --
   merge into tournaments d
   using(select i.name,
@@ -42,7 +42,7 @@ begin
                      end as country,
                      tourney_year as year,
                      null as week,
-                     tourney_url as sgl_draw_link,
+                     substr(t.tourney_url, 1, length(t.tourney_url) - 7) || 'draws' as sgl_draw_link,
                      null as dbl_draw_link,
                      tt.id as type_id,
                      s.id as surface_id,
@@ -86,11 +86,15 @@ begin
   on (s.code = d.code and s.year = d.year)
   when not matched then
     insert (d.name, d.code, d.url, d.slug, d.city, d.year, d.week, d.sgl_draw_link, d.dbl_draw_link, d.type_id, d.surface_id, d.start_dtm, d.finish_dtm,
-            d.sgl_draw_qty, d.dbl_draw_qty, d.series_id, d.prize_money, d.prize_currency, d.sgl_result_link, d.dbl_result_link, d.country_code, d.delta_hash)
+            d.sgl_draw_qty, d.dbl_draw_qty, d.series_id, d.prize_money, d.prize_currency, d.sgl_result_link, d.dbl_result_link, d.country_code, d.delta_hash,
+            d.batch_id)
     values (s.name, s.code, s.url, s.slug, s.city, s.year, s.week, s.sgl_draw_link, s.dbl_draw_link, s.type_id, s.surface_id, s.start_dtm, s.finish_dtm,
-            s.sgl_draw_qty, s.dbl_draw_qty, s.series_id, s.prize_money, s.prize_currency, s.sgl_result_link, s.dbl_result_link, s.country_code, s.delta_hash)
+            s.sgl_draw_qty, s.dbl_draw_qty, s.series_id, s.prize_money, s.prize_currency, s.sgl_result_link, s.dbl_result_link, s.country_code, s.delta_hash,
+            pkg_log.gn_batch_id)
   when matched then
     update set
+      d.delta_hash      = s.delta_hash,
+      d.batch_id        = pkg_log.gn_batch_id,
       d.name            = s.name,
       d.slug            = s.slug,
       d.city            = nvl(s.city, d.city),
@@ -112,17 +116,18 @@ begin
       d.sgl_result_link = s.sgl_result_link,
       d.dbl_result_link = s.dbl_result_link,
       d.url             = s.url,
-      d.country_code    = nvl(s.country_code, d.country_code),
-      d.delta_hash      = s.delta_hash
+      d.country_code    = nvl(s.country_code, d.country_code)
     where d.delta_hash != s.delta_hash;
   vn_qty := sql%rowcount;
   --
   commit;
-  pkg_log.sp_log_message(pv_module => cv_module_name, pv_text => 'completed successfully.', pn_qty => vn_qty);
+  pkg_log.sp_log_message(pv_text => 'rows processed', pn_qty => vn_qty);
+  pkg_log.sp_finish_batch_successfully;
 exception
   when others then
     rollback;
-    pkg_log.sp_log_message(pv_module => cv_module_name, pv_text => 'completed with error.', pv_clob => dbms_utility.format_error_stack || pkg_utils.CRLF || dbms_utility.format_error_backtrace, pv_type => 'E');
+    pkg_log.sp_log_message(pv_text => 'errors stack', pv_clob => dbms_utility.format_error_stack || pkg_utils.CRLF || dbms_utility.format_error_backtrace, pv_type => 'E');
+    pkg_log.sp_finish_batch_with_errors;
     raise;
 end sp_process_tournaments;
 /

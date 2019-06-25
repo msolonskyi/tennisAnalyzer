@@ -22,5 +22,6 @@
     <column name="loser_sets_won"       type="number"/>
     <column name="loser_games_won"      type="number"/>
     <column name="loser_tiebreaks_won"  type="number"/>
+    <column name="batch_id"             type="number(12)"/>
   </columns>
 </table>
