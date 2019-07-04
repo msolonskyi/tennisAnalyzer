@@ -2,7 +2,7 @@
   <table name="stg_match_stats" type="normal">
   <columns>
     <column name="match_stats_url"                type="varchar2(256)" nullable="n"/>
-    <column name="match_time"                     type="varchar2(10)"/>
+    <column name="match_id"                       type="varchar2(40)"/>
     <column name="match_duration"                 type="number(4)"/>
     <column name="win_aces"                       type="number(4)"/>
     <column name="win_double_faults"              type="number(4)"/>

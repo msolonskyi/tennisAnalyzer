@@ -72,7 +72,8 @@ begin
       d.loser_games_won      = s.loser_games_won,
       d.winner_tiebreaks_won = s.winner_tiebreaks_won,
       d.loser_tiebreaks_won  = s.loser_tiebreaks_won,
-      d.match_ret            = s.match_ret
+      d.match_ret            = s.match_ret,
+      d.stats_url            = nvl(d.stats_url, s.stats_url)
     where d.delta_hash != s.delta_hash;
   vn_qty := sql%rowcount;
   --

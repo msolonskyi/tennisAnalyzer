@@ -1,3 +1,4 @@
+from constants import CONNECTION_STRING, CHUNK_SIZE, BORDER_QTY, DURATION_IN_DAYS
 from lxml import html
 import cx_Oracle
 import sys
@@ -19,7 +20,9 @@ def strip_array(arr):
 
 def parse_stats(url_tpl):
     # 0: winner's code; 1: loser's code; 2: stats_url
-    url = url_tpl[2] + '&ajax=true'
+    url = url_tpl[2] #+ '&ajax=true'
+    #logzero.logger.info(f'processing {url_tpl[2]}')
+
 
     # Match tree
     tree = html.fromstring(requests.get(url).content)
@@ -32,7 +35,7 @@ def parse_stats(url_tpl):
         match_time_split   = match_time.split(":")
         match_time_hours   = int(match_time_split[0])
         match_time_minutes = int(match_time_split[1])
-        match_duration     = 60*match_time_hours + match_time_minutes
+        match_duration     = 60 * match_time_hours + match_time_minutes
     except Exception as e:
         logzero.logger.error('Match time: ' + str(e))
         match_time     = None
@@ -152,96 +155,85 @@ def parse_stats(url_tpl):
 
     # Store data
     output = []
-    output.append([url, match_time, match_duration, winner_aces, winner_double_faults, winner_first_serves_in, winner_first_serves_total, winner_first_serve_points_won, winner_first_serve_points_total, winner_second_serve_points_won, winner_second_serve_points_total, winner_break_points_saved, winner_break_points_serve_total, winner_service_points_won, winner_service_points_total, winner_first_serve_return_won, winner_first_serve_return_total, winner_second_serve_return_won, winner_second_serve_return_total, winner_break_points_converted, winner_break_points_return_total, winner_service_games_played, winner_return_games_played, winner_return_points_won, winner_return_points_total, winner_total_points_won, winner_total_points_total, loser_aces, loser_double_faults, loser_first_serves_in, loser_first_serves_total, loser_first_serve_points_won, loser_first_serve_points_total, loser_second_serve_points_won, loser_second_serve_points_total, loser_break_points_saved, loser_break_points_serve_total, loser_service_points_won, loser_service_points_total, loser_first_serve_return_won, loser_first_serve_return_total, loser_second_serve_return_won, loser_second_serve_return_total, loser_break_points_converted, loser_break_points_return_total, loser_service_games_played, loser_return_games_played, loser_return_points_won, loser_return_points_total, loser_total_points_won, loser_total_points_total])
+    output.append([url_tpl[2], match_duration, winner_aces, winner_double_faults, winner_first_serves_in, winner_first_serves_total, winner_first_serve_points_won, winner_first_serve_points_total, winner_second_serve_points_won, winner_second_serve_points_total, winner_break_points_saved, winner_break_points_serve_total, winner_service_points_won, winner_service_points_total, winner_first_serve_return_won, winner_first_serve_return_total, winner_second_serve_return_won, winner_second_serve_return_total, winner_break_points_converted, winner_break_points_return_total, winner_service_games_played, winner_return_games_played, winner_return_points_won, winner_return_points_total, winner_total_points_won, winner_total_points_total, loser_aces, loser_double_faults, loser_first_serves_in, loser_first_serves_total, loser_first_serve_points_won, loser_first_serve_points_total, loser_second_serve_points_won, loser_second_serve_points_total, loser_break_points_saved, loser_break_points_serve_total, loser_service_points_won, loser_service_points_total, loser_first_serve_return_won, loser_first_serve_return_total, loser_second_serve_return_won, loser_second_serve_return_total, loser_break_points_converted, loser_break_points_return_total, loser_service_games_played, loser_return_games_played, loser_return_points_won, loser_return_points_total, loser_total_points_won, loser_total_points_total])
     return output
 
 
 
 # main
 # logging support
-logzero.logfile("./load_stats.log", loglevel=logzero.logging.INFO)
+logzero.logfile('load_stats.log', loglevel=logzero.logging.INFO)
 
-logzero.logger.info ('')
-logzero.logger.info ('==========')
-logzero.logger.info ('start.')
+logzero.logger.info('')
+logzero.logger.info('==========')
+logzero.logger.info('start')
 
 # parsing command line
 if len(sys.argv) >= 2:
-    year_from = int(sys.argv[1])
-    logzero.logger.info("year_from: " + str(year_from))
-    year_to = int(sys.argv[2])
-    logzero.logger.info("year_to: " + str(year_to))
+    year = int(sys.argv[1])
 else:
-    year_from = int(datetime.datetime.today().year)
-    logzero.logger.info("year_from: " + str(year_from))
-    year_to = int(datetime.datetime.today().year)
-    logzero.logger.info("year_to: " + str(year_to))
+    year = None
 
 logzero.logger.info ('')
 
-connection_string = '/@'
-con = cx_Oracle.connect(connection_string, encoding = "UTF-8")
+try:
+    #load score adjustments
+    con = cx_Oracle.connect(CONNECTION_STRING, encoding='UTF-8')
 
-for year in range(year_from, year_to + 1):
     stats_data = []
     #
     cur = con.cursor()
-    if year_from != year_to:
-        # historical data
-        sql = '''select w.code w_code, l.code l_code, m.stats_url
-from match_scores m, players w, players l, tournaments t
-where m.winner_id = w.id
-  and m.loser_id = l.id
-  and t.id = m.tournament_id
-  and m.stats_url is not null
-  and t.year = :year'''
-        matches = cur.execute(sql, {"year":year}).fetchall()
-        logzero.logger.info ('Parse ' + str(year) + '...')
-    else:
+    if year is None:
         # last couple weeks
-        sql = '''select w.code w_code, l.code l_code, m.stats_url
-from match_scores m, players w, players l, tournaments t
-where m.winner_id = w.id
-  and m.loser_id = l.id
-  and t.id = m.tournament_id
-  and m.stats_url is not null
-  and t.start_dtm > sysdate - :duration'''
-        duration = 12
-        #
-        matches = cur.execute(sql, {"duration":duration}).fetchall()
-        logzero.logger.info ('Parse last ' + str(duration) + ' days...')
-    for url_tpl in matches:
+        sql = '''select v.winner_code, v.loser_code, v.stats_url
+from vw_match_scores v
+where stats_url is not null
+  and v.match_score_id not in (select match_score_id from match_stats)
+  and v.tournament_start_dtm > sysdate - :duration'''
+        match_stats = cur.execute(sql, {'duration': DURATION_IN_DAYS}).fetchall()
+        logzero.logger.info(f'Parse last {DURATION_IN_DAYS} days...')
+    else:
+        # historical data
+        sql = '''select v.winner_code, v.loser_code, v.stats_url
+from vw_match_scores v
+where stats_url is not null
+  and v.match_score_id not in (select match_score_id from match_stats)
+  and rownum <= :chunk_size
+  and v.tournament_year = :year'''
+        match_stats = cur.execute(sql, {'year': year, 'chunk_size': CHUNK_SIZE}).fetchall()
+        logzero.logger.info(f'Parse firts {CHUNK_SIZE} rows for {year} ...')
+
+    for url_tpl in match_stats:
         stats = parse_stats(url_tpl)
         if stats is not None:
-            stats_data += parse_stats(url_tpl)
+            stats_data += stats
 
     #
-    logzero.logger.info ('Truncating table STG_MATCH_STATS...')
     cur.execute('truncate table stg_match_stats')
-    logzero.logger.info ('Truncating table STG_MATCH_STATS...Done')
     #
-    cur.executemany('''insert into stg_match_stats (match_stats_url, match_time, match_duration, win_aces, win_double_faults, win_first_serves_in, win_first_serves_total, win_first_serve_points_won, win_first_serve_points_total, win_second_serve_points_won, win_second_serve_points_total, win_break_points_saved, win_break_points_serve_total, win_service_points_won, win_service_points_total, win_first_serve_return_won, win_first_serve_return_total, win_second_serve_return_won, win_second_serve_return_total, win_break_points_converted, win_break_points_return_total, win_service_games_played, win_return_games_played, win_return_points_won, win_return_points_total, win_total_points_won, win_total_points_total, los_aces, los_double_faults, los_first_serves_in, los_first_serves_total, los_first_serve_points_won, los_first_serve_points_total, los_second_serve_points_won, los_second_serve_points_total, los_break_points_saved, los_break_points_serve_total, los_service_points_won, los_service_points_total, los_first_serve_return_won, los_first_serve_return_total, los_second_serve_return_won, los_second_serve_return_total, los_break_points_converted, los_break_points_return_total, los_service_games_played, los_return_games_played, los_return_points_won, los_return_points_total, los_total_points_won, los_total_points_total)
-values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, :21, :22, :23, :24, :25, :26, :27, :28, :29, :30, :31, :32, :33, :34, :35, :36, :37, :38, :39, :40, :41, :42, :43, :44, :45, :46, :47, :48, :49, :50, :51)''',
+    cur.executemany('''insert into stg_match_stats (match_stats_url, match_duration, win_aces, win_double_faults, win_first_serves_in, win_first_serves_total, win_first_serve_points_won, win_first_serve_points_total, win_second_serve_points_won, win_second_serve_points_total, win_break_points_saved, win_break_points_serve_total, win_service_points_won, win_service_points_total, win_first_serve_return_won, win_first_serve_return_total, win_second_serve_return_won, win_second_serve_return_total, win_break_points_converted, win_break_points_return_total, win_service_games_played, win_return_games_played, win_return_points_won, win_return_points_total, win_total_points_won, win_total_points_total, los_aces, los_double_faults, los_first_serves_in, los_first_serves_total, los_first_serve_points_won, los_first_serve_points_total, los_second_serve_points_won, los_second_serve_points_total, los_break_points_saved, los_break_points_serve_total, los_service_points_won, los_service_points_total, los_first_serve_return_won, los_first_serve_return_total, los_second_serve_return_won, los_second_serve_return_total, los_break_points_converted, los_break_points_return_total, los_service_games_played, los_return_games_played, los_return_points_won, los_return_points_total, los_total_points_won, los_total_points_total)
+values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, :21, :22, :23, :24, :25, :26, :27, :28, :29, :30, :31, :32, :33, :34, :35, :36, :37, :38, :39, :40, :41, :42, :43, :44, :45, :46, :47, :48, :49, :50)''',
                     stats_data)
     con.commit()
-    #
-    logzero.logger.info ('Inserted ' + str(len(stats_data)) + ' rows')
+    logzero.logger.info(f'{len(stats_data)} row(s) inserted')
     #
     # run data processing
-    logzero.logger.info ('Processing data...')
+    logzero.logger.info('start data processing')
     cur.callproc('sp_process_match_stats')
-    logzero.logger.info ('Processing data...Done')
 
     # store in CSV
-    csv_file = open('match_stats_' + str(year) + '.csv', 'w', encoding='utf-8')
-    writer = csv.writer(csv_file)
-    for row in stats_data:
-        writer.writerow(row)
-    csv_file.close()
+    #csv_file = open('match_stats_' + str(year) + '.csv', 'w', encoding='utf-8')
+    #writer = csv.writer(csv_file)
+    #for row in stats_data:
+    #    writer.writerow(row)
+    #csv_file.close()
 
-
-cur.close()
-con.close()
-
-logzero.logger.info ('completed successfully.')
-logzero.logger.info ('==========')
+    logzero.logger.info('')
+    logzero.logger.info('completed successfully')
+    logzero.logger.info('==========')
+    logzero.logger.info('')
+except Exception as e:
+    logzero.logger.error(f'Error: {str(e)}')
+finally:
+    cur.close()
+    con.close()
