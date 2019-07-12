@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
   <table name="players" type="normal">
   <columns>
-    <column name="id"          type="number(12)"    nullable="n"/>
+    <column name="code"        type="varchar2(12)"  nullable="n"/>
     <column name="delta_hash"  type="number"        nullable="n"/>
+    <column name="batch_id"    type="number(12)"    nullable="n"/>
+    <column name="url"         type="varchar2(128)"/>
     <column name="first_name"  type="varchar2(128)"/>
     <column name="last_name"   type="varchar2(128)"/>
-    <column name="url"         type="varchar2(128)" nullable="n"/>
     <column name="slug"        type="varchar2(128)"/>
-    <column name="code"        type="varchar2(8)"   nullable="n"/>
     <column name="birth_date"  type="date"/>
     <column name="birthplace"  type="varchar2(128)"/>
     <column name="turned_pro"  type="number(4)"/>
@@ -17,12 +17,14 @@
     <column name="handedness"  type="varchar2(128)"/>
     <column name="backhand"    type="varchar2(128)"/>
     <column name="citizenship" type="varchar2(3)"/>
-    <column name="batch_id"    type="number(12)"/>
+    <column name="code_dc"     type="varchar2(12)"/>
+    <column name="url_dc"      type="varchar2(128)"/>
   </columns>
   <constraints>
-    <constraint name="pk_players"  type="primary key" columns_list="id"/>
-    <constraint name="unq_players$code" type="unique" columns_list="code"/>
-    <constraint name="unq_players$url" type="unique" columns_list="url"/>
+    <constraint name="pk_players"             type="primary key" columns_list="code"/>
+    <constraint name="unq_players$code_dc"    type="unique"      columns_list="code_dc"/>
+    <constraint name="unq_players$url"        type="unique"      columns_list="url"/>
+    <constraint name="unq_players$url_dc"     type="unique"      columns_list="url_dc"/>
     <constraint name="fk_players$citizenship" type="foreign key" columns_list="citizenship" foreign_table="countries" foreign_columns_list="code"/>
   </constraints>
 </table>

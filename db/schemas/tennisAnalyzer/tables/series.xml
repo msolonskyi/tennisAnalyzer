@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+  <table name="series" type="normal">
+  <columns>
+    <column name="id"   type="varchar2(8)"  nullable="n"/>
+    <column name="name" type="varchar2(64)" nullable="n"/>
+  </columns>
+  <constraints>
+    <constraint name="pk_series"  type="primary key" columns_list="id"/>
+    <constraint name="unq_series" type="unique"      columns_list="name"/>
+  </constraints>
+</table>

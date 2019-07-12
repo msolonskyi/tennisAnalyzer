@@ -1,20 +1,22 @@
 <?xml version="1.0"?>
   <table name="stg_players" type="normal">
   <columns>
-    <column name="player_code"   type="varchar2(10)"/>
-    <column name="player_slug"   type="varchar2(40)"/>
-    <column name="first_name"    type="varchar2(40)"/>
-    <column name="last_name"     type="varchar2(40)"/>
-    <column name="player_url"    type="varchar2(200)"/>
-    <column name="flag_code"     type="varchar2(10)"/>
-    <column name="residence"     type="varchar2(60)"/>
-    <column name="birthplace"    type="varchar2(60)"/>
-    <column name="birthdate"     type="varchar2(15)"/>
-    <column name="turned_pro"    type="number"/>
-    <column name="weight_kg"     type="number"/>
-    <column name="height_cm"     type="number"/>
-    <column name="handedness"    type="varchar2(15)"/>
-    <column name="backhand"      type="varchar2(20)"/>
-    <column name="batch_id"      type="number(12)"/>
+    <column name="player_code"    type="varchar2(10)"/>
+    <column name="player_slug"    type="varchar2(40)"/>
+    <column name="first_name"     type="varchar2(40)"/>
+    <column name="last_name"      type="varchar2(40)"/>
+    <column name="player_url"     type="varchar2(200)"/>
+    <column name="flag_code"      type="varchar2(10)"/>
+    <column name="residence"      type="varchar2(60)"/>
+    <column name="birthplace"     type="varchar2(60)"/>
+    <column name="birthdate"      type="varchar2(15)"/>
+    <column name="turned_pro"     type="number"/>
+    <column name="weight_kg"      type="number"/>
+    <column name="height_cm"      type="number"/>
+    <column name="handedness"     type="varchar2(15)"/>
+    <column name="backhand"       type="varchar2(20)"/>
+    <column name="player_code_dc" type="varchar2(10)"/>
+    <column name="player_url_dc"  type="varchar2(200)"/>
+    <column name="batch_id"       type="number(12)"/>
   </columns>
 </table>

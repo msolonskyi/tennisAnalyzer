@@ -27,17 +27,19 @@ begin
   vn_qty := sql%rowcount;
   pkg_log.sp_log_message(pv_text => 'add new players (losers)', pn_qty => vn_qty);
   --
-  merge into match_scores d
-  using(select *
-        from (select t.id as tournament_id,
+  merge into matches d
+  using(select i.*,
+               ora_hash(i.id || '|' || i.tournament_id || '|' || i.stadie_id || '|' || i.match_order || '|' || i.match_ret || '|' || i.winner_code || '|' || i.loser_code || '|' || i.winner_seed || '|' || i.loser_seed || '|' || i.match_score || '|' || i.winner_sets_won || '|' || i.loser_sets_won || '|' || i.winner_games_won || '|' || i.loser_games_won || '|' || i.winner_tiebreaks_won || '|' || i.loser_tiebreaks_won || '|' || i.stats_url || '|' || m.match_duration || '|' || m.win_aces || '|' || m.win_double_faults || '|' || m.win_first_serves_in || '|' || m.win_first_serves_total || '|' || m.win_first_serve_points_won || '|' || m.win_first_serve_points_total || '|' || m.win_second_serve_points_won || '|' || m.win_second_serve_points_total || '|' || m.win_break_points_saved || '|' || m.win_break_points_serve_total || '|' || m.win_service_points_won || '|' || m.win_service_points_total || '|' || m.win_first_serve_return_won || '|' || m.win_first_serve_return_total || '|' || m.win_second_serve_return_won || '|' || m.win_second_serve_return_total || '|' || m.win_break_points_converted || '|' || m.win_break_points_return_total || '|' || m.win_service_games_played || '|' || m.win_return_games_played || '|' || m.win_return_points_won || '|' || m.win_return_points_total || '|' || m.win_total_points_won || '|' || m.win_total_points_total || '|' || m.win_winners || '|' || m.win_forced_errors || '|' || m.win_unforced_errors || '|' || m.win_net_points_won || '|' || m.los_aces || '|' || m.los_double_faults || '|' || m.los_first_serves_in || '|' || m.los_first_serves_total || '|' || m.los_first_serve_points_won || '|' || m.los_first_serve_points_total || '|' || m.los_second_serve_points_won || '|' || m.los_second_serve_points_total || '|' || m.los_break_points_saved || '|' || m.los_break_points_serve_total || '|' || m.los_service_points_won || '|' || m.los_service_points_total || '|' || m.los_first_serve_return_won || '|' || m.los_first_serve_return_total || '|' || m.los_second_serve_return_won || '|' || m.los_second_serve_return_total || '|' || m.los_break_points_converted || '|' || m.los_break_points_return_total || '|' || m.los_service_games_played || '|' || m.los_return_games_played || '|' || m.los_return_points_won || '|' || m.los_return_points_total || '|' || m.los_total_points_won || '|' || m.los_total_points_total || '|' || m.los_winners || '|' || m.los_forced_errors || '|' || m.los_unforced_errors || '|' || m.los_net_points_won || '|' || m.win_h2h_qty_3y || '|' || m.los_h2h_qty_3y || '|' || m.win_win_qty_3y || '|' || m.win_los_qty_3y || '|' || m.los_win_qty_3y || '|' || m.los_los_qty_3y || '|' || m.win_avg_tiebreaks_3y || '|' || m.los_avg_tiebreaks_3y || '|' || m.win_h2h_qty_3y_current || '|' || m.los_h2h_qty_3y_current || '|' || m.win_win_qty_3y_current || '|' || m.win_los_qty_3y_current || '|' || m.los_win_qty_3y_current || '|' || m.los_los_qty_3y_current || '|' || m.win_avg_tiebreaks_3y_current || '|' || m.los_avg_tiebreaks_3y_current || '|' || m.win_ace_pct_3y || '|' || m.win_df_pct_3y || '|' || m.win_1st_pct_3y || '|' || m.win_1st_won_pct_3y || '|' || m.win_2nd_won_pct_3y || '|' || m.win_bp_saved_pct_3y || '|' || m.win_srv_won_pct_3y || '|' || m.win_1st_return_won_pct_3y || '|' || m.win_2nd_return_won_pct_3y || '|' || m.win_bp_won_pct_3y || '|' || m.win_return_won_pct_3y || '|' || m.win_total_won_pct_3y || '|' || m.win_ace_pct_3y_current || '|' || m.win_df_pct_3y_current || '|' || m.win_1st_pct_3y_current || '|' || m.win_1st_won_pct_3y_current || '|' || m.win_2nd_won_pct_3y_current || '|' || m.win_bp_saved_pct_3y_current || '|' || m.win_srv_won_pct_3y_current || '|' || m.win_1st_return_won_pct_3y_cur || '|' || m.win_2nd_return_won_pct_3y_cur || '|' || m.win_bp_won_pct_3y_current || '|' || m.win_return_won_pct_3y_current || '|' || m.win_total_won_pct_3y_current || '|' || m.los_ace_pct_3y || '|' || m.los_df_pct_3y || '|' || m.los_1st_pct_3y || '|' || m.los_1st_won_pct_3y || '|' || m.los_2nd_won_pct_3y || '|' || m.los_bp_saved_pct_3y || '|' || m.los_srv_won_pct_3y || '|' || m.los_1st_return_won_pct_3y || '|' || m.los_2nd_return_won_pct_3y || '|' || m.los_bp_won_pct_3y || '|' || m.los_return_won_pct_3y || '|' || m.los_total_won_pct_3y || '|' || m.los_ace_pct_3y_current || '|' || m.los_df_pct_3y_current || '|' || m.los_1st_pct_3y_current || '|' || m.los_1st_won_pct_3y_current || '|' || m.los_2nd_won_pct_3y_current || '|' || m.los_bp_saved_pct_3y_current || '|' || m.los_srv_won_pct_3y_current || '|' || m.los_1st_return_won_pct_3y_cur || '|' || m.los_2nd_return_won_pct_3y_cur || '|' || m.los_bp_won_pct_3y_current || '|' || m.los_return_won_pct_3y_current || '|' || m.los_total_won_pct_3y_current) as delta_hash
+        from (select m.tourney_year_id || '-' || m.winner_code || '-' || m.loser_code || '-' || st.id as id,
+                     m.tourney_year_id as tournament_id,
                      m.match_stats_url as stats_url,
-                     s.id as stadie_id,
+                     st.id as stadie_id,
                      m.match_order,
-                     w.id as winner_id,
-                     l.id as loser_id,
+                     m.winner_code,
+                     m.loser_code,
                      m.winner_seed,
                      m.loser_seed,
-                     m.match_score as match_score_raw,
+                     m.match_score as match_score,
                      m.winner_sets_won,
                      m.loser_sets_won,
                      m.winner_games_won,
@@ -45,34 +47,35 @@ begin
                      m.winner_tiebreaks_won,
                      m.loser_tiebreaks_won,
                      m.match_ret,
-                     row_number() over (partition by t.id, w.id, l.id, s.id order by m.match_order) rn,
-                     ora_hash(t.id || '|' || m.match_stats_url || '|' || s.id || '|' || m.match_order || '|' || w.id || '|' || l.id || '|' || m.winner_seed || '|' || m.loser_seed || '|' || m.match_score || '|' || m.winner_sets_won || '|' || m.loser_sets_won || '|' || m.winner_games_won || '|' || m.loser_games_won || '|' || m.winner_tiebreaks_won || '|' || m.loser_tiebreaks_won || '|' || m.match_ret) as delta_hash
-              from stg_match_scores m, tournaments t, stadies s,
-                   players w, players l
-              where m.tourney_year_id = t.year || '-' || t.code
-                and upper(trim(m.tourney_round_name)) = upper(s.name(+))
-                and m.winner_code = w.code
-                and m.loser_code = l.code) i
-        where rn = 1) s
-  on (s.tournament_id || '-' || s.stadie_id || '-' || s.winner_id || '-' || s.loser_id = d.tournament_id || '-' || d.stadie_id || '-' || d.winner_id || '-' || d.loser_id)
+                     row_number() over (partition by m.tourney_year_id || '-' || m.winner_code || '-' || m.loser_code || '-' || st.id order by m.match_order) rn
+              from stg_match_scores m, stadies st
+              where upper(trim(m.tourney_round_name)) = upper(st.name(+))) i,
+             matches m
+        where m.id(+) = i.id
+          and i.rn = 1) s
+  on (s.id = d.id)
   when not matched then
-    insert (d.tournament_id, d.batch_id,          d.delta_hash, d.stats_url, d.stadie_id,d. match_order, d.winner_id, d.loser_id, d.winner_seed, d.loser_seed, d.match_score_raw, d.winner_sets_won, d.loser_sets_won, d.winner_games_won, d.loser_games_won, d.winner_tiebreaks_won, d.loser_tiebreaks_won, d.match_ret)
-    values (s.tournament_id, pkg_log.gn_batch_id, s.delta_hash, s.stats_url, s.stadie_id, s.match_order, s.winner_id, s.loser_id, s.winner_seed, s.loser_seed, s.match_score_raw, s.winner_sets_won, s.loser_sets_won, s.winner_games_won, s.loser_games_won, s.winner_tiebreaks_won, s.loser_tiebreaks_won, s.match_ret)
+    insert (d.id, d.delta_hash, d.batch_id,          d.tournament_id, d.stadie_id, d.match_order, d.match_ret, d.winner_code, d.loser_code, d.winner_seed, d.loser_seed, d.match_score, d.winner_sets_won, d.loser_sets_won, d.winner_games_won, d.loser_games_won, d.winner_tiebreaks_won, d.loser_tiebreaks_won, d.stats_url)
+    values (s.id, s.delta_hash, pkg_log.gn_batch_id, s.tournament_id, s.stadie_id, s.match_order, s.match_ret, s.winner_code, s.loser_code, s.winner_seed, s.loser_seed, s.match_score, s.winner_sets_won, s.loser_sets_won, s.winner_games_won, s.loser_games_won, s.winner_tiebreaks_won, s.loser_tiebreaks_won, s.stats_url)
   when matched then
     update set
       d.delta_hash           = s.delta_hash,
       d.batch_id             = pkg_log.gn_batch_id,
+      d.tournament_id        = s.tournament_id,
+      d.stadie_id            = s.stadie_id,
       d.match_order          = s.match_order,
+      d.match_ret            = s.match_ret,
+      d.winner_code          = s.winner_code,
+      d.loser_code           = s.loser_code,
       d.winner_seed          = s.winner_seed,
       d.loser_seed           = s.loser_seed,
-      d.match_score_raw      = s.match_score_raw,
+      d.match_score          = s.match_score,
       d.winner_sets_won      = s.winner_sets_won,
       d.loser_sets_won       = s.loser_sets_won,
       d.winner_games_won     = s.winner_games_won,
       d.loser_games_won      = s.loser_games_won,
       d.winner_tiebreaks_won = s.winner_tiebreaks_won,
       d.loser_tiebreaks_won  = s.loser_tiebreaks_won,
-      d.match_ret            = s.match_ret,
       d.stats_url            = nvl(d.stats_url, s.stats_url)
     where d.delta_hash != s.delta_hash;
   vn_qty := sql%rowcount;
