@@ -185,21 +185,22 @@ try:
     cur = con.cursor()
     if year is None:
         # last couple weeks
-        sql = '''select v.winner_code, v.loser_code, v.stats_url
-from vw_match_scores v
+        sql = '''select m.winner_code, m.loser_code, m.stats_url
+from matches m, tournaments t
 where stats_url is not null
-  and v.match_score_id not in (select match_score_id from match_stats)
-  and v.tournament_start_dtm > sysdate - :duration'''
+  and m.tournament_id = t.id
+  and t.start_dtm > sysdate - :duration'''
         match_stats = cur.execute(sql, {'duration': DURATION_IN_DAYS}).fetchall()
         logzero.logger.info(f'Parse last {DURATION_IN_DAYS} days...')
     else:
         # historical data
-        sql = '''select v.winner_code, v.loser_code, v.stats_url
-from vw_match_scores v
+        sql = '''select winner_code, loser_code, stats_url
+from matches m
 where stats_url is not null
-  and v.match_score_id not in (select match_score_id from match_stats)
+  and win_aces is null
   and rownum <= :chunk_size
-  and v.tournament_year = :year'''
+  and :year = :year
+order by 3'''
         match_stats = cur.execute(sql, {'year': year, 'chunk_size': CHUNK_SIZE}).fetchall()
         logzero.logger.info(f'Parse firts {CHUNK_SIZE} rows for {year} ...')
 
