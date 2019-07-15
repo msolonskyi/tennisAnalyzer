@@ -57,12 +57,12 @@ def parse_stats(url_tpl):
 
     # Match stats
     try:
-        if (url_tpl[0] == left_code) and (url_tpl[1] == right_code): # OK
+        if (url_tpl[0] == left_code) or (url_tpl[1] == right_code): # OK
             winner_stats_parsed = tree.xpath("//td[@class='match-stats-number-left']/span/text()")
             loser_stats_parsed  = tree.xpath("//td[@class='match-stats-number-right']/span/text()")
             winner_code         = left_code
             loser_code          = right_code
-        elif (url_tpl[1] == left_code) and (url_tpl[0] == right_code): # vice versa
+        elif (url_tpl[1] == left_code) or (url_tpl[0] == right_code): # vice versa
             loser_stats_parsed  = tree.xpath("//td[@class='match-stats-number-left']/span/text()")
             winner_stats_parsed = tree.xpath("//td[@class='match-stats-number-right']/span/text()")
             winner_code         = right_code
@@ -188,6 +188,7 @@ try:
         sql = '''select m.winner_code, m.loser_code, m.stats_url
 from matches m, tournaments t
 where stats_url is not null
+  and (win_aces is null or los_aces is null)
   and m.tournament_id = t.id
   and t.start_dtm > sysdate - :duration'''
         match_stats = cur.execute(sql, {'duration': DURATION_IN_DAYS}).fetchall()
