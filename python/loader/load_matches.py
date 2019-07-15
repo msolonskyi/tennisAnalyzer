@@ -54,7 +54,7 @@ def parse_score(match_score: str, match_id: str, tourney_id:str) -> Array:
         # split score to sets
         match_score_array = match_score.split(' ')
         for set_score in match_score_array:
-            if (len(set_score) == 2) or (len(set_score) >= 5):
+            if (len(set_score) == 2) or (len(set_score) in (5, 6)):
                 # checks
                 if (len(set_score) == 2) and (set_score[:2] in ('60', '61', '62', '63', '64', '75', '76', '06', '16', '26', '36', '46', '57', '67')):
                     None
@@ -142,6 +142,21 @@ def parse_score(match_score: str, match_id: str, tourney_id:str) -> Array:
                 else:
                     logzero.logger.info(url)
                     logzero.logger.error(f'len(set_score) == 4; set_score[:2] == set_score[2:]; match_id: {match_id}; set_score[:2]: {set_score[:2]}; set_score[2:]: {set_score[2:]}; set_score: {set_score}')
+            elif len(set_score) >= 7:
+                #tiebreak with big score
+                if set_score[:2] > set_score[2:4]:
+                    winner_sets_won += 1
+                    winner_games_won += int(set_score[:2])
+                    loser_games_won += int(set_score[2:4])
+                    winner_tiebreaks_won += 1
+                elif set_score[:2] < set_score[2:4]:
+                    loser_sets_won += 1
+                    winner_games_won += int(set_score[:2])
+                    loser_games_won += int(set_score[2:4])
+                    loser_tiebreaks_won += 1
+                else:
+                    logzero.logger.info(url)
+                    logzero.logger.error(f'len(set_score) > 7; set_score[:2] == set_score[2:4]; match_id: {match_id}; set_score[:2]: {set_score[:2]}; set_score[2:4]: {set_score[2:4]}; set_score: {set_score}')
             else:  # log
                 logzero.logger.info(url)
                 logzero.logger.error(f'match_id: {match_id}; set_score: {set_score}')

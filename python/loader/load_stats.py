@@ -197,7 +197,7 @@ where stats_url is not null
         sql = '''select winner_code, loser_code, stats_url
 from matches m
 where stats_url is not null
-  and win_aces is null
+  and (win_aces is null or los_aces is null)
   and rownum <= :chunk_size
   and :year = :year
 order by 3'''

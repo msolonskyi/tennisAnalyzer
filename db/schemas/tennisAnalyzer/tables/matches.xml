@@ -77,6 +77,8 @@
     <column name="los_forced_errors"             type="number(4)"/>
     <column name="los_unforced_errors"           type="number(4)"/>
     <column name="los_net_points_won"            type="number(4)"/>
+    <column name="winner_age"                    type="number"/>
+    <column name="loser_age"                     type="number"/>
     <column name="win_h2h_qty_3y"                type="number"/>
     <column name="los_h2h_qty_3y"                type="number"/>
     <column name="win_win_qty_3y"                type="number"/>

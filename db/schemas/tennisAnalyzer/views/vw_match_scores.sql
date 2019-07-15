@@ -1,25 +1,26 @@
 create or replace view vw_match_scores as
-select m.id as match_score_id,
-       t.year || '-' || t.code || '-' || w.code || '-' || l.code || '-' || st.short_name as match_id,
+select m.id,
        t.id as tournament_id,
        t.name as tournament_name,
+       t.year as tournament_year,
        t.code as tournament_code,
        t.url as tournament_url,
+       t.slug as tournament_slug,
        t.city as tournament_city,
-       t.year as tournament_year,
-       t.week as tournament_week,
-       t.sgl_draw_link as tournament_sgl_draw_link,
-       tt.name as tournament_type_name,
-       su.name as surface_name,
+       t.sgl_draw_url as tournament_sgl_draw_url,
+       t.sgl_pdf_url as tournament_sgl_pdf_url,
+       t.type as tournament_type,
+       t.surface as tournament_surface,
+       t.series_id as series_id,
+       se.name as series_mane,
        t.start_dtm as tournament_start_dtm,
+       to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.ord, 2, '0'), 'yyyymmddhh24') as tournament_ord_start_dtm,
+       t.finish_dtm as tournament_finish_dtm,
        t.sgl_draw_qty as tournament_sgl_draw_qty,
        t.dbl_draw_qty as tournament_dbl_draw_qty,
-       ts.name as series_name,
-       ts.code as series_code,
        t.prize_money as tournament_prize_money,
        t.prize_currency as tournament_prize_currency,
        t.country_code as tournament_country_code,
-       w.id as winner_id,
        w.first_name as winner_first_name,
        w.last_name as winner_last_name,
        w.url as winner_url,
@@ -33,7 +34,10 @@ select m.id as match_score_id,
        w.handedness as winner_handedness,
        w.backhand as winner_backhand,
        w.citizenship as winner_citizenship,
-       l.id as loser_id,
+       case
+         when w.birth_date is not null and t.start_dtm is not null then trunc(months_between(t.start_dtm, w.birth_date) / 12, 3)
+         else null
+       end as winner_age,
        l.first_name as loser_first_name,
        l.last_name as loser_last_name,
        l.url as loser_url,
@@ -47,1162 +51,150 @@ select m.id as match_score_id,
        l.handedness as loser_handedness,
        l.backhand as loser_backhand,
        l.citizenship as loser_citizenship,
-       m.winner_seed as winner_seed,
-       m.loser_seed as loser_seed,
-       m.match_order as match_order,
-       m.match_ret as match_ret,
-       m.match_score_raw as match_score_raw,
-       m.winner_sets_won as winner_sets_won,
-       m.loser_sets_won as loser_sets_won,
-       m.winner_games_won as winner_games_won,
-       m.loser_games_won as loser_games_won,
-       m.winner_tiebreaks_won as winner_tiebreaks_won,
-       m.loser_tiebreaks_won as loser_tiebreaks_won,
-       m.stats_url as stats_url,
+       case
+         when l.birth_date is not null and t.start_dtm is not null then trunc(months_between(t.start_dtm, l.birth_date) / 12, 3)
+         else null
+       end as loser_age,
        st.name as stadie_name,
-       st.pos as stadie_pos,
-       -- 12 weeks
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and mi.winner_id = m.winner_id
-          and mi.loser_id = m.loser_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 12 * 7 -- 12 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_h2h_qty_12w,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and mi.winner_id = m.loser_id
-          and mi.loser_id = m.winner_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 12 * 7 -- 12 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_h2h_qty_12w,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and mi.winner_id = m.winner_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 12 * 7 -- 12 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_win_qty_12w,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and mi.loser_id = m.winner_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 12 * 7 -- 12 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_los_qty_12w,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and mi.winner_id = m.loser_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 12 * 7 -- 12 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_win_qty_12w,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and mi.loser_id = m.loser_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 12 * 7 -- 12 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_los_qty_12w,
-       (select case
-                 when m.match_ret is null and m.winner_sets_won = 2 then trunc(avg(mi.winner_games_won + mi.loser_games_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and (mi.winner_id = m.winner_id or mi.loser_id = m.winner_id)
-          and mi.match_ret is null
-          and mi.winner_sets_won = 2 -- 3-sets match
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 12 * 7 -- 12 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_avg_total_3s_12w,
-       (select case
-                 when m.match_ret is null and m.winner_sets_won = 2 then trunc(avg(mi.winner_games_won + mi.loser_games_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and (mi.winner_id = m.loser_id or mi.loser_id = m.loser_id)
-          and mi.match_ret is null
-          and mi.winner_sets_won = 2 -- 3-sets match
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 12 * 7 -- 12 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_avg_total_3s_12w,
-       (select case
-                 when m.match_ret is null and m.winner_sets_won = 3 then trunc(avg(mi.winner_games_won + mi.loser_games_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and (mi.winner_id = m.winner_id or mi.loser_id = m.winner_id)
-          and mi.match_ret is null
-          and mi.winner_sets_won = 3 -- 5-sets match
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 12 * 7 -- 12 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_avg_total_5s_12w,
-       (select case
-                 when m.match_ret is null and m.winner_sets_won = 3 then trunc(avg(mi.winner_games_won + mi.loser_games_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and (mi.winner_id = m.loser_id or mi.loser_id = m.loser_id)
-          and mi.match_ret is null
-          and mi.winner_sets_won = 3 -- 5-sets match
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 12 * 7 -- 12 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_avg_total_5s_12w,
-       (select case
-                 when m.match_ret is null then trunc(avg(mi.winner_tiebreaks_won + mi.loser_tiebreaks_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and (mi.winner_id = m.winner_id or mi.loser_id = m.winner_id)
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 12 * 7 -- 12 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_avg_tiebreaks_12w,
-       (select case
-                 when m.match_ret is null then trunc(avg(mi.winner_tiebreaks_won + mi.loser_tiebreaks_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and (mi.winner_id = m.loser_id or mi.loser_id = m.loser_id)
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 12 * 7 -- 12 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_avg_tiebreaks_12w,
-       -- current surface
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and mi.winner_id = m.winner_id
-          and mi.loser_id = m.loser_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 12 * 7 -- 12 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_h2h_qty_12w_current,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and mi.winner_id = m.loser_id
-          and mi.loser_id = m.winner_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 12 * 7 -- 12 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_h2h_qty_12w_current,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and mi.winner_id = m.winner_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 12 * 7 -- 12 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_win_qty_12w_current,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and mi.loser_id = m.winner_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 12 * 7 -- 12 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_los_qty_12w_current,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and mi.winner_id = m.loser_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 12 * 7 -- 12 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_win_qty_12w_current,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and mi.loser_id = m.loser_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 12 * 7 -- 12 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_los_qty_12w_current,
-       (select case
-                 when m.match_ret is null and m.winner_sets_won = 2 then trunc(avg(mi.winner_games_won + mi.loser_games_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and (mi.winner_id = m.winner_id or mi.loser_id = m.winner_id)
-          and mi.match_ret is null
-          and mi.winner_sets_won = 2 -- 3-sets match
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 12 * 7 -- 12 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_avg_total_3s_12w_current,
-       (select case
-                 when m.match_ret is null and m.winner_sets_won = 2 then trunc(avg(mi.winner_games_won + mi.loser_games_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and (mi.winner_id = m.loser_id or mi.loser_id = m.loser_id)
-          and mi.match_ret is null
-          and mi.winner_sets_won = 2 -- 3-sets match
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 12 * 7 -- 12 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_avg_total_3s_12w_current,
-       (select case
-                 when m.match_ret is null and m.winner_sets_won = 3 then trunc(avg(mi.winner_games_won + mi.loser_games_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and (mi.winner_id = m.winner_id or mi.loser_id = m.winner_id)
-          and mi.match_ret is null
-          and mi.winner_sets_won = 3 -- 5-sets match
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 12 * 7 -- 12 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_avg_total_5s_12w_current,
-       (select case
-                 when m.match_ret is null and m.winner_sets_won = 3 then trunc(avg(mi.winner_games_won + mi.loser_games_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and (mi.winner_id = m.loser_id or mi.loser_id = m.loser_id)
-          and mi.match_ret is null
-          and mi.winner_sets_won = 3 -- 5-sets match
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 12 * 7 -- 12 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_avg_total_5s_12w_current,
-       (select case
-                 when m.match_ret is null then trunc(avg(mi.winner_tiebreaks_won + mi.loser_tiebreaks_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and (mi.winner_id = m.winner_id or mi.loser_id = m.winner_id)
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 12 * 7 -- 12 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_avg_tiebreaks_12w_current,
-       (select case
-                 when m.match_ret is null then trunc(avg(mi.winner_tiebreaks_won + mi.loser_tiebreaks_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and (mi.winner_id = m.loser_id or mi.loser_id = m.loser_id)
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 12 * 7 -- 12 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_avg_tiebreaks_12w_current,
-       -- 52 weeks
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and mi.winner_id = m.winner_id
-          and mi.loser_id = m.loser_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 52 * 7 -- 52 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_h2h_qty_52w,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and mi.winner_id = m.loser_id
-          and mi.loser_id = m.winner_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 52 * 7 -- 52 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_h2h_qty_52w,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and mi.winner_id = m.winner_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 52 * 7 -- 52 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_win_qty_52w,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and mi.loser_id = m.winner_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 52 * 7 -- 52 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_los_qty_52w,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and mi.winner_id = m.loser_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 52 * 7 -- 52 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_win_qty_52w,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and mi.loser_id = m.loser_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 52 * 7 -- 52 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_los_qty_52w,
-       (select case
-                 when m.match_ret is null and m.winner_sets_won = 2 then trunc(avg(mi.winner_games_won + mi.loser_games_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and (mi.winner_id = m.winner_id or mi.loser_id = m.winner_id)
-          and mi.match_ret is null
-          and mi.winner_sets_won = 2 -- 3-sets match
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 52 * 7 -- 52 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_avg_total_3s_52w,
-       (select case
-                 when m.match_ret is null and m.winner_sets_won = 2 then trunc(avg(mi.winner_games_won + mi.loser_games_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and (mi.winner_id = m.loser_id or mi.loser_id = m.loser_id)
-          and mi.match_ret is null
-          and mi.winner_sets_won = 2 -- 3-sets match
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 52 * 7 -- 52 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_avg_total_3s_52w,
-       (select case
-                 when m.match_ret is null and m.winner_sets_won = 3 then trunc(avg(mi.winner_games_won + mi.loser_games_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and (mi.winner_id = m.winner_id or mi.loser_id = m.winner_id)
-          and mi.match_ret is null
-          and mi.winner_sets_won = 3 -- 5-sets match
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 52 * 7 -- 52 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_avg_total_5s_52w,
-       (select case
-                 when m.match_ret is null and m.winner_sets_won = 3 then trunc(avg(mi.winner_games_won + mi.loser_games_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and (mi.winner_id = m.loser_id or mi.loser_id = m.loser_id)
-          and mi.match_ret is null
-          and mi.winner_sets_won = 3 -- 5-sets match
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 52 * 7 -- 52 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_avg_total_5s_52w,
-       (select case
-                 when m.match_ret is null then trunc(avg(mi.winner_tiebreaks_won + mi.loser_tiebreaks_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and (mi.winner_id = m.winner_id or mi.loser_id = m.winner_id)
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 52 * 7 -- 52 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_avg_tiebreaks_52w,
-       (select case
-                 when m.match_ret is null then trunc(avg(mi.winner_tiebreaks_won + mi.loser_tiebreaks_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and (mi.winner_id = m.loser_id or mi.loser_id = m.loser_id)
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 52 * 7 -- 52 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_avg_tiebreaks_52w,
-       -- current surface
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and mi.winner_id = m.winner_id
-          and mi.loser_id = m.loser_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 52 * 7 -- 52 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_h2h_qty_52w_current,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and mi.winner_id = m.loser_id
-          and mi.loser_id = m.winner_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 52 * 7 -- 52 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_h2h_qty_52w_current,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and mi.winner_id = m.winner_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 52 * 7 -- 52 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_win_qty_52w_current,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and mi.loser_id = m.winner_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 52 * 7 -- 52 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_los_qty_52w_current,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and mi.winner_id = m.loser_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 52 * 7 -- 52 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_win_qty_52w_current,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and mi.loser_id = m.loser_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 52 * 7 -- 52 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_los_qty_52w_current,
-       (select case
-                 when m.match_ret is null and m.winner_sets_won = 2 then trunc(avg(mi.winner_games_won + mi.loser_games_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and (mi.winner_id = m.winner_id or mi.loser_id = m.winner_id)
-          and mi.match_ret is null
-          and mi.winner_sets_won = 2 -- 3-sets match
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 52 * 7 -- 52 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_avg_total_3s_52w_current,
-       (select case
-                 when m.match_ret is null and m.winner_sets_won = 2 then trunc(avg(mi.winner_games_won + mi.loser_games_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and (mi.winner_id = m.loser_id or mi.loser_id = m.loser_id)
-          and mi.match_ret is null
-          and mi.winner_sets_won = 2 -- 3-sets match
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 52 * 7 -- 52 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_avg_total_3s_52w_current,
-       (select case
-                 when m.match_ret is null and m.winner_sets_won = 3 then trunc(avg(mi.winner_games_won + mi.loser_games_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and (mi.winner_id = m.winner_id or mi.loser_id = m.winner_id)
-          and mi.match_ret is null
-          and mi.winner_sets_won = 3 -- 5-sets match
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 52 * 7 -- 52 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_avg_total_5s_52w_current,
-       (select case
-                 when m.match_ret is null and m.winner_sets_won = 3 then trunc(avg(mi.winner_games_won + mi.loser_games_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and (mi.winner_id = m.loser_id or mi.loser_id = m.loser_id)
-          and mi.match_ret is null
-          and mi.winner_sets_won = 3 -- 5-sets match
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 52 * 7 -- 52 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_avg_total_5s_52w_current,
-       (select case
-                 when m.match_ret is null then trunc(avg(mi.winner_tiebreaks_won + mi.loser_tiebreaks_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and (mi.winner_id = m.winner_id or mi.loser_id = m.winner_id)
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 52 * 7 -- 52 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_avg_tiebreaks_52w_current,
-       (select case
-                 when m.match_ret is null then trunc(avg(mi.winner_tiebreaks_won + mi.loser_tiebreaks_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and (mi.winner_id = m.loser_id or mi.loser_id = m.loser_id)
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 52 * 7 -- 52 weeks
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_avg_tiebreaks_52w_current,
-       -- 3 years
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and mi.winner_id = m.winner_id
-          and mi.loser_id = m.loser_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 365 * 3 -- 3 years
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_h2h_qty_3y,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and mi.winner_id = m.loser_id
-          and mi.loser_id = m.winner_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 365 * 3 -- 3 years
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_h2h_qty_3y,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and mi.winner_id = m.winner_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 365 * 3 -- 3 years
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_win_qty_3y,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and mi.loser_id = m.winner_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 365 * 3 -- 3 years
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_los_qty_3y,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and mi.winner_id = m.loser_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 365 * 3 -- 3 years
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_win_qty_3y,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and mi.loser_id = m.loser_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 365 * 3 -- 3 years
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_los_qty_3y,
-       (select case
-                 when m.match_ret is null and m.winner_sets_won = 2 then trunc(avg(mi.winner_games_won + mi.loser_games_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and (mi.winner_id = m.winner_id or mi.loser_id = m.winner_id)
-          and mi.match_ret is null
-          and mi.winner_sets_won = 2 -- 3-sets match
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 365 * 3 -- 3 years
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_avg_total_3s_3y,
-       (select case
-                 when m.match_ret is null and m.winner_sets_won = 2 then trunc(avg(mi.winner_games_won + mi.loser_games_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and (mi.winner_id = m.loser_id or mi.loser_id = m.loser_id)
-          and mi.match_ret is null
-          and mi.winner_sets_won = 2 -- 3-sets match
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 365 * 3 -- 3 years
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_avg_total_3s_3y,
-       (select case
-                 when m.match_ret is null and m.winner_sets_won = 3 then trunc(avg(mi.winner_games_won + mi.loser_games_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and (mi.winner_id = m.winner_id or mi.loser_id = m.winner_id)
-          and mi.match_ret is null
-          and mi.winner_sets_won = 3 -- 5-sets match
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 365 * 3 -- 3 years
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_avg_total_5s_3y,
-       (select case
-                 when m.match_ret is null and m.winner_sets_won = 3 then trunc(avg(mi.winner_games_won + mi.loser_games_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and (mi.winner_id = m.loser_id or mi.loser_id = m.loser_id)
-          and mi.match_ret is null
-          and mi.winner_sets_won = 3 -- 5-sets match
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 365 * 3 -- 3 years
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_avg_total_5s_3y,
-       (select case
-                 when m.match_ret is null then trunc(avg(mi.winner_tiebreaks_won + mi.loser_tiebreaks_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and (mi.winner_id = m.winner_id or mi.loser_id = m.winner_id)
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 365 * 3 -- 3 years
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_avg_tiebreaks_3y,
-       (select case
-                 when m.match_ret is null then trunc(avg(mi.winner_tiebreaks_won + mi.loser_tiebreaks_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and (mi.winner_id = m.loser_id or mi.loser_id = m.loser_id)
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 365 * 3 -- 3 years
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_avg_tiebreaks_3y,
-       -- current surface
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and mi.winner_id = m.winner_id
-          and mi.loser_id = m.loser_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 365 * 3 -- 3 years
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_h2h_qty_3y_current,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and mi.winner_id = m.loser_id
-          and mi.loser_id = m.winner_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 365 * 3 -- 3 years
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_h2h_qty_3y_current,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and mi.winner_id = m.winner_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 365 * 3 -- 3 years
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_win_qty_3y_current,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and mi.loser_id = m.winner_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 365 * 3 -- 3 years
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_los_qty_3y_current,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and mi.winner_id = m.loser_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 365 * 3 -- 3 years
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_win_qty_3y_current,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and mi.loser_id = m.loser_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 365 * 3 -- 3 years
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_los_qty_3y_current,
-       (select case
-                 when m.match_ret is null and m.winner_sets_won = 2 then trunc(avg(mi.winner_games_won + mi.loser_games_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and (mi.winner_id = m.winner_id or mi.loser_id = m.winner_id)
-          and mi.match_ret is null
-          and mi.winner_sets_won = 2 -- 3-sets match
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 365 * 3 -- 3 years
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_avg_total_3s_3y_current,
-       (select case
-                 when m.match_ret is null and m.winner_sets_won = 2 then trunc(avg(mi.winner_games_won + mi.loser_games_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and (mi.winner_id = m.loser_id or mi.loser_id = m.loser_id)
-          and mi.match_ret is null
-          and mi.winner_sets_won = 2 -- 3-sets match
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 365 * 3 -- 3 years
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_avg_total_3s_3y_current,
-       (select case
-                 when m.match_ret is null and m.winner_sets_won = 3 then trunc(avg(mi.winner_games_won + mi.loser_games_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and (mi.winner_id = m.winner_id or mi.loser_id = m.winner_id)
-          and mi.match_ret is null
-          and mi.winner_sets_won = 3 -- 5-sets match
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 365 * 3 -- 3 years
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_avg_total_5s_3y_current,
-       (select case
-                 when m.match_ret is null and m.winner_sets_won = 3 then trunc(avg(mi.winner_games_won + mi.loser_games_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and (mi.winner_id = m.loser_id or mi.loser_id = m.loser_id)
-          and mi.match_ret is null
-          and mi.winner_sets_won = 3 -- 5-sets match
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 365 * 3 -- 3 years
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_avg_total_5s_3y_current,
-       (select case
-                 when m.match_ret is null then trunc(avg(mi.winner_tiebreaks_won + mi.loser_tiebreaks_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and (mi.winner_id = m.winner_id or mi.loser_id = m.winner_id)
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 365 * 3 -- 3 years
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_avg_tiebreaks_3y_current,
-       (select case
-                 when m.match_ret is null then trunc(avg(mi.winner_tiebreaks_won + mi.loser_tiebreaks_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and (mi.winner_id = m.loser_id or mi.loser_id = m.loser_id)
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') >= t.start_dtm - 365 * 3 -- 3 years
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_avg_tiebreaks_3y_current,
-       -- for all time
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and mi.winner_id = m.winner_id
-          and mi.loser_id = m.loser_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_h2h_qty_all,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and mi.winner_id = m.loser_id
-          and mi.loser_id = m.winner_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_h2h_qty_all,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and mi.winner_id = m.winner_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_win_qty_all,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and mi.loser_id = m.winner_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_los_qty_all,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and mi.winner_id = m.loser_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_win_qty_all,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and mi.loser_id = m.loser_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_los_qty_all,
-       (select case
-                 when m.match_ret is null and m.winner_sets_won = 2 then trunc(avg(mi.winner_games_won + mi.loser_games_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and (mi.winner_id = m.winner_id or mi.loser_id = m.winner_id)
-          and mi.match_ret is null
-          and mi.winner_sets_won = 2 -- 3-sets match
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_avg_total_3s_all,
-       (select case
-                 when m.match_ret is null and m.winner_sets_won = 2 then trunc(avg(mi.winner_games_won + mi.loser_games_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and (mi.winner_id = m.loser_id or mi.loser_id = m.loser_id)
-          and mi.match_ret is null
-          and mi.winner_sets_won = 2 -- 3-sets match
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_avg_total_3s_all,
-       (select case
-                 when m.match_ret is null and m.winner_sets_won = 3 then trunc(avg(mi.winner_games_won + mi.loser_games_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and (mi.winner_id = m.winner_id or mi.loser_id = m.winner_id)
-          and mi.match_ret is null
-          and mi.winner_sets_won = 3 -- 5-sets match
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_avg_total_5s_all,
-       (select case
-                 when m.match_ret is null and m.winner_sets_won = 3 then trunc(avg(mi.winner_games_won + mi.loser_games_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and (mi.winner_id = m.loser_id or mi.loser_id = m.loser_id)
-          and mi.match_ret is null
-          and mi.winner_sets_won = 3 -- 5-sets match
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_avg_total_5s_all,
-       (select case
-                 when m.match_ret is null then trunc(avg(mi.winner_tiebreaks_won + mi.loser_tiebreaks_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and (mi.winner_id = m.winner_id or mi.loser_id = m.winner_id)
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_avg_tiebreaks_all,
-       (select case
-                 when m.match_ret is null then trunc(avg(mi.winner_tiebreaks_won + mi.loser_tiebreaks_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and (mi.winner_id = m.loser_id or mi.loser_id = m.loser_id)
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_avg_tiebreaks_all,
-       -- current surface
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and mi.winner_id = m.winner_id
-          and mi.loser_id = m.loser_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_h2h_qty_all_current,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and mi.winner_id = m.loser_id
-          and mi.loser_id = m.winner_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_h2h_qty_all_current,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and mi.winner_id = m.winner_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_win_qty_all_current,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and mi.loser_id = m.winner_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_los_qty_all_current,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and mi.winner_id = m.loser_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_win_qty_all_current,
-       (select case
-                 when m.match_ret is null then count(*)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and mi.loser_id = m.loser_id
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_los_qty_all_current,
-       (select case
-                 when m.match_ret is null and m.winner_sets_won = 2 then trunc(avg(mi.winner_games_won + mi.loser_games_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and (mi.winner_id = m.winner_id or mi.loser_id = m.winner_id)
-          and mi.match_ret is null
-          and mi.winner_sets_won = 2 -- 3-sets match
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_avg_total_3s_all_current,
-       (select case
-                 when m.match_ret is null and m.winner_sets_won = 2 then trunc(avg(mi.winner_games_won + mi.loser_games_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and (mi.winner_id = m.loser_id or mi.loser_id = m.loser_id)
-          and mi.match_ret is null
-          and mi.winner_sets_won = 2 -- 3-sets match
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_avg_total_3s_all_current,
-       (select case
-                 when m.match_ret is null and m.winner_sets_won = 3 then trunc(avg(mi.winner_games_won + mi.loser_games_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and (mi.winner_id = m.winner_id or mi.loser_id = m.winner_id)
-          and mi.match_ret is null
-          and mi.winner_sets_won = 3 -- 5-sets match
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_avg_total_5s_all_current,
-       (select case
-                 when m.match_ret is null and m.winner_sets_won = 3 then trunc(avg(mi.winner_games_won + mi.loser_games_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and (mi.winner_id = m.loser_id or mi.loser_id = m.loser_id)
-          and mi.match_ret is null
-          and mi.winner_sets_won = 3 -- 5-sets match
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_avg_total_5s_all_current,
-       (select case
-                 when m.match_ret is null then trunc(avg(mi.winner_tiebreaks_won + mi.loser_tiebreaks_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and (mi.winner_id = m.winner_id or mi.loser_id = m.winner_id)
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as win_avg_tiebreaks_all_current,
-       (select case
-                 when m.match_ret is null then trunc(avg(mi.winner_tiebreaks_won + mi.loser_tiebreaks_won), 2)
-                 else null
-               end as qty
-        from match_scores mi, tournaments ti, stadies sti
-        where mi.tournament_id = ti.id
-          and mi.stadie_id = sti.id
-          and ti.surface_id = t.surface_id
-          and (mi.winner_id = m.loser_id or mi.loser_id = m.loser_id)
-          and mi.match_ret is null
-          and to_date(to_char(ti.start_dtm, 'yyyymmdd') || lpad(sti.pos, 2, '0'), 'yyyymmddhh24') < to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.pos, 2, '0'), 'yyyymmddhh24')) as los_avg_tiebreaks_all_current
-from match_scores m, tournaments t, players w, players l, stadies st, tournament_series ts, tournament_types tt, surfaces su
-where m.winner_id = w.id
-  and m.loser_id = l.id
+       st.ord as stadie_ord,
+       m.stadie_id,
+       m.match_order,
+       m.match_ret,
+       m.winner_seed,
+       m.loser_seed,
+       m.match_score,
+       m.winner_sets_won,
+       m.loser_sets_won,
+       m.winner_games_won,
+       m.loser_games_won,
+       m.winner_tiebreaks_won,
+       m.loser_tiebreaks_won,
+       m.stats_url,
+       m.match_duration,
+       m.win_aces,
+       m.win_double_faults,
+       m.win_first_serves_in,
+       m.win_first_serves_total,
+       m.win_first_serve_points_won,
+       m.win_first_serve_points_total,
+       m.win_second_serve_points_won,
+       m.win_second_serve_points_total,
+       m.win_break_points_saved,
+       m.win_break_points_serve_total,
+       m.win_service_points_won,
+       m.win_service_points_total,
+       m.win_first_serve_return_won,
+       m.win_first_serve_return_total,
+       m.win_second_serve_return_won,
+       m.win_second_serve_return_total,
+       m.win_break_points_converted,
+       m.win_break_points_return_total,
+       m.win_service_games_played,
+       m.win_return_games_played,
+       m.win_return_points_won,
+       m.win_return_points_total,
+       m.win_total_points_won,
+       m.win_total_points_total,
+       m.win_winners,
+       m.win_forced_errors,
+       m.win_unforced_errors,
+       m.win_net_points_won,
+       m.los_aces,
+       m.los_double_faults,
+       m.los_first_serves_in,
+       m.los_first_serves_total,
+       m.los_first_serve_points_won,
+       m.los_first_serve_points_total,
+       m.los_second_serve_points_won,
+       m.los_second_serve_points_total,
+       m.los_break_points_saved,
+       m.los_break_points_serve_total,
+       m.los_service_points_won,
+       m.los_service_points_total,
+       m.los_first_serve_return_won,
+       m.los_first_serve_return_total,
+       m.los_second_serve_return_won,
+       m.los_second_serve_return_total,
+       m.los_break_points_converted,
+       m.los_break_points_return_total,
+       m.los_service_games_played,
+       m.los_return_games_played,
+       m.los_return_points_won,
+       m.los_return_points_total,
+       m.los_total_points_won,
+       m.los_total_points_total,
+       m.los_winners,
+       m.los_forced_errors,
+       m.los_unforced_errors,
+       m.los_net_points_won,
+       m.win_h2h_qty_3y,
+       m.los_h2h_qty_3y,
+       m.win_win_qty_3y,
+       m.win_los_qty_3y,
+       m.los_win_qty_3y,
+       m.los_los_qty_3y,
+       m.win_avg_tiebreaks_3y,
+       m.los_avg_tiebreaks_3y,
+       m.win_h2h_qty_3y_current,
+       m.los_h2h_qty_3y_current,
+       m.win_win_qty_3y_current,
+       m.win_los_qty_3y_current,
+       m.los_win_qty_3y_current,
+       m.los_los_qty_3y_current,
+       m.win_avg_tiebreaks_3y_current,
+       m.los_avg_tiebreaks_3y_current,
+       m.win_ace_pct_3y,
+       m.win_df_pct_3y,
+       m.win_1st_pct_3y,
+       m.win_1st_won_pct_3y,
+       m.win_2nd_won_pct_3y,
+       m.win_bp_saved_pct_3y,
+       m.win_srv_won_pct_3y,
+       m.win_1st_return_won_pct_3y,
+       m.win_2nd_return_won_pct_3y,
+       m.win_bp_won_pct_3y,
+       m.win_return_won_pct_3y,
+       m.win_total_won_pct_3y,
+       m.win_ace_pct_3y_current,
+       m.win_df_pct_3y_current,
+       m.win_1st_pct_3y_current,
+       m.win_1st_won_pct_3y_current,
+       m.win_2nd_won_pct_3y_current,
+       m.win_bp_saved_pct_3y_current,
+       m.win_srv_won_pct_3y_current,
+       m.win_1st_return_won_pct_3y_cur,
+       m.win_2nd_return_won_pct_3y_cur,
+       m.win_bp_won_pct_3y_current,
+       m.win_return_won_pct_3y_current,
+       m.win_total_won_pct_3y_current,
+       m.los_ace_pct_3y,
+       m.los_df_pct_3y,
+       m.los_1st_pct_3y,
+       m.los_1st_won_pct_3y,
+       m.los_2nd_won_pct_3y,
+       m.los_bp_saved_pct_3y,
+       m.los_srv_won_pct_3y,
+       m.los_1st_return_won_pct_3y,
+       m.los_2nd_return_won_pct_3y,
+       m.los_bp_won_pct_3y,
+       m.los_return_won_pct_3y,
+       m.los_total_won_pct_3y,
+       m.los_ace_pct_3y_current,
+       m.los_df_pct_3y_current,
+       m.los_1st_pct_3y_current,
+       m.los_1st_won_pct_3y_current,
+       m.los_2nd_won_pct_3y_current,
+       m.los_bp_saved_pct_3y_current,
+       m.los_srv_won_pct_3y_current,
+       m.los_1st_return_won_pct_3y_cur,
+       m.los_2nd_return_won_pct_3y_cur,
+       m.los_bp_won_pct_3y_current,
+       m.los_return_won_pct_3y_current,
+       m.los_total_won_pct_3y_current
+from matches m, tournaments t, players w, players l, stadies st, series se
+where m.winner_code = w.code
+  and m.loser_code = l.code
   and m.tournament_id = t.id
   and m.stadie_id = st.id
-  and t.surface_id = su.id
-  and t.series_id = ts.id
-  and t.type_id = tt.id
+  and t.series_id = se.id
 /

@@ -6,7 +6,7 @@
     <column name="batch_id"          type="number(12)"/>
     <column name="name"              type="varchar2(128)" nullable="n"/>
     <column name="year"              type="number(4)"     nullable="n"/>
-    <column name="code"              type="number(4)"     nullable="n"/>
+    <column name="code"              type="varchar2(32)"  nullable="n"/>
     <column name="url"               type="varchar2(256)" nullable="n"/>
     <column name="slug"              type="varchar2(128)"/>
     <column name="city"              type="varchar2(128)" nullable="n"/>
