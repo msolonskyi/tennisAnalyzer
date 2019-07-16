@@ -1,15 +1,15 @@
-from constants import CONNECTION_STRING, URL_PREFIX, DURATION_IN_DAYS, ROUND_NAMES_MAP
-from lxml import html
-from ctypes import Array
-from datetime import datetime
+from constants import CONNECTION_STRING, DURATION_IN_DAYS
+#from lxml import html
+#from ctypes import Array
+#from datetime import datetime
 import cx_Oracle
 import sys
-import requests
+#import requests
 import logzero
 
 # main
 # logging support
-logzero.logfile('process_scores.log', loglevel=logzero.logging.INFO)
+logzero.logfile('enrich_matches.log', loglevel=logzero.logging.INFO)
 
 logzero.logger.info('')
 logzero.logger.info('==========')
@@ -37,8 +37,7 @@ try:
         logzero.logger.info(f'loading matches for {year} year')
 
     for id in tournaments:
-        cur.callproc('sp_process_scores_by_t',
-                     [id[0]])
+        cur.callproc('sp_enrich_matches', [id[0]])
 
     logzero.logger.info('')
     logzero.logger.info('completed successfully')
