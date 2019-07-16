@@ -89,7 +89,7 @@ begin
                                 when vw.match_ret is null then count(*)
                                 else null
                               end as qty
-                       from vw_match_scores vi
+                       from vw_matches vi
                        where vi.winner_code = vw.winner_code
                          and vi.loser_code = vw.loser_code
                          and vi.match_ret is null
@@ -100,7 +100,7 @@ begin
                                 when vw.match_ret is null then count(*)
                                 else null
                               end as qty
-                       from vw_match_scores vi
+                       from vw_matches vi
                        where vi.winner_code = vw.loser_code
                          and vi.loser_code = vw.winner_code
                          and vi.match_ret is null
@@ -111,7 +111,7 @@ begin
                                 when vw.match_ret is null then count(*)
                                 else null
                               end as qty
-                       from vw_match_scores vi
+                       from vw_matches vi
                        where vi.winner_code = vw.winner_code
                          and vi.match_ret is null
                          and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
@@ -121,7 +121,7 @@ begin
                                 when vw.match_ret is null then count(*)
                                 else null
                               end as qty
-                       from vw_match_scores vi
+                       from vw_matches vi
                        where vi.loser_code = vw.winner_code
                          and vi.match_ret is null
                          and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
@@ -131,7 +131,7 @@ begin
                                 when vw.match_ret is null then count(*)
                                 else null
                               end as qty
-                       from vw_match_scores vi
+                       from vw_matches vi
                        where vi.winner_code = vw.loser_code
                          and vi.match_ret is null
                          and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
@@ -141,7 +141,7 @@ begin
                                 when vw.match_ret is null then count(*)
                                 else null
                               end as qty
-                       from vw_match_scores vi
+                       from vw_matches vi
                        where vi.loser_code = vw.loser_code
                          and vi.match_ret is null
                          and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
@@ -172,7 +172,7 @@ begin
                                 when vw.match_ret is null then count(*)
                                 else null
                               end as qty
-                       from vw_match_scores vi
+                       from vw_matches vi
                        where vi.tournament_surface = vw.tournament_surface
                          and vi.winner_code = vw.winner_code
                          and vi.loser_code = vw.loser_code
@@ -184,7 +184,7 @@ begin
                                 when vw.match_ret is null then count(*)
                                 else null
                               end as qty
-                       from vw_match_scores vi
+                       from vw_matches vi
                        where vi.tournament_surface = vw.tournament_surface
                          and vi.winner_code = vw.loser_code
                          and vi.loser_code = vw.winner_code
@@ -196,7 +196,7 @@ begin
                                 when vw.match_ret is null then count(*)
                                 else null
                               end as qty
-                       from vw_match_scores vi
+                       from vw_matches vi
                        where vi.tournament_surface = vw.tournament_surface
                          and vi.winner_code = vw.winner_code
                          and vi.match_ret is null
@@ -207,7 +207,7 @@ begin
                                 when vw.match_ret is null then count(*)
                                 else null
                               end as qty
-                       from vw_match_scores vi
+                       from vw_matches vi
                        where vi.tournament_surface = vw.tournament_surface
                          and vi.loser_code = vw.winner_code
                          and vi.match_ret is null
@@ -218,7 +218,7 @@ begin
                                 when vw.match_ret is null then count(*)
                                 else null
                               end as qty
-                       from vw_match_scores vi
+                       from vw_matches vi
                        where vi.tournament_surface = vw.tournament_surface
                          and vi.winner_code = vw.loser_code
                          and vi.match_ret is null
@@ -229,7 +229,7 @@ begin
                                 when vw.match_ret is null then count(*)
                                 else null
                               end as qty
-                       from vw_match_scores vi
+                       from vw_matches vi
                        where vi.tournament_surface = vw.tournament_surface
                          and vi.loser_code = vw.loser_code
                          and vi.match_ret is null
@@ -762,7 +762,7 @@ begin
                          and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) los_total_won_pct_3y_current
-              from vw_match_scores vw
+              from vw_matches vw
               where vw.tournament_id = p_tournament_id) i) s
   on (s.id = d.id)
   when matched then
