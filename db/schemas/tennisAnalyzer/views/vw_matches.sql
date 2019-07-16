@@ -1,4 +1,4 @@
-create or replace view vw_match_scores as
+create or replace view vw_matches as
 select m.id,
        t.id as tournament_id,
        t.name as tournament_name,
@@ -12,7 +12,7 @@ select m.id,
        t.type as tournament_type,
        t.surface as tournament_surface,
        t.series_id as series_id,
-       se.name as series_mane,
+       se.name as series_name,
        t.start_dtm as tournament_start_dtm,
        to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.ord, 2, '0'), 'yyyymmddhh24') as tournament_ord_start_dtm,
        t.finish_dtm as tournament_finish_dtm,
