@@ -110,7 +110,7 @@ try:
 
     cur = con.cursor()
     if year is None:
-        sql = 'select url from players where first_name is null and rownum <= :chunk_size'
+        sql = 'select url from players where (first_name is null or citizenship is null) and rownum <= :chunk_size'
         players = cur.execute(sql, {'chunk_size': CHUNK_SIZE}).fetchall()
     else:
         sql = '''select url
