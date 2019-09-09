@@ -50,13 +50,19 @@ order by code''',
        country_code
 from tournaments
 order by start_dtm, code''',
-    'matches': '''select m.id, 
+    'matches': '''select id, 
        tournament_id, 
        stadie_id, 
        match_order, 
        match_ret, 
        winner_code, 
+       winner_first_name || ' ' || winner_last_name as winner_name,
+       winner_citizenship,
+       winner_age,
        loser_code, 
+       loser_first_name || ' ' || loser_last_name as loser_name,
+       loser_citizenship,
+       loser_age,
        winner_seed, 
        loser_seed, 
        match_score, 
@@ -124,10 +130,8 @@ order by start_dtm, code''',
        los_forced_errors, 
        los_unforced_errors, 
        los_net_points_won
-from matches m, tournaments t, stadies s
-where m.tournament_id = t.id
-  and m.stadie_id = s.id
-order by t.start_dtm, t.code, s.ord, m.id'''
+from vw_matches v
+order by tournament_start_dtm, tournament_code, stadie_ord, id'''
          }
 
 con = cx_Oracle.connect(CONNECTION_STRING, encoding="UTF-8")
