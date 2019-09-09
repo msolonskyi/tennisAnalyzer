@@ -29,6 +29,8 @@ def parse_tournaments(year: str, tournament_type: str) -> Array:
         tourney_location = tourney_location_array[i].strip()
         if 'Slovak Republic' in tourney_location: # Slovak Republic
             tourney_location = tourney_location.replace('Slovak Republic', 'Slovakia')
+        elif 'Bosnia-Herzegovina' in tourney_location: # Bosnia and Herzegovina
+            tourney_location = tourney_location.replace('Bosnia-Herzegovina', 'Bosnia and Herzegovina')
         tourney_dates    = tourney_dates_array[i].strip()
         try:
             tourney_dates_split = tourney_dates.strip().split('.')
