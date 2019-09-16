@@ -1,0 +1,1 @@
+sqlldr control=matches.ctrl, log=matches.log, bad=matches.bad, data=matches.csv userid=/@, errors=999, discard=matches.dsc, discardmax=5, skip=1
