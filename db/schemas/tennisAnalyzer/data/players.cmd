@@ -1,1 +1,1 @@
-sqlldr control=players.ctrl, log=players.log, bad=players.bad, data=players.csv userid=tennisAnalyzer/@, errors=999, discard=players.dsc, discardmax=5
+sqlldr control=players.ctrl, log=players.log, bad=players.bad, data=players.csv userid=/@, errors=999, discard=players.dsc, discardmax=5, skip=1

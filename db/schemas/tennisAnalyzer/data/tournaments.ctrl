@@ -1,36 +1,29 @@
 LOAD DATA
 CHARACTERSET UTF8
 APPEND
-INTO TABLE stg_tournaments
+INTO TABLE tournaments
 FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
 TRAILING NULLCOLS
 (
-tourney_year, 
-tourney_order, 
-tourney_name, 
-tourney_id, 
-tourney_slug, 
-tourney_location, 
-tourney_dates, 
-tourney_month, 
-tourney_day, 
-tourney_singles_draw, 
-tourney_doubles_draw, 
-tourney_conditions, 
-tourney_surface, 
-tourney_fin_commit, 
-tourney_url_suffix, 
-singles_winner_name, 
-singles_winner_url, 
-singles_winner_player_slug, 
-singles_winner_player_id, 
-doubles_winner_1_name, 
-doubles_winner_1_url, 
-doubles_winner_1_player_slug, 
-doubles_winner_1_player_id, 
-doubles_winner_2_name, 
-doubles_winner_2_url, 
-doubles_winner_2_player_slug, 
-doubles_winner_2_player_id, 
-tourney_year_id
+id,
+delta_hash CONSTANT 1, 
+batch_id CONSTANT 0, 
+name,
+year,
+code,
+url,
+slug,
+city,
+sgl_draw_url,
+sgl_pdf_url,
+type,
+surface,
+series_id,
+start_dtm DATE 'yyyymmdd',
+finish_dtm DATE 'yyyymmdd',
+sgl_draw_qty,
+dbl_draw_qty,
+prize_money,
+prize_currency,
+country_code char "replace(replace(:country_code, chr(13), ''), chr(10), '')"
 )

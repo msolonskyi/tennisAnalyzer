@@ -1,7 +1,7 @@
 LOAD DATA
 CHARACTERSET UTF8
 APPEND
-INTO TABLE matches_ll
+INTO TABLE matches
 FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
 TRAILING NULLCOLS
 (
@@ -86,5 +86,5 @@ los_total_points_total,
 los_winners,
 los_forced_errors,
 los_unforced_errors,
-los_net_points_won
+los_net_points_won char "replace(replace(:los_net_points_won, chr(13), ''), chr(10), '')"
 )

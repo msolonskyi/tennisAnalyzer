@@ -1,1 +1,1 @@
-sqlldr control=tournaments.ctrl, log=tournaments.log, bad=tournaments.bad, data=tournaments.csv userid=tennisAnalyzer/@, errors=999, discard=tournaments.dsc, discardmax=5
+sqlldr control=tournaments.ctrl, log=tournaments.log, bad=tournaments.bad, data=tournaments.csv userid=/@, errors=999, discard=tournaments.dsc, discardmax=5, skip=1

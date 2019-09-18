@@ -1,28 +1,26 @@
 LOAD DATA
 CHARACTERSET UTF8
 APPEND
-INTO TABLE stg_players
+INTO TABLE players
 FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
 TRAILING NULLCOLS
 (
-player_id,
-player_slug,
+code,
+delta_hash CONSTANT 1, 
+batch_id CONSTANT 0, 
+url,
 first_name,
 last_name,
-player_url,
-flag_code,
-residence,
+slug,
+birth_date DATE 'yyyymmdd',
 birthplace,
-birthdate,
-birth_year,
-birth_month,
-birth_day,
 turned_pro,
-weight_lbs,
-weight_kg,
-height_ft,
-height_inches,
-height_cm,
+weight,
+height,
+residence,
 handedness,
-backhand
+backhand,
+citizenship,
+code_dc,
+url_dc char "replace(replace(:url_dc, chr(13), ''), chr(10), '')"
 )
