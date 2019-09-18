@@ -15,8 +15,6 @@
     <column name="height_cm"      type="number"/>
     <column name="handedness"     type="varchar2(15)"/>
     <column name="backhand"       type="varchar2(20)"/>
-    <column name="player_code_dc" type="varchar2(10)"/>
-    <column name="player_url_dc"  type="varchar2(200)"/>
     <column name="batch_id"       type="number(12)"/>
   </columns>
 </table>

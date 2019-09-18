@@ -1,14 +1,30 @@
-create or replace procedure sp_process_players
+create or replace procedure sp_process_atp_players
 is
-  cv_module_name constant varchar2(200) := 'process players';
+  cv_module_name constant varchar2(200) := 'process atp players';
   vn_qty         number;
 begin
   pkg_log.sp_start_batch(pv_module => cv_module_name);
   --
   merge into players d
   using(select first_name, last_name, player_url as url, player_slug as slug, player_code as code, to_date(birthdate, 'yyyy.mm.dd') as birth_date, birthplace,
-               turned_pro, weight_kg as weight, height_cm as height, residence, handedness, backhand, flag_code as citizenship, player_code_dc as code_dc, player_url_dc as url_dc,
-               ora_hash(player_code || '|' || player_url || '|' || first_name || '|' || last_name || '|' || player_slug || '|' || to_date(birthdate, 'yyyy.mm.dd') || '|' || birthplace || '|' || turned_pro || '|' || weight_kg || '|' || height_cm || '|' || residence || '|' || handedness || '|' || backhand || '|' || flag_code || '|' || player_code_dc || '|' || player_url_dc) as delta_hash
+               turned_pro, weight_kg as weight, height_cm as height, residence, handedness, backhand, flag_code as citizenship, null as code_dc, null as url_dc,
+               sf_players_delta_hash(
+                 pn_code =>        player_code,
+                 pn_url =>         player_url,
+                 pn_first_name =>  first_name,
+                 pn_last_name =>   last_name,
+                 pn_slug =>        player_slug,
+                 pn_birth_date =>  to_date(birthdate, 'yyyy.mm.dd'),
+                 pn_birthplace =>  birthplace,
+                 pn_turned_pro =>  turned_pro,
+                 pn_weight =>      weight_kg,
+                 pn_height =>      height_cm,
+                 pn_residence =>   residence,
+                 pn_handedness =>  handedness,
+                 pn_backhand =>    backhand,
+                 pn_citizenship => flag_code,
+                 pn_code_dc =>     null,
+                 pn_url_dc =>      null) as delta_hash
         from stg_players sp) s
   on (s.code = d.code)
   when not matched then
@@ -46,5 +62,5 @@ exception
     pkg_log.sp_log_message(pv_text => 'errors stack', pv_clob => dbms_utility.format_error_stack || pkg_utils.CRLF || dbms_utility.format_error_backtrace, pv_type => 'E');
     pkg_log.sp_finish_batch_with_errors;
     raise;
-end sp_process_players;
+end sp_process_atp_players;
 /

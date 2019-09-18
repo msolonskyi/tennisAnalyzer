@@ -72,65 +72,147 @@ begin
                 nvl(s.los_forced_errors,             m.los_forced_errors)             as los_forced_errors,
                 nvl(s.los_unforced_errors,           m.los_unforced_errors)           as los_unforced_errors,
                 nvl(s.los_net_points_won,            m.los_net_points_won)            as los_net_points_won,
-                ora_hash (m.id || '|' || m.tournament_id || '|' || m.stadie_id || '|' || m.match_order || '|' || m.match_ret || '|' || m.winner_code || '|' || m.loser_code || '|' || m.winner_seed || '|' || m.loser_seed || '|' || m.match_score || '|' || m.winner_sets_won || '|' || m.loser_sets_won || '|' || m.winner_games_won || '|' || m.loser_games_won || '|' || m.winner_tiebreaks_won || '|' || m.loser_tiebreaks_won || '|' || m.stats_url || '|' ||
-                          nvl(s.match_duration,                m.match_duration) || '|' ||
-                          nvl(s.win_aces,                      m.win_aces) || '|' ||
-                          nvl(s.win_double_faults,             m.win_double_faults) || '|' ||
-                          nvl(s.win_first_serves_in,           m.win_first_serves_in) || '|' ||
-                          nvl(s.win_first_serves_total,        m.win_first_serves_total) || '|' ||
-                          nvl(s.win_first_serve_points_won,    m.win_first_serve_points_won) || '|' ||
-                          nvl(s.win_first_serve_points_total,  m.win_first_serve_points_total) || '|' ||
-                          nvl(s.win_second_serve_points_won,   m.win_second_serve_points_won) || '|' ||
-                          nvl(s.win_second_serve_points_total, m.win_second_serve_points_total) || '|' ||
-                          nvl(s.win_break_points_saved,        m.win_break_points_saved) || '|' ||
-                          nvl(s.win_break_points_serve_total,  m.win_break_points_serve_total) || '|' ||
-                          nvl(s.win_service_points_won,        m.win_service_points_won) || '|' ||
-                          nvl(s.win_service_points_total,      m.win_service_points_total) || '|' ||
-                          nvl(s.win_first_serve_return_won,    m.win_first_serve_return_won) || '|' ||
-                          nvl(s.win_first_serve_return_total,  m.win_first_serve_return_total) || '|' ||
-                          nvl(s.win_second_serve_return_won,   m.win_second_serve_return_won) || '|' ||
-                          nvl(s.win_second_serve_return_total, m.win_second_serve_return_total) || '|' ||
-                          nvl(s.win_break_points_converted,    m.win_break_points_converted) || '|' ||
-                          nvl(s.win_break_points_return_total, m.win_break_points_return_total) || '|' ||
-                          nvl(s.win_service_games_played,      m.win_service_games_played) || '|' ||
-                          nvl(s.win_return_games_played,       m.win_return_games_played) || '|' ||
-                          nvl(s.win_return_points_won,         m.win_return_points_won) || '|' ||
-                          nvl(s.win_return_points_total,       m.win_return_points_total) || '|' ||
-                          nvl(s.win_total_points_won,          m.win_total_points_won) || '|' ||
-                          nvl(s.win_total_points_total,        m.win_total_points_total) || '|' ||
-                          nvl(s.win_winners,                   m.win_winners) || '|' ||
-                          nvl(s.win_forced_errors,             m.win_forced_errors) || '|' ||
-                          nvl(s.win_unforced_errors,           m.win_unforced_errors) || '|' ||
-                          nvl(s.win_net_points_won,            m.win_net_points_won) || '|' ||
-                          nvl(s.los_aces,                      m.los_aces) || '|' ||
-                          nvl(s.los_double_faults,             m.los_double_faults) || '|' ||
-                          nvl(s.los_first_serves_in,           m.los_first_serves_in) || '|' ||
-                          nvl(s.los_first_serves_total,        m.los_first_serves_total) || '|' ||
-                          nvl(s.los_first_serve_points_won,    m.los_first_serve_points_won) || '|' ||
-                          nvl(s.los_first_serve_points_total,  m.los_first_serve_points_total) || '|' ||
-                          nvl(s.los_second_serve_points_won,   m.los_second_serve_points_won) || '|' ||
-                          nvl(s.los_second_serve_points_total, m.los_second_serve_points_total) || '|' ||
-                          nvl(s.los_break_points_saved,        m.los_break_points_saved) || '|' ||
-                          nvl(s.los_break_points_serve_total,  m.los_break_points_serve_total) || '|' ||
-                          nvl(s.los_service_points_won,        m.los_service_points_won) || '|' ||
-                          nvl(s.los_service_points_total,      m.los_service_points_total) || '|' ||
-                          nvl(s.los_first_serve_return_won,    m.los_first_serve_return_won) || '|' ||
-                          nvl(s.los_first_serve_return_total,  m.los_first_serve_return_total) || '|' ||
-                          nvl(s.los_second_serve_return_won,   m.los_second_serve_return_won) || '|' ||
-                          nvl(s.los_second_serve_return_total, m.los_second_serve_return_total) || '|' ||
-                          nvl(s.los_break_points_converted,    m.los_break_points_converted) || '|' ||
-                          nvl(s.los_break_points_return_total, m.los_break_points_return_total) || '|' ||
-                          nvl(s.los_service_games_played,      m.los_service_games_played) || '|' ||
-                          nvl(s.los_return_games_played,       m.los_return_games_played) || '|' ||
-                          nvl(s.los_return_points_won,         m.los_return_points_won) || '|' ||
-                          nvl(s.los_return_points_total,       m.los_return_points_total) || '|' ||
-                          nvl(s.los_total_points_won,          m.los_total_points_won) || '|' ||
-                          nvl(s.los_total_points_total,        m.los_total_points_total) || '|' ||
-                          nvl(s.los_winners,                   m.los_winners) || '|' ||
-                          nvl(s.los_forced_errors,             m.los_forced_errors) || '|' ||
-                          nvl(s.los_unforced_errors,           m.los_unforced_errors) || '|' ||
-                          nvl(s.los_net_points_won,            m.los_net_points_won) || '|' ||
-                          m.win_h2h_qty_3y || '|' || m.los_h2h_qty_3y || '|' || m.win_win_qty_3y || '|' || m.win_los_qty_3y || '|' || m.los_win_qty_3y || '|' || m.los_los_qty_3y || '|' || m.win_avg_tiebreaks_3y || '|' || m.los_avg_tiebreaks_3y || '|' || m.win_h2h_qty_3y_current || '|' || m.los_h2h_qty_3y_current || '|' || m.win_win_qty_3y_current || '|' || m.win_los_qty_3y_current || '|' || m.los_win_qty_3y_current || '|' || m.los_los_qty_3y_current || '|' || m.win_avg_tiebreaks_3y_current || '|' || m.los_avg_tiebreaks_3y_current || '|' || m.win_ace_pct_3y || '|' || m.win_df_pct_3y || '|' || m.win_1st_pct_3y || '|' || m.win_1st_won_pct_3y || '|' || m.win_2nd_won_pct_3y || '|' || m.win_bp_saved_pct_3y || '|' || m.win_srv_won_pct_3y || '|' || m.win_1st_return_won_pct_3y || '|' || m.win_2nd_return_won_pct_3y || '|' || m.win_bp_won_pct_3y || '|' || m.win_return_won_pct_3y || '|' || m.win_total_won_pct_3y || '|' || m.win_ace_pct_3y_current || '|' || m.win_df_pct_3y_current || '|' || m.win_1st_pct_3y_current || '|' || m.win_1st_won_pct_3y_current || '|' || m.win_2nd_won_pct_3y_current || '|' || m.win_bp_saved_pct_3y_current || '|' || m.win_srv_won_pct_3y_current || '|' || m.win_1st_return_won_pct_3y_cur || '|' || m.win_2nd_return_won_pct_3y_cur || '|' || m.win_bp_won_pct_3y_current || '|' || m.win_return_won_pct_3y_current || '|' || m.win_total_won_pct_3y_current || '|' || m.los_ace_pct_3y || '|' || m.los_df_pct_3y || '|' || m.los_1st_pct_3y || '|' || m.los_1st_won_pct_3y || '|' || m.los_2nd_won_pct_3y || '|' || m.los_bp_saved_pct_3y || '|' || m.los_srv_won_pct_3y || '|' || m.los_1st_return_won_pct_3y || '|' || m.los_2nd_return_won_pct_3y || '|' || m.los_bp_won_pct_3y || '|' || m.los_return_won_pct_3y || '|' || m.los_total_won_pct_3y || '|' || m.los_ace_pct_3y_current || '|' || m.los_df_pct_3y_current || '|' || m.los_1st_pct_3y_current || '|' || m.los_1st_won_pct_3y_current || '|' || m.los_2nd_won_pct_3y_current || '|' || m.los_bp_saved_pct_3y_current || '|' || m.los_srv_won_pct_3y_current || '|' || m.los_1st_return_won_pct_3y_cur || '|' || m.los_2nd_return_won_pct_3y_cur || '|' || m.los_bp_won_pct_3y_current || '|' || m.los_return_won_pct_3y_current || '|' || m.los_total_won_pct_3y_current || '|' || m.loser_age || '|' || m.winner_age) as delta_hash
+                sf_matches_delta_hash(
+                  pn_id                         => m.id,
+                  pn_tournament_id              => m.tournament_id,
+                  pn_stadie_id                  => m.stadie_id,
+                  pn_match_order                => m.match_order,
+                  pn_match_ret                  => m.match_ret,
+                  pn_winner_code                => m.winner_code,
+                  pn_loser_code                 => m.loser_code,
+                  pn_winner_seed                => m.winner_seed,
+                  pn_loser_seed                 => m.loser_seed,
+                  pn_match_score                => m.match_score,
+                  pn_winner_sets_won            => m.winner_sets_won,
+                  pn_loser_sets_won             => m.loser_sets_won,
+                  pn_winner_games_won           => m.winner_games_won,
+                  pn_loser_games_won            => m.loser_games_won,
+                  pn_winner_tiebreaks_won       => m.winner_tiebreaks_won,
+                  pn_loser_tiebreaks_won        => m.loser_tiebreaks_won,
+                  pn_stats_url                  => m.stats_url,
+                  pn_match_duration             => nvl(s.match_duration,                m.match_duration),
+                  pn_win_aces                   => nvl(s.win_aces,                      m.win_aces),
+                  pn_win_double_faults          => nvl(s.win_double_faults,             m.win_double_faults),
+                  pn_win_first_serves_in        => nvl(s.win_first_serves_in,           m.win_first_serves_in),
+                  pn_win_first_serves_total     => nvl(s.win_first_serves_total,        m.win_first_serves_total),
+                  pn_win_first_serve_points_won => nvl(s.win_first_serve_points_won,    m.win_first_serve_points_won),
+                  pn_win_first_serve_points_tot => nvl(s.win_first_serve_points_total,  m.win_first_serve_points_total),
+                  pn_win_second_serve_points_wo => nvl(s.win_second_serve_points_won,   m.win_second_serve_points_won),
+                  pn_win_second_serve_points_to => nvl(s.win_second_serve_points_total, m.win_second_serve_points_total),
+                  pn_win_break_points_saved     => nvl(s.win_break_points_saved,        m.win_break_points_saved),
+                  pn_win_break_points_serve_tot => nvl(s.win_break_points_serve_total,  m.win_break_points_serve_total),
+                  pn_win_service_points_won     => nvl(s.win_service_points_won,        m.win_service_points_won),
+                  pn_win_service_points_total   => nvl(s.win_service_points_total,      m.win_service_points_total),
+                  pn_win_first_serve_return_won => nvl(s.win_first_serve_return_won,    m.win_first_serve_return_won),
+                  pn_win_first_serve_return_tot => nvl(s.win_first_serve_return_total,  m.win_first_serve_return_total),
+                  pn_win_second_serve_return_wo => nvl(s.win_second_serve_return_won,   m.win_second_serve_return_won),
+                  pn_win_second_serve_return_to => nvl(s.win_second_serve_return_total, m.win_second_serve_return_total),
+                  pn_win_break_points_converted => nvl(s.win_break_points_converted,    m.win_break_points_converted),
+                  pn_win_break_points_return_to => nvl(s.win_break_points_return_total, m.win_break_points_return_total),
+                  pn_win_service_games_played   => nvl(s.win_service_games_played,      m.win_service_games_played),
+                  pn_win_return_games_played    => nvl(s.win_return_games_played,       m.win_return_games_played),
+                  pn_win_return_points_won      => nvl(s.win_return_points_won,         m.win_return_points_won),
+                  pn_win_return_points_total    => nvl(s.win_return_points_total,       m.win_return_points_total),
+                  pn_win_total_points_won       => nvl(s.win_total_points_won,          m.win_total_points_won),
+                  pn_win_total_points_total     => nvl(s.win_total_points_total,        m.win_total_points_total),
+                  pn_win_winners                => nvl(s.win_winners,                   m.win_winners),
+                  pn_win_forced_errors          => nvl(s.win_forced_errors,             m.win_forced_errors),
+                  pn_win_unforced_errors        => nvl(s.win_unforced_errors,           m.win_unforced_errors),
+                  pn_win_net_points_won         => nvl(s.win_net_points_won,            m.win_net_points_won),
+                  pn_los_aces                   => nvl(s.los_aces,                      m.los_aces),
+                  pn_los_double_faults          => nvl(s.los_double_faults,             m.los_double_faults),
+                  pn_los_first_serves_in        => nvl(s.los_first_serves_in,           m.los_first_serves_in),
+                  pn_los_first_serves_total     => nvl(s.los_first_serves_total,        m.los_first_serves_total),
+                  pn_los_first_serve_points_won => nvl(s.los_first_serve_points_won,    m.los_first_serve_points_won),
+                  pn_los_first_serve_points_tot => nvl(s.los_first_serve_points_total,  m.los_first_serve_points_total),
+                  pn_los_second_serve_points_wo => nvl(s.los_second_serve_points_won,   m.los_second_serve_points_won),
+                  pn_los_second_serve_points_to => nvl(s.los_second_serve_points_total, m.los_second_serve_points_total),
+                  pn_los_break_points_saved     => nvl(s.los_break_points_saved,        m.los_break_points_saved),
+                  pn_los_break_points_serve_tot => nvl(s.los_break_points_serve_total,  m.los_break_points_serve_total),
+                  pn_los_service_points_won     => nvl(s.los_service_points_won,        m.los_service_points_won),
+                  pn_los_service_points_total   => nvl(s.los_service_points_total,      m.los_service_points_total),
+                  pn_los_first_serve_return_won => nvl(s.los_first_serve_return_won,    m.los_first_serve_return_won),
+                  pn_los_first_serve_return_tot => nvl(s.los_first_serve_return_total,  m.los_first_serve_return_total),
+                  pn_los_second_serve_return_wo => nvl(s.los_second_serve_return_won,   m.los_second_serve_return_won),
+                  pn_los_second_serve_return_to => nvl(s.los_second_serve_return_total, m.los_second_serve_return_total),
+                  pn_los_break_points_converted => nvl(s.los_break_points_converted,    m.los_break_points_converted),
+                  pn_los_break_points_return_to => nvl(s.los_break_points_return_total, m.los_break_points_return_total),
+                  pn_los_service_games_played   => nvl(s.los_service_games_played,      m.los_service_games_played),
+                  pn_los_return_games_played    => nvl(s.los_return_games_played,       m.los_return_games_played),
+                  pn_los_return_points_won      => nvl(s.los_return_points_won,         m.los_return_points_won),
+                  pn_los_return_points_total    => nvl(s.los_return_points_total,       m.los_return_points_total),
+                  pn_los_total_points_won       => nvl(s.los_total_points_won,          m.los_total_points_won),
+                  pn_los_total_points_total     => nvl(s.los_total_points_total,        m.los_total_points_total),
+                  pn_los_winners                => nvl(s.los_winners,                   m.los_winners),
+                  pn_los_forced_errors          => nvl(s.los_forced_errors,             m.los_forced_errors),
+                  pn_los_unforced_errors        => nvl(s.los_unforced_errors,           m.los_unforced_errors),
+                  pn_los_net_points_won         => nvl(s.los_net_points_won,            m.los_net_points_won),
+                  pn_win_h2h_qty_3y             => m.win_h2h_qty_3y,
+                  pn_los_h2h_qty_3y             => m.los_h2h_qty_3y,
+                  pn_win_win_qty_3y             => m.win_win_qty_3y,
+                  pn_win_los_qty_3y             => m.win_los_qty_3y,
+                  pn_los_win_qty_3y             => m.los_win_qty_3y,
+                  pn_los_los_qty_3y             => m.los_los_qty_3y,
+                  pn_win_avg_tiebreaks_3y       => m.win_avg_tiebreaks_3y,
+                  pn_los_avg_tiebreaks_3y       => m.los_avg_tiebreaks_3y,
+                  pn_win_h2h_qty_3y_current     => m.win_h2h_qty_3y_current,
+                  pn_los_h2h_qty_3y_current     => m.los_h2h_qty_3y_current,
+                  pn_win_win_qty_3y_current     => m.win_win_qty_3y_current,
+                  pn_win_los_qty_3y_current     => m.win_los_qty_3y_current,
+                  pn_los_win_qty_3y_current     => m.los_win_qty_3y_current,
+                  pn_los_los_qty_3y_current     => m.los_los_qty_3y_current,
+                  pn_win_avg_tiebreaks_3y_curre => m.win_avg_tiebreaks_3y_current,
+                  pn_los_avg_tiebreaks_3y_curre => m.los_avg_tiebreaks_3y_current,
+                  pn_win_ace_pct_3y             => m.win_ace_pct_3y,
+                  pn_win_df_pct_3y              => m.win_df_pct_3y,
+                  pn_win_1st_pct_3y             => m.win_1st_pct_3y,
+                  pn_win_1st_won_pct_3y         => m.win_1st_won_pct_3y,
+                  pn_win_2nd_won_pct_3y         => m.win_2nd_won_pct_3y,
+                  pn_win_bp_saved_pct_3y        => m.win_bp_saved_pct_3y,
+                  pn_win_srv_won_pct_3y         => m.win_srv_won_pct_3y,
+                  pn_win_1st_return_won_pct_3y  => m.win_1st_return_won_pct_3y,
+                  pn_win_2nd_return_won_pct_3y  => m.win_2nd_return_won_pct_3y,
+                  pn_win_bp_won_pct_3y          => m.win_bp_won_pct_3y,
+                  pn_win_return_won_pct_3y      => m.win_return_won_pct_3y,
+                  pn_win_total_won_pct_3y       => m.win_total_won_pct_3y,
+                  pn_win_ace_pct_3y_current     => m.win_ace_pct_3y_current,
+                  pn_win_df_pct_3y_current      => m.win_df_pct_3y_current,
+                  pn_win_1st_pct_3y_current     => m.win_1st_pct_3y_current,
+                  pn_win_1st_won_pct_3y_current => m.win_1st_won_pct_3y_current,
+                  pn_win_2nd_won_pct_3y_current => m.win_2nd_won_pct_3y_current,
+                  pn_win_bp_saved_pct_3y_curren => m.win_bp_saved_pct_3y_current,
+                  pn_win_srv_won_pct_3y_current => m.win_srv_won_pct_3y_current,
+                  pn_win_1st_return_won_pct_3y_ => m.win_1st_return_won_pct_3y_cur,
+                  pn_win_2nd_return_won_pct_3y_ => m.win_2nd_return_won_pct_3y_cur,
+                  pn_win_bp_won_pct_3y_current  => m.win_bp_won_pct_3y_current,
+                  pn_win_return_won_pct_3y_curr => m.win_return_won_pct_3y_current,
+                  pn_win_total_won_pct_3y_curre => m.win_total_won_pct_3y_current,
+                  pn_los_ace_pct_3y             => m.los_ace_pct_3y,
+                  pn_los_df_pct_3y              => m.los_df_pct_3y,
+                  pn_los_1st_pct_3y             => m.los_1st_pct_3y,
+                  pn_los_1st_won_pct_3y         => m.los_1st_won_pct_3y,
+                  pn_los_2nd_won_pct_3y         => m.los_2nd_won_pct_3y,
+                  pn_los_bp_saved_pct_3y        => m.los_bp_saved_pct_3y,
+                  pn_los_srv_won_pct_3y         => m.los_srv_won_pct_3y,
+                  pn_los_1st_return_won_pct_3y  => m.los_1st_return_won_pct_3y,
+                  pn_los_2nd_return_won_pct_3y  => m.los_2nd_return_won_pct_3y,
+                  pn_los_bp_won_pct_3y          => m.los_bp_won_pct_3y,
+                  pn_los_return_won_pct_3y      => m.los_return_won_pct_3y,
+                  pn_los_total_won_pct_3y       => m.los_total_won_pct_3y,
+                  pn_los_ace_pct_3y_current     => m.los_ace_pct_3y_current,
+                  pn_los_df_pct_3y_current      => m.los_df_pct_3y_current,
+                  pn_los_1st_pct_3y_current     => m.los_1st_pct_3y_current,
+                  pn_los_1st_won_pct_3y_current => m.los_1st_won_pct_3y_current,
+                  pn_los_2nd_won_pct_3y_current => m.los_2nd_won_pct_3y_current,
+                  pn_los_bp_saved_pct_3y_curren => m.los_bp_saved_pct_3y_current,
+                  pn_los_srv_won_pct_3y_current => m.los_srv_won_pct_3y_current,
+                  pn_los_1st_return_won_pct_3y_ => m.los_1st_return_won_pct_3y_cur,
+                  pn_los_2nd_return_won_pct_3y_ => m.los_2nd_return_won_pct_3y_cur,
+                  pn_los_bp_won_pct_3y_current  => m.los_bp_won_pct_3y_current,
+                  pn_los_return_won_pct_3y_curr => m.los_return_won_pct_3y_current,
+                  pn_los_total_won_pct_3y_curre => m.los_total_won_pct_3y_current,
+                  pn_loser_age                  => m.loser_age,
+                  pn_winner_age                 => m.winner_age) as delta_hash
         from stg_match_stats s, matches m
         where s.match_duration || s.win_aces || s.win_double_faults || s.win_first_serves_in || s.win_first_serves_total || s.win_first_serve_points_won || s.win_first_serve_points_total || s.win_second_serve_points_won || s.win_second_serve_points_total || s.win_break_points_saved || s.win_break_points_serve_total || s.win_service_points_won || s.win_service_points_total || s.win_first_serve_return_won || s.win_first_serve_return_total || s.win_second_serve_return_won || s.win_second_serve_return_total || s.win_break_points_converted || s.win_break_points_return_total || s.win_service_games_played || s.win_return_games_played || s.win_return_points_won || s.win_return_points_total || s.win_total_points_won || s.win_total_points_total || s.los_aces || s.los_double_faults || s.los_first_serves_in || s.los_first_serves_total || s.los_first_serve_points_won || s.los_first_serve_points_total || s.los_second_serve_points_won || s.los_second_serve_points_total || s.los_break_points_saved || s.los_break_points_serve_total || s.los_service_points_won || s.los_service_points_total || s.los_first_serve_return_won || s.los_first_serve_return_total || s.los_second_serve_return_won || s.los_second_serve_return_total || s.los_break_points_converted || s.los_break_points_return_total || s.los_service_games_played || s.los_return_games_played || s.los_return_points_won || s.los_return_points_total || s.los_total_points_won || s.los_total_points_total is not null
           and s.match_stats_url = m.stats_url) s

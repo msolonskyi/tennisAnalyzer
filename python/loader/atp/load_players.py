@@ -143,7 +143,7 @@ from (select d.url, count(*) qry
     #
     # run data processing
     logzero.logger.info('start data processing')
-    cur.callproc('sp_process_players')
+    cur.callproc('sp_process_atp_players')
 
     # store in CSV
 #    csv_file = open('player_overviews.csv', 'w', encoding='utf-8')
