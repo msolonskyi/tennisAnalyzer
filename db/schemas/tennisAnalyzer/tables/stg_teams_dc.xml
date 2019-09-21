@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+  <table name="stg_teams_dc" type="normal">
+  <columns>
+    <column name="country_code" type="varchar2(3)"/>
+    <column name="name"         type="varchar2(64)"/>
+    <column name="url"          type="varchar2(256)"/>
+    <column name="batch_id"     type="number(12)"/>
+  </columns>
+</table>

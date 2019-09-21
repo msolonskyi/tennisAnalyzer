@@ -1,3 +1,6 @@
+set feedback off
+set define off
+prompt Loading COUNTRIES...
 insert into COUNTRIES (code, name)
 values ('AFG', 'Afghanistan');
 insert into COUNTRIES (code, name)
@@ -85,6 +88,8 @@ values ('CAN', 'Canada');
 insert into COUNTRIES (code, name)
 values ('CPV', 'Cape Verde');
 insert into COUNTRIES (code, name)
+values ('CAR', 'Caribbean/West Indies');
+insert into COUNTRIES (code, name)
 values ('CAY', 'Cayman Islands');
 insert into COUNTRIES (code, name)
 values ('CAF', 'Central African Republic');
@@ -135,6 +140,8 @@ values ('GDR', 'East Germany');
 insert into COUNTRIES (code, name)
 values ('TLS', 'East Timor');
 insert into COUNTRIES (code, name)
+values ('ECA', 'Eastern Caribbean');
+insert into COUNTRIES (code, name)
 values ('ECU', 'Ecuador');
 insert into COUNTRIES (code, name)
 values ('EGY', 'Egypt');
@@ -173,6 +180,8 @@ values ('GRE', 'Greece');
 insert into COUNTRIES (code, name)
 values ('GRN', 'Grenada');
 insert into COUNTRIES (code, name)
+values ('GUD', 'Guadeloupe');
+insert into COUNTRIES (code, name)
 values ('GUM', 'Guam');
 insert into COUNTRIES (code, name)
 values ('GUA', 'Guatemala');
@@ -192,14 +201,14 @@ insert into COUNTRIES (code, name)
 values ('ISL', 'Iceland');
 insert into COUNTRIES (code, name)
 values ('IOA', 'Independent Olympic Athletes');
+commit;
+prompt 100 records committed...
 insert into COUNTRIES (code, name)
 values ('IOP', 'Independent Olympic Participants');
 insert into COUNTRIES (code, name)
 values ('IPP', 'Independent Paralympic Participants');
 insert into COUNTRIES (code, name)
 values ('IND', 'India');
-commit;
-prompt 100 records committed...
 insert into COUNTRIES (code, name)
 values ('IPA', 'Individual Paralympic Athletes');
 insert into COUNTRIES (code, name)
@@ -311,6 +320,8 @@ values ('AHO', 'Netherlands Antilles');
 insert into COUNTRIES (code, name)
 values ('NPA', 'Neutral Paralympic Athletes');
 insert into COUNTRIES (code, name)
+values ('CAL', 'New Caledonia');
+insert into COUNTRIES (code, name)
 values ('NZL', 'New Zealand');
 insert into COUNTRIES (code, name)
 values ('NCA', 'Nicaragua');
@@ -327,6 +338,8 @@ values ('MKD', 'North Macedonia');
 insert into COUNTRIES (code, name)
 values ('YAR', 'North Yemen');
 insert into COUNTRIES (code, name)
+values ('NMI', 'Northern Mariana Islands');
+insert into COUNTRIES (code, name)
 values ('NRH', 'Northern Rhodesia');
 insert into COUNTRIES (code, name)
 values ('NOR', 'Norway');
@@ -334,6 +347,8 @@ insert into COUNTRIES (code, name)
 values ('OAR', 'Olympic Athletes from Russia');
 insert into COUNTRIES (code, name)
 values ('OMA', 'Oman');
+insert into COUNTRIES (code, name)
+values ('POC', 'Pacific Oceania');
 insert into COUNTRIES (code, name)
 values ('PAK', 'Pakistan');
 insert into COUNTRIES (code, name)
@@ -388,6 +403,8 @@ insert into COUNTRIES (code, name)
 values ('SMR', 'San Marino');
 insert into COUNTRIES (code, name)
 values ('KSA', 'Saudi Arabia');
+commit;
+prompt 200 records committed...
 insert into COUNTRIES (code, name)
 values ('SEN', 'Senegal');
 insert into COUNTRIES (code, name)
@@ -400,8 +417,6 @@ insert into COUNTRIES (code, name)
 values ('SLE', 'Sierra Leone');
 insert into COUNTRIES (code, name)
 values ('SGP', 'Singapore');
-commit;
-prompt 200 records committed...
 insert into COUNTRIES (code, name)
 values ('SVK', 'Slovakia');
 insert into COUNTRIES (code, name)
@@ -500,10 +515,8 @@ insert into COUNTRIES (code, name)
 values ('ZAM', 'Zambia');
 insert into COUNTRIES (code, name)
 values ('ZIM', 'Zimbabwe');
-insert into COUNTRIES (code, name)
-values ('NMI', 'Northern Mariana Islands');
-insert into COUNTRIES (code, name)
-values ('CAL', 'New Caledonia');
-insert into COUNTRIES (code, name)
-values ('GUD', 'Guadeloupe');
 commit;
+prompt 255 records loaded
+set feedback on
+set define on
+prompt Done.

@@ -1,6 +1,6 @@
-create or replace procedure sp_process_tournaments
+create or replace procedure sp_process_atp_tournaments
 is
-  cv_module_name constant varchar2(200) := 'process tournaments';
+  cv_module_name constant varchar2(200) := 'process atp tournaments';
   vn_qty         number;
 begin
   pkg_log.sp_start_batch(pv_module => cv_module_name);
@@ -60,8 +60,8 @@ begin
                      initcap(t.tourney_conditions) as type,
                      initcap(t.tourney_surface) as surface,
                      se.id as series_id,
-                     to_date(tourney_dates, 'yyyy.mm.dd') as start_dtm,
-                     null as finish_dtm,
+                     to_date(tourney_begin_dtm, 'yyyy.mm.dd') as start_dtm,
+                     to_date(tourney_end_dtm, 'yyyy.mm.dd') as finish_dtm,
                      tourney_singles_draw as sgl_draw_qty,
                      tourney_doubles_draw as dbl_draw_qty,
                      to_number(replace(replace(replace(
@@ -138,5 +138,5 @@ exception
     pkg_log.sp_log_message(pv_text => 'errors stack', pv_clob => dbms_utility.format_error_stack || pkg_utils.CRLF || dbms_utility.format_error_backtrace, pv_type => 'E');
     pkg_log.sp_finish_batch_with_errors;
     raise;
-end sp_process_tournaments;
+end sp_process_atp_tournaments;
 /
