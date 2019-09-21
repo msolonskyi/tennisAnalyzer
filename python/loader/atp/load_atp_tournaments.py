@@ -75,7 +75,7 @@ def parse_tournaments(year: str, tournament_type: str) -> Array:
 
 # main
 # logging support
-logzero.logfile('load_tournaments.log', loglevel=logzero.logging.INFO)
+logzero.logfile('load_atp_tournaments.log', loglevel=logzero.logging.INFO)
 
 logzero.logger.info('')
 logzero.logger.info('==========')
@@ -97,7 +97,7 @@ try:
     for tpe in TOURNAMENT_TYPES:
         tourney_data = parse_tournaments(year, tpe)
         # insert
-        cur.executemany('insert into stg_tournaments(tourney_year, series, tourney_name, tourney_id, tourney_slug, tourney_location, tourney_dates, tourney_singles_draw, tourney_doubles_draw, tourney_conditions, tourney_surface, tourney_fin_commit, tourney_url, tourney_year_id) values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14)',
+        cur.executemany('insert into stg_tournaments(tourney_year, series, tourney_name, tourney_id, tourney_slug, tourney_location, tourney_begin_dtm, tourney_singles_draw, tourney_doubles_draw, tourney_conditions, tourney_surface, tourney_fin_commit, tourney_url, tourney_year_id) values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14)',
                         tourney_data)
         con.commit()
 
@@ -109,7 +109,7 @@ try:
 #        csv_file.close()
     # run data processing
     logzero.logger.info('start data processing')
-    cur.callproc('sp_process_tournaments')
+    cur.callproc('sp_process_atp_tournaments')
 
     logzero.logger.info('')
     logzero.logger.info('completed successfully')

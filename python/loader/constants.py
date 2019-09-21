@@ -5,6 +5,17 @@ URL_PREFIX = 'http://www.atpworldtour.com'
 TOURNAMENT_TYPES = ('gs', '1000', 'atp', 'ch')
 DURATION_IN_DAYS = 17
 CSV_PATH = ''
+SLEEP_DURATION = 10
+
+INDOOR_OUTDOOR_MAP = {
+    'I': 'Indoor',
+    'O': 'Outdoor'}
+
+SURFACE_MAP = {
+    'H': 'Hard',
+    'C': 'Clay',
+    'A': 'Carpet',
+    'G': 'Grass'}
 
 ROUND_NAMES_MAP = {
     'F': 'Finals',
