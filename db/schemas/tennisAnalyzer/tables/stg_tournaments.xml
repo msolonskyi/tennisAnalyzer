@@ -4,7 +4,7 @@
     <column name="tourney_year"         type="number"/>
     <column name="series"               type="varchar2(32)"/>
     <column name="tourney_name"         type="varchar2(120)"/>
-    <column name="tourney_id"           type="varchar2(32)"/>
+    <column name="tourney_id"           type="varchar2(48)"/>
     <column name="tourney_slug"         type="varchar2(30)"/>
     <column name="tourney_location"     type="varchar2(40)"/>
     <column name="tourney_begin_dtm"    type="varchar2(32)"/>

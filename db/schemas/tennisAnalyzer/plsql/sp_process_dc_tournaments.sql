@@ -45,7 +45,9 @@ begin
                   pn_prize_money    => 0,
                   pn_prize_currency => null,
                   pn_country_code   => country_code) as delta_hash
-        from stg_tournaments) s
+        from stg_tournaments
+        where tourney_conditions is not null
+          and tourney_surface is not null) s
   on (s.id = d.id)
   when not matched then
     insert (d.id, d.delta_hash, d.batch_id,          d.name, d.year, d.code, d.url, d.slug, d.city, d.sgl_draw_url, d.sgl_pdf_url, d.type, d.surface, d.series_id, d.start_dtm, d.finish_dtm, d.sgl_draw_qty, d.dbl_draw_qty, d.prize_money, d.prize_currency, d.country_code)
@@ -86,3 +88,4 @@ exception
     raise;
 end sp_process_dc_tournaments;
 /
+2
