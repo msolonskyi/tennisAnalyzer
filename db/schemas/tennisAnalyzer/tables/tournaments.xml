@@ -9,10 +9,10 @@
     <column name="code"              type="varchar2(48)"  nullable="n"/>
     <column name="url"               type="varchar2(256)" nullable="n"/>
     <column name="slug"              type="varchar2(128)"/>
-    <column name="city"              type="varchar2(128)" nullable="n"/>
+    <column name="location"          type="varchar2(128)" nullable="n"/>
     <column name="sgl_draw_url"      type="varchar2(256)"/>
     <column name="sgl_pdf_url"       type="varchar2(256)"/>
-    <column name="type"              type="varchar2(8)"   nullable="n"/>
+    <column name="indoor_outdoor"    type="varchar2(8)"   nullable="n"/>
     <column name="surface"           type="varchar2(8)"   nullable="n"/>
     <column name="series_id"         type="varchar2(8)"   nullable="n"/>
     <column name="start_dtm"         type="date"/>
@@ -24,11 +24,11 @@
     <column name="country_code"      type="varchar2(3)"   nullable="n"/>
   </columns>
   <constraints>
-    <constraint name="pk_tournaments"          type="primary key" columns_list="id"/>
-    <constraint name="unq_tourn$code$year"     type="unique" columns_list="code, year"/>
-    <constraint name="fk_tourn$series"         type="foreign key" columns_list="series_id"    foreign_table="series"    foreign_columns_list="id"/>
-    <constraint name="fk_tourn$country_code"   type="foreign key" columns_list="country_code" foreign_table="countries" foreign_columns_list="code"/>
-    <constraint name="chk_tournaments$type"    type="check" condition="type in ('Indoor', 'Outdoor')"/>
-    <constraint name="chk_tournaments$surface" type="check" condition="surface in ('Hard', 'Clay', 'Carpet', 'Grass')"/>
+    <constraint name="pk_tournaments"                 type="primary key" columns_list="id"/>
+    <constraint name="unq_tourn$code$year"            type="unique" columns_list="code, year"/>
+    <constraint name="fk_tourn$series"                type="foreign key" columns_list="series_id"    foreign_table="series"    foreign_columns_list="id"/>
+    <constraint name="fk_tourn$country_code"          type="foreign key" columns_list="country_code" foreign_table="countries" foreign_columns_list="code"/>
+    <constraint name="chk_tournaments$indoor_outdoor" type="check" condition="indoor_outdoor in ('Indoor', 'Outdoor')"/>
+    <constraint name="chk_tournaments$surface"        type="check" condition="surface in ('Hard', 'Clay', 'Carpet', 'Grass')"/>
   </constraints>
 </table>

@@ -5,10 +5,10 @@ create or replace function sf_tournaments_delta_hash(
   pn_code           tournaments.code%type,
   pn_url            tournaments.url%type,
   pn_slug           tournaments.slug%type,
-  pn_city           tournaments.city%type,
+  pn_location       tournaments.location%type,
   pn_sgl_draw_url   tournaments.sgl_draw_url%type,
   pn_sgl_pdf_url    tournaments.sgl_pdf_url%type,
-  pn_type           tournaments.type%type,
+  pn_indoor_outdoor tournaments.indoor_outdoor%type,
   pn_surface        tournaments.surface%type,
   pn_series_id      tournaments.series_id%type,
   pn_start_dtm      tournaments.start_dtm%type,
@@ -23,7 +23,7 @@ create or replace function sf_tournaments_delta_hash(
 is
   vn_delta_hash tournaments.delta_hash%type;
 begin
-  select ora_hash(pn_id || '|' || pn_name || '|' || pn_year || '|' || pn_code || '|' || pn_url || '|' || pn_slug || '|' || pn_city || '|' || pn_sgl_draw_url || '|' || pn_sgl_pdf_url || '|' || pn_type || '|' || pn_surface || '|' || pn_series_id || '|' || to_char(pn_start_dtm, 'yyyymmdd') || '|' || to_char(pn_finish_dtm, 'yyyymmdd') || '|' || pn_sgl_draw_qty || '|' || pn_dbl_draw_qty || '|' || pn_prize_money || '|' || pn_prize_currency || '|' || pn_country_code)
+  select ora_hash(pn_id || '|' || pn_name || '|' || pn_year || '|' || pn_code || '|' || pn_url || '|' || pn_slug || '|' || pn_location || '|' || pn_sgl_draw_url || '|' || pn_sgl_pdf_url || '|' || pn_indoor_outdoor || '|' || pn_surface || '|' || pn_series_id || '|' || to_char(pn_start_dtm, 'yyyymmdd') || '|' || to_char(pn_finish_dtm, 'yyyymmdd') || '|' || pn_sgl_draw_qty || '|' || pn_dbl_draw_qty || '|' || pn_prize_money || '|' || pn_prize_currency || '|' || pn_country_code)
   into vn_delta_hash
   from dual;
   return (vn_delta_hash);

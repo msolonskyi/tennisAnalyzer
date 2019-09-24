@@ -6,100 +6,60 @@ begin
   pkg_log.sp_start_batch(pv_module => cv_module_name);
   --
   merge into tournaments d
-  using(select i.id,
-               i.name,
-               i.year,
-               i.code,
-               i.url,
-               i.slug,
-               i.city,
-               i.sgl_draw_url,
-               i.sgl_pdf_url,
-               i.type,
-               i.surface,
-               i.series_id,
-               i.start_dtm,
-               i.finish_dtm,
-               i.sgl_draw_qty,
-               i.dbl_draw_qty,
-               i.prize_money,
-               i.prize_currency,
-               c.code as country_code,
+  using(select i.*,
                sf_tournaments_delta_hash(
-                  pn_id             => i.id,
-                  pn_name           => i.name,
-                  pn_year           => i.year,
-                  pn_code           => i.code,
-                  pn_url            => i.url,
-                  pn_slug           => i.slug,
-                  pn_city           => i.city,
-                  pn_sgl_draw_url   => i.sgl_draw_url,
-                  pn_sgl_pdf_url    => i.sgl_pdf_url,
-                  pn_type           => i.type,
-                  pn_surface        => i.surface,
-                  pn_series_id      => i.series_id,
-                  pn_start_dtm      => i.start_dtm,
-                  pn_finish_dtm     => i.finish_dtm,
-                  pn_sgl_draw_qty   => i.sgl_draw_qty,
-                  pn_dbl_draw_qty   => i.dbl_draw_qty,
-                  pn_prize_money    => i.prize_money,
-                  pn_prize_currency => i.prize_currency,
-                  pn_country_code   => c.code) as delta_hash
-        from (select tourney_year || '-' || tourney_id as id,
-                     tourney_name as name,
-                     tourney_year as year,
-                     tourney_id as code,
-                     t.tourney_url url,
-                     tourney_slug as slug,
+                 pn_id             => i.id,
+                 pn_name           => i.name,
+                 pn_year           => i.year,
+                 pn_code           => i.code,
+                 pn_url            => i.url,
+                 pn_slug           => i.slug,
+                 pn_location       => i.location,
+                 pn_sgl_draw_url   => i.sgl_draw_url,
+                 pn_sgl_pdf_url    => i.sgl_pdf_url,
+                 pn_indoor_outdoor => i.indoor_outdoor,
+                 pn_surface        => i.surface,
+                 pn_series_id      => i.series_id,
+                 pn_start_dtm      => i.start_dtm,
+                 pn_finish_dtm     => i.finish_dtm,
+                 pn_sgl_draw_qty   => i.sgl_draw_qty,
+                 pn_dbl_draw_qty   => i.dbl_draw_qty,
+                 pn_prize_money    => i.prize_money,
+                 pn_prize_currency => i.prize_currency,
+                 pn_country_code   => i.country_code) as delta_hash
+        from (select g.id,
+                     g.name,
+                     g.year,
+                     g.code,
+                     g.url,
+                     g.slug,
+                     nvl(g.location, t.location) as location,
+                     g.sgl_draw_url,
+                     g.sgl_pdf_url,
+                     g.indoor_outdoor,
+                     g.surface,
                      case
-                       when regexp_substr (tourney_location, '[^,]+', 1, 3) is not null then regexp_substr (tourney_location, '[^,]+', 1, 1) || ',' || regexp_substr (tourney_location, '[^,]+', 1, 2)
-                       else regexp_substr (tourney_location, '[^,]+', 1, 1)
-                     end as city,
-                     substr(t.tourney_url, 1, length(t.tourney_url) - 7) || 'draws' as sgl_draw_url,
-                     'http://www.protennislive.com/posting/' || tourney_year || '/' || tourney_id || '/mds.pdf' as sgl_pdf_url,
-                     initcap(t.tourney_conditions) as type,
-                     initcap(t.tourney_surface) as surface,
-                     se.id as series_id,
-                     to_date(tourney_begin_dtm, 'yyyy.mm.dd') as start_dtm,
-                     to_date(tourney_end_dtm, 'yyyy.mm.dd') as finish_dtm,
-                     tourney_singles_draw as sgl_draw_qty,
-                     tourney_doubles_draw as dbl_draw_qty,
-                     to_number(replace(replace(replace(
-                       case
-                         when length(trim(tourney_fin_commit)) > 0 then
-                           case
-                             when substr(tourney_fin_commit, 1, 1) = 'A' then
-                               substr(tourney_fin_commit, 3)
-                             else
-                               substr(tourney_fin_commit, 2)
-                             end
-                         else null
-                       end, ' ', ''), ',', ''), '.', '')) as prize_money,
-                     case
-                       when length(trim(tourney_fin_commit)) > 0 then
-                         case
-                           when substr(tourney_fin_commit, 1, 1) = 'A' then
-                             substr(tourney_fin_commit, 1, 2)
-                           else
-                             substr(tourney_fin_commit, 1, 1)
-                           end
-                       else null
-                     end as prize_currency,
-                     case
-                       when regexp_substr (tourney_location, '[^,]+', 1, 3) is not null then trim(regexp_substr (tourney_location, '[^,]+', 1, 3))
-                       else trim(regexp_substr (tourney_location, '[^,]+', 1, 2))
-                     end as country,
-                     row_number() over (partition by tourney_year, tourney_id order by se.id) as rn
-              from stg_tournaments t, series se
-              where t.series = se.id(+)
-                and t.tourney_id is not null) i,
-             countries c
-        where i.country = c.name(+)
-          and rn = 1) s
+                       when t.series_id = 'og' then t.series_id
+                       else nvl(g.series, t.series_id)
+                     end as series_id,
+                     to_date(g.start_dtm, 'yyyymmdd') as start_dtm,
+                     to_date(g.finish_dtm, 'yyyymmdd') as finish_dtm,
+                     g.sgl_draw_qty,
+                     g.dbl_draw_qty,
+                     g.prize_money,
+                     g.prize_currency,
+                     nvl(c.code, t.country_code) as country_code,
+                     row_number() over (partition by g.id order by se.id) as rn
+              from stg_tournaments g, series se, countries c, tournaments t
+              where g.series = se.id(+)
+                and g.code is not null
+                and g.country_name = c.name(+)
+                and g.id = t.id(+)) i
+        where rn = 1) s
   on (s.id = d.id)
   when not matched then
-    insert (d.id, d.delta_hash, d.batch_id,          d.name, d.year, d.code, d.url, d.slug, d.city, d.sgl_draw_url, d.sgl_pdf_url, d.type, d.surface, d.series_id, d.start_dtm, d.finish_dtm, d.sgl_draw_qty, d.dbl_draw_qty, d.prize_money, d.prize_currency, d.country_code)
-    values (s.id, s.delta_hash, pkg_log.gn_batch_id, s.name, s.year, s.code, s.url, s.slug, s.city, s.sgl_draw_url, s.sgl_pdf_url, s.type, s.surface, s.series_id, s.start_dtm, s.finish_dtm, s.sgl_draw_qty, s.dbl_draw_qty, s.prize_money, s.prize_currency, s.country_code)
+    insert (d.id, d.delta_hash, d.batch_id,          d.name, d.year, d.code, d.url, d.slug, d.location, d.sgl_draw_url, d.sgl_pdf_url, d.indoor_outdoor, d.surface, d.series_id, d.start_dtm, d.finish_dtm, d.sgl_draw_qty, d.dbl_draw_qty, d.prize_money, d.prize_currency, d.country_code)
+    values (s.id, s.delta_hash, pkg_log.gn_batch_id, s.name, s.year, s.code, s.url, s.slug, s.location, s.sgl_draw_url, s.sgl_pdf_url, s.indoor_outdoor, s.surface, s.series_id, s.start_dtm, s.finish_dtm, s.sgl_draw_qty, s.dbl_draw_qty, s.prize_money, s.prize_currency, s.country_code)
   when matched then
     update set
       d.delta_hash     = s.delta_hash,
@@ -109,23 +69,19 @@ begin
       d.code           = s.code,
       d.url            = s.url,
       d.slug           = s.slug,
-      d.city           = nvl(s.city, d.city),
+      d.location       = s.location,
       d.sgl_draw_url   = s.sgl_draw_url,
       d.sgl_pdf_url    = s.sgl_pdf_url,
-      d.type           = s.type,
+      d.indoor_outdoor = s.indoor_outdoor,
       d.surface        = s.surface,
-      d.series_id      = case
-                            when d.series_id = 'og' then d.series_id
-                            else nvl(s.series_id, d.series_id)
-                          end,
+      d.series_id      = s.series_id,
       d.start_dtm      = s.start_dtm,
       d.finish_dtm     = s.finish_dtm,
       d.sgl_draw_qty   = s.sgl_draw_qty,
       d.dbl_draw_qty   = s.dbl_draw_qty,
       d.prize_money    = s.prize_money,
       d.prize_currency = s.prize_currency,
-      d.country_code   = nvl(s.country_code, d.country_code)
-
+      d.country_code   = s.country_code
     where d.delta_hash != s.delta_hash;
   vn_qty := sql%rowcount;
   --

@@ -1,23 +1,26 @@
 <?xml version="1.0"?>
   <table name="stg_tournaments" type="normal">
   <columns>
-    <column name="tourney_year"         type="number"/>
-    <column name="series"               type="varchar2(32)"/>
-    <column name="tourney_name"         type="varchar2(120)"/>
-    <column name="tourney_id"           type="varchar2(48)"/>
-    <column name="tourney_slug"         type="varchar2(30)"/>
-    <column name="tourney_location"     type="varchar2(40)"/>
-    <column name="tourney_begin_dtm"    type="varchar2(32)"/>
-    <column name="tourney_end_dtm"      type="varchar2(32)"/>
-    <column name="tourney_singles_draw" type="number"/>
-    <column name="tourney_doubles_draw" type="number"/>
-    <column name="tourney_conditions"   type="varchar2(10)"/>
-    <column name="tourney_surface"      type="varchar2(10)"/>
-    <column name="tourney_fin_commit"   type="varchar2(25)"/>
-    <column name="tourney_url"          type="varchar2(200)"/>
-    <column name="tourney_year_id"      type="varchar2(64)"/>
-    <column name="city"                 type="varchar2(128)"/>
-    <column name="country_code"         type="varchar2(3)"/>
-    <column name="batch_id"             type="number(12)"/>
+    <column name="id"                type="varchar2(64)"/>
+    <column name="name"              type="varchar2(128)"/>
+    <column name="year"              type="number(4)"/>
+    <column name="code"              type="varchar2(48)"/>
+    <column name="url"               type="varchar2(256)"/>
+    <column name="slug"              type="varchar2(128)"/>
+    <column name="location"          type="varchar2(128)"/>
+    <column name="sgl_draw_url"      type="varchar2(256)"/>
+    <column name="sgl_pdf_url"       type="varchar2(256)"/>
+    <column name="indoor_outdoor"    type="varchar2(8)"/>
+    <column name="surface"           type="varchar2(8)"/>
+    <column name="series"            type="varchar2(8)"/>
+    <column name="start_dtm"         type="varchar2(10)"/>
+    <column name="finish_dtm"        type="varchar2(10)"/>
+    <column name="sgl_draw_qty"      type="number(4)"/>
+    <column name="dbl_draw_qty"      type="number(4)"/>
+    <column name="prize_money"       type="number(10)"/>
+    <column name="prize_currency"    type="varchar2(16)"/>
+    <column name="country_name"      type="varchar2(256)"/>
+    <column name="country_code"      type="varchar2(3)"/>
   </columns>
 </table>
+
