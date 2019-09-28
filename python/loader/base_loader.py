@@ -1,4 +1,4 @@
-from constants import CONNECTION_STRING, INDOOR_OUTDOOR_MAP, SURFACE_MAP, COUNTRY_MAP
+from constants import CONNECTION_STRING, INDOOR_OUTDOOR_MAP, SURFACE_MAP, COUNTRY_MAP, STADIE_CODES_MAP
 from ctypes import Array
 import cx_Oracle
 import requests
@@ -25,16 +25,24 @@ class BaseLoader(object):
         logzero.logger.info('==========')
         logzero.logger.info('start')
 
-    def get_script_name(self):
+    @staticmethod
+    def get_script_name():
         return os.path.basename(__file__)
 
-    def remap_indoor_outdoor_name(self, indoor_outdoor_short_name: str) -> str:
+    @staticmethod
+    def remap_indoor_outdoor_name(indoor_outdoor_short_name: str) -> str:
         return INDOOR_OUTDOOR_MAP.get(indoor_outdoor_short_name)
 
-    def remap_surface_name(self, surface_short_name: str) -> str:
+    @staticmethod
+    def remap_surface_name(surface_short_name: str) -> str:
         return SURFACE_MAP.get(surface_short_name)
 
-    def remap_country_name(self, country_name: str) -> str:
+    @staticmethod
+    def remap_stadie_code(round_name: str) -> str:
+        return STADIE_CODES_MAP.get(round_name)
+
+    @staticmethod
+    def remap_country_name(country_name: str) -> str:
         if country_name in COUNTRY_MAP:
             return COUNTRY_MAP.get(country_name)
         else:
