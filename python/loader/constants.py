@@ -23,16 +23,19 @@ SURFACE_MAP = {
     'A': 'Carpet',
     'G': 'Grass'}
 
-ROUND_NAMES_MAP = {
-    'F': 'Finals',
-    'SF': 'Semi-Finals',
-    'QF': 'Quarter-Finals',
-    'R16': 'Round of 16',
-    'R32': 'Round of 32',
-    'R64': 'Round of 64',
-    'R128': 'Round of 128',
-    'RR': 'Round Robin',
-    'Q1': '1st Round Qualifying',
-    'Q2': '2nd Round Qualifying',
-    'Q3': '3rd Round Qualifying',
-    'BR': 'Olympic Bronze'}
+STADIE_CODES_MAP = {
+    'Finals': 'F',
+    'Final': 'F',
+    'Semi-Finals': 'SF',
+    'Semifinals': 'SF',
+    'Quarter-Finals': 'QF',
+    'Quarterfinals': 'QF',
+    'Round of 16': 'R16',
+    'Round of 32': 'R32',
+    'Round of 64': 'R64',
+    'Round of 128': 'R128',
+    'Round Robin': 'RR',
+    'Olympic Bronze': 'BR',
+    '3rd Round Qualifying': 'Q3',
+    '2nd Round Qualifying': 'Q2',
+    '1st Round Qualifying': 'Q1'}
