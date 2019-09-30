@@ -30,6 +30,8 @@ values ('2019-540-hh26-mc65-R128', '67(8) 36 64 75 30 (RET)', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2019-7351-db93-p0f5-Q1', null, null, 'Y');
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2018-M-DC-2018-G2-AM-M-VEN-URU-01-800519151-800519151-RR', '57 63 10 (RET)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2001-560-g354-t243-R128', '64 63 46 46 62', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2008-670-sc40-b977-Q2', '(W/O)', null, null);
@@ -199,10 +201,10 @@ insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2007-499-m680-g476-QF', null, 'http://www.atpworldtour.com/en/scores/2007/499/MS006/match-stats?isLive=False', null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2007-499-s544-h355-QF', null, 'http://www.atpworldtour.com/en/scores/2007/499/MS005/match-stats?isLive=False', null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2007-505-v258-b884-QF', null, 'http://www.atpworldtour.com/en/scores/2007/505/MS007/match-stats?isLive=False', null);
 commit;
 prompt 100 records committed...
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2007-505-v258-b884-QF', null, 'http://www.atpworldtour.com/en/scores/2007/505/MS007/match-stats?isLive=False', null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2007-505-h390-a511-QF', null, 'http://www.atpworldtour.com/en/scores/2007/505/MS006/match-stats?isLive=False', null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
@@ -330,7 +332,7 @@ values ('2008-3626-g511-n309-F', '64 63', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2008-3812-s944-b752-QF', '64 75', null, null);
 commit;
-prompt 163 records loaded
+prompt 164 records loaded
 set feedback on
 set define on
 prompt Done.

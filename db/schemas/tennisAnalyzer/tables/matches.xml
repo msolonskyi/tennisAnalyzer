@@ -49,6 +49,11 @@
     <column name="win_forced_errors"             type="number(4)"/>
     <column name="win_unforced_errors"           type="number(4)"/>
     <column name="win_net_points_won"            type="number(4)"/>
+    <column name="win_net_points_total"          type="number(4)"/>
+    <column name="win_fastest_first_serves"      type="number(4)"/>
+    <column name="win_average_first_serves"      type="number(4)"/>
+    <column name="win_fastest_second_serve"      type="number(4)"/>
+    <column name="win_average_second_serve"      type="number(4)"/>
     <column name="los_aces"                      type="number(4)"/>
     <column name="los_double_faults"             type="number(4)"/>
     <column name="los_first_serves_in"           type="number(4)"/>
@@ -77,6 +82,11 @@
     <column name="los_forced_errors"             type="number(4)"/>
     <column name="los_unforced_errors"           type="number(4)"/>
     <column name="los_net_points_won"            type="number(4)"/>
+    <column name="los_net_points_total"          type="number(4)"/>
+    <column name="los_fastest_first_serves"      type="number(4)"/>
+    <column name="los_average_first_serves"      type="number(4)"/>
+    <column name="los_fastest_second_serve"      type="number(4)"/>
+    <column name="los_average_second_serve"      type="number(4)"/>
     <column name="winner_age"                    type="number"/>
     <column name="loser_age"                     type="number"/>
     <column name="win_h2h_qty_3y"                type="number"/>
