@@ -107,6 +107,14 @@ class MatchesBaseLoader(BaseLoader):
                         winner_sets_won += 1
                         winner_games_won += 10
                         loser_games_won += 8
+                    elif set_score == '106':
+                        winner_sets_won += 1
+                        winner_games_won += 10
+                        loser_games_won += 6
+                    elif set_score == '107':
+                        winner_sets_won += 1
+                        winner_games_won += 10
+                        loser_games_won += 7
                     elif set_score == '911':
                         loser_sets_won += 1
                         loser_games_won += 11
@@ -155,7 +163,7 @@ class MatchesBaseLoader(BaseLoader):
                     logzero.logger.error(f'match_id: {match_id}; set_score: {set_score}')
             if str(winner_sets_won) + str(loser_sets_won) not in ('30', '31', '32', '21', '20'):
                 logzero.logger.error(f'(unexpected match score; score: {winner_sets_won}{loser_sets_won} match_id: {match_id}; match_score_array: {match_score_array}')
-        return([match_ret, winner_sets_won, winner_games_won, winner_tiebreaks_won, loser_sets_won, loser_games_won, loser_tiebreaks_won])
+        return([match_ret, winner_sets_won, loser_sets_won, winner_games_won, loser_games_won, winner_tiebreaks_won, loser_tiebreaks_won])
 
     @staticmethod
     def get_match_ret(match_score: str) -> str:
@@ -165,7 +173,7 @@ class MatchesBaseLoader(BaseLoader):
             match_ret = '(W/O)'
         elif 'Walkover' in match_score:
             match_ret = '(W/O)'
-        elif 'RE' in match_score: # covers 'RE', 'RET' and '(RET)'
+        elif 'RE' in match_score.upper(): # covers 'Re', 'RE', 'RET' and '(RET)'
             match_ret = '(RET)'
         elif 'DEF' in match_score: # covers '(DEF)' and 'DEF'
             match_ret = '(RET)'
