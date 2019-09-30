@@ -35,7 +35,6 @@ class TournamentsATPLoader(BaseLoader):
         tournament_doubles_draw_array = tree.xpath("//div[contains(., 'DBL')]/a[1]/span/text()")
         tournament_indoor_outdoor_array = tree.xpath("//div[contains(., 'Outdoor') or contains(., 'Indoor')]/text()[normalize-space()]")
         tournament_surface_array = tree.xpath("//div[contains(., 'Outdoor') or contains(., 'Indoor')]/span/text()[normalize-space()]")
-        tournament_fin_commit_array = tree.xpath("//td[contains(@class, 'fin-commit')]/div/div/span/text()")
 
         for i in range(0, len(tournament_title_array)):
             tournament_name = tournament_title_array[i].strip()
@@ -61,20 +60,7 @@ class TournamentsATPLoader(BaseLoader):
                 tournament_surface = ''
                 logzero.logger.error(f'parsing indoor_outdoor and surface: {str(e)}')
 
-            try:
-                tournament_fin_commit = tournament_fin_commit_array[i].strip()
-                if tournament_fin_commit[0] == 'A':
-                    tournament_prize_currency = tournament_fin_commit[0:2]
-                    tournament_prize_money = tournament_fin_commit[2:].replace(',', '').replace('.', '')
-                else:
-                    tournament_prize_currency = tournament_fin_commit[0:1]
-                    tournament_prize_money = tournament_fin_commit[1:].replace(',', '').replace('.', '')
-            except Exception as e:
-                tournament_prize_money = None
-                tournament_prize_currency = None
-
             tournament_details_url = tree.xpath("//tr[contains(@class, 'tourney-result')][" + str(i + 1) + "]/td[8]/a/@href")
-
             if len(tournament_details_url) > 0:
                 tournament_url = ATP_URL_PREFIX + tournament_details_url[0].replace('live-scores', 'results')
                 tournament_url_split = tournament_url.split('/')
@@ -88,6 +74,21 @@ class TournamentsATPLoader(BaseLoader):
             tournament_sgl_pdf_url = f'http://www.protennislive.com/posting/{self.year}/{tournament_code}/mds.pdf'
 
             tournament_id = self.year + '-' + tournament_code
+
+            tournament_fin_commit_details = tree.xpath("//tr[contains(@class, 'tourney-result')][" + str(i + 1) + "]/td[contains(@class, 'tourney-details fin-commit')]/div/div/span/text()")
+            if len(tournament_fin_commit_details) > 0:
+                tournament_fin_commit = tournament_fin_commit_details[0].strip()
+                #logzero.logger.info(f'tournament_fin_commit_details: {tournament_fin_commit}')
+                if tournament_fin_commit[0] == 'A':
+                    tournament_prize_currency = tournament_fin_commit[0:2]
+                    tournament_prize_money = tournament_fin_commit[2:].replace(',', '').replace('.', '')
+                else:
+                    tournament_prize_currency = tournament_fin_commit[0:1]
+                    tournament_prize_money = tournament_fin_commit[1:].replace(',', '').replace('.', '')
+            else:
+                logzero.logger.warning(f'tournament_id: {tournament_id}. tournament_fin_commit_details is empty')
+                tournament_prize_money = None
+                tournament_prize_currency = None
 
             if tournament_code != '602': # doubles
                 self.data.append([tournament_id, tournament_name, self.year, tournament_code, tournament_url, tournament_slug,
