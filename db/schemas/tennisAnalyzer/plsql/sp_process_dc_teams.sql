@@ -1,6 +1,6 @@
 create or replace procedure sp_process_dc_teams
 is
-  cv_module_name constant varchar2(200) := 'process DC teams';
+  cv_module_name constant varchar2(200) := 'process dc teams';
   vn_qty         number;
 begin
   pkg_log.sp_start_batch(pv_module => cv_module_name);
