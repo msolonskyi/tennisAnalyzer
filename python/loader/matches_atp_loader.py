@@ -16,9 +16,8 @@ class MatchesATPLoader(MatchesBaseLoader):
         #self.CSVFILE_NAME = os.path.splitext(os.path.basename(__file__))[0] + '.csv'
         self.CSVFILE_NAME = None
         self.TABLE_NAME = 'stg_matches'
-        self.INSERT_STR = 'insert into stg_matches (id, tournament_id, stadie_id, match_order, winner_code, winner_url, loser_code, loser_url, winner_seed, loser_seed, match_score, stats_url, match_ret, winner_sets_won, winner_games_won, winner_tiebreaks_won, loser_sets_won, loser_games_won, loser_tiebreaks_won) values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19)'
-        #self.PROCESS_PROC_NAME = 'sp_process_match_scores'
-        self.PROCESS_PROC_NAME = ''
+        self.INSERT_STR = 'insert into stg_matches (id, tournament_id, stadie_id, match_order, winner_code, winner_url, loser_code, loser_url, winner_seed, loser_seed, match_score, stats_url, match_ret, winner_sets_won, loser_sets_won, winner_games_won, loser_games_won, winner_tiebreaks_won, loser_tiebreaks_won) values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19)'
+        self.PROCESS_PROC_NAME = 'sp_process_atp_matches'
         super()._init()
 
     def _fill_tournaments_list(self):
@@ -112,7 +111,6 @@ class MatchesATPLoader(MatchesBaseLoader):
                     # Match score
                     if match_id in self._dic_match_scores_skip_adj:  # skip this match
                         continue
-                    # Match score
                     if match_id in self._dic_match_scores_adj:
                         match_score = self._dic_match_scores_adj[match_id]
                         logzero.logger.warning(f'adjustment of match_id: {match_id}; match_score: {match_score}')
@@ -120,6 +118,10 @@ class MatchesATPLoader(MatchesBaseLoader):
                         match_score_array = tree.xpath("//table[contains(@class, 'day-table')]/tbody[" + str(i + 1) + "]/tr[" + str(j + 1) + "]/td[contains(@class, 'day-table-score')]/a/text()")
                         if len(match_score_array) > 0:
                             match_score = match_score_array[0].replace('\n', '').replace('\r', '').replace('\t', '').strip()
+
+                        match_score_array = tree.xpath("//table[contains(@class, 'day-table')]/tbody[" + str(i + 1) + "]/tr[" + str(j + 1) + "]/td[contains(@class, 'day-table-score')]/a/text()")
+                        if len(match_score_array) > 0:
+                            match_score = ''.join(match_score_array).replace('\n', '').replace('\r', '').replace('\t', '').replace('     ', ' ').strip()
                     score_array = self._parse_score(match_score, match_id, tournament_code)
                     # Match stats URL
                     if match_id in self._dic_match_scores_stats_url_adj:

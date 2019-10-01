@@ -1,6 +1,6 @@
-create or replace procedure sp_process_match_scores
+create or replace procedure sp_process_atp_matches
 is
-  cv_module_name constant varchar2(200) := 'process match scores';
+  cv_module_name constant varchar2(200) := 'process atp matches';
   vn_qty         number;
 begin
   pkg_log.sp_start_batch(pv_module => cv_module_name);
@@ -14,7 +14,7 @@ begin
            pn_url =>  url) as delta_hash,
          pkg_log.gn_batch_id
   from (select distinct s.winner_url as url, s.winner_code as code
-        from stg_match_scores s
+        from stg_matches s
         where s.winner_code not in (select p.code from players p));
   --
   vn_qty := sql%rowcount;
@@ -27,14 +27,33 @@ begin
            pn_url =>  url) as delta_hash,
          pkg_log.gn_batch_id
   from (select distinct s.loser_url as url, s.loser_code as code
-        from stg_match_scores s
+        from stg_matches s
         where s.loser_code not in (select p.code from players p));
   --
   vn_qty := sql%rowcount;
   pkg_log.sp_log_message(pv_text => 'add new players (losers)', pn_qty => vn_qty);
   --
   merge into matches d
-  using(select i.*,
+  using(select i.id,
+               i.tournament_id,
+               nvl(i.stats_url, m.stats_url) as stats_url,
+               i.stadie_id,
+               i.match_order,
+               i.winner_code,
+               i.loser_code,
+               i.winner_seed,
+               i.loser_seed,
+               case
+                 when length(i.match_score) > length(m.match_score) then i.match_score
+                 else m.match_score
+               end as match_score,
+               i.winner_sets_won,
+               i.loser_sets_won,
+               i.winner_games_won,
+               i.loser_games_won,
+               i.winner_tiebreaks_won,
+               i.loser_tiebreaks_won,
+               i.match_ret,
                sf_matches_delta_hash(
                  pn_id                         => i.id,
                  pn_tournament_id              => i.tournament_id,
@@ -45,14 +64,17 @@ begin
                  pn_loser_code                 => i.loser_code,
                  pn_winner_seed                => i.winner_seed,
                  pn_loser_seed                 => i.loser_seed,
-                 pn_match_score                => i.match_score,
+                 pn_match_score                => case
+                                                    when length(i.match_score) > length(m.match_score) then i.match_score
+                                                    else m.match_score
+                                                  end,
                  pn_winner_sets_won            => i.winner_sets_won,
                  pn_loser_sets_won             => i.loser_sets_won,
                  pn_winner_games_won           => i.winner_games_won,
                  pn_loser_games_won            => i.loser_games_won,
                  pn_winner_tiebreaks_won       => i.winner_tiebreaks_won,
                  pn_loser_tiebreaks_won        => i.loser_tiebreaks_won,
-                 pn_stats_url                  => i.stats_url,
+                 pn_stats_url                  => nvl(i.stats_url, m.stats_url),
                  pn_match_duration             => m.match_duration,
                  pn_win_aces                   => m.win_aces,
                  pn_win_double_faults          => m.win_double_faults,
@@ -176,19 +198,19 @@ begin
                  pn_los_total_won_pct_3y_curre => m.los_total_won_pct_3y_current,
                  pn_loser_age                  => m.loser_age,
                  pn_winner_age                 => m.winner_age) as delta_hash
-        from (select sm.tourney_year_id || '-' || sm.winner_code || '-' || sm.loser_code || '-' || st.id as id,
-                     sm.tourney_year_id as tournament_id,
+        from (select sm.id,
+                     sm.tournament_id,
                      case
-                       when sm.match_ret is null then sm.match_stats_url
+                       when sm.match_ret is null then sm.stats_url
                        else null
                      end as stats_url,
-                     st.id as stadie_id,
+                     sm.stadie_id,
                      sm.match_order,
                      sm.winner_code,
                      sm.loser_code,
                      sm.winner_seed,
                      sm.loser_seed,
-                     sm.match_score as match_score,
+                     sm.match_score,
                      sm.winner_sets_won,
                      sm.loser_sets_won,
                      sm.winner_games_won,
@@ -196,9 +218,8 @@ begin
                      sm.winner_tiebreaks_won,
                      sm.loser_tiebreaks_won,
                      sm.match_ret,
-                     row_number() over (partition by sm.tourney_year_id || '-' || sm.winner_code || '-' || sm.loser_code || '-' || st.id order by sm.match_order) rn
-              from stg_match_scores sm, stadies st
-              where upper(trim(sm.tourney_round_name)) = upper(st.name(+))) i,
+                     row_number() over (partition by sm.id order by sm.match_order) rn
+              from stg_matches sm) i,
              matches m
         where m.id(+) = i.id
           and i.rn = 1) s
@@ -218,10 +239,7 @@ begin
       d.loser_code           = s.loser_code,
       d.winner_seed          = s.winner_seed,
       d.loser_seed           = s.loser_seed,
-      d.match_score          = case
-                                 when length(s.match_score) > length(d.match_score) then s.match_score
-                                 else d.match_score
-                               end,
+      d.match_score          = s.match_score,
       d.winner_sets_won      = s.winner_sets_won,
       d.loser_sets_won       = s.loser_sets_won,
       d.winner_games_won     = s.winner_games_won,
@@ -241,5 +259,5 @@ exception
     pkg_log.sp_log_message(pv_text => 'errors stack', pv_clob => dbms_utility.format_error_stack || pkg_utils.CRLF || dbms_utility.format_error_backtrace, pv_type => 'E');
     pkg_log.sp_finish_batch_with_errors;
     raise;
-end sp_process_match_scores;
+end sp_process_atp_matches;
 /
