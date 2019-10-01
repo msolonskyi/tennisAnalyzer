@@ -1,7 +1,6 @@
 from constants import SLEEP_DURATION
 from base_loader import BaseLoader
 import datetime
-import requests
 from time import sleep
 import logzero
 import json
@@ -9,9 +8,10 @@ import os
 
 class TournamentDCLoader(BaseLoader):
 
-    def __init__(self, country_code: str):
+    def __init__(self, country_code: str, year: int):
         super().__init__()
         self.url = 'https://media.itfdataservices.com/nationwinlossrecords/dc/en?NationCode=' + country_code
+        self.year = int(year)
 
     def _init(self):
         self.LOGFILE_NAME = os.path.splitext(os.path.basename(__file__))[0] + '.log'
@@ -26,7 +26,7 @@ class TournamentDCLoader(BaseLoader):
         dic = json.loads(self.responce_str)
         for i in dic:
             year = i.get('Year')
-            if year < 2019:
+            if year < self.year:
                 continue
             ties = i.get('Ties')
             for tie in ties:
@@ -41,21 +41,35 @@ class TournamentDCLoader(BaseLoader):
                 indoor_outdoor_name = self.remap_indoor_outdoor_name(indoor_outdoor)
                 surface_code = tie.get('SurfaceCode')
                 surface_name = self.remap_surface_name(surface_code)
-                tournament_id = str(year) + '-' + str(tie_id)
+                tournament_id = f'{year}-{tie_id}'
                 tournament_url = 'https://www.daviscup.com/en/draws-results/tie.aspx?id=' + tie_id
                 #
                 # Load city and country from tie page
                 #
                 sleep(SLEEP_DURATION)
                 #
-                tie_url = 'https://media.itfdataservices.com/tiedetailsweb/dc/en/' + tie_id
-                logzero.logger.info(tie_url)
-                tie_response = requests.get(tie_url)
-                tie_text = tie_response.text
-                tie_dic = json.loads(tie_text)
+                self.url = 'https://media.itfdataservices.com/tiedetailsweb/dc/en/' + tie_id
+                self._request_url()
+                tie_dic = json.loads(self.responce_str)
                 tie_details = tie_dic[0]
                 tournament_name = tie_details.get('EventName')
+                # location
                 location = tie_details.get('Venue')
+                if location is not None:
+                    location_array = location.split(',')
+                    if len(location_array) >= 3:
+                        tournament_location = location_array[-2].strip()
+                    elif len(location_array) == 2:
+                        tournament_location = location_array[-1].strip()
+                    elif len(location_array) == 1:
+                        tournament_location = location.strip()
+                    else:
+                        logzero.logger.warning(f'location: is empty')
+                        tournament_location = None
+                else:
+                    logzero.logger.warning(f'location: is empty')
+                    tournament_location = None
+
                 host_nation_code = tie_details.get('HostNationCode')
     
-                self.data.append([tournament_id, tournament_name, year, tie_id, tournament_url, None, location, None, None, indoor_outdoor_name, surface_name, 'dc', start_date_str, end_date_str, None, None, 0, None, host_nation_code])
+                self.data.append([tournament_id, tournament_name, year, tie_id, tournament_url, None, tournament_location, None, None, indoor_outdoor_name, surface_name, 'dc', start_date_str, end_date_str, None, None, None, None, host_nation_code])

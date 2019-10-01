@@ -1,6 +1,6 @@
 create or replace procedure sp_process_dc_tournaments
 is
-  cv_module_name constant varchar2(200) := 'process DC tournaments';
+  cv_module_name constant varchar2(200) := 'process dc tournaments';
   vn_qty         number;
 begin
   pkg_log.sp_start_batch(pv_module => cv_module_name);
@@ -46,7 +46,8 @@ begin
                   pn_prize_currency => s.prize_currency,
                   pn_country_code   => nvl(s.country_code, t.country_code)) as delta_hash
         from stg_tournaments s, tournaments t
-        where s.id = t.id(+)) s
+        where s.id = t.id(+)
+          and s.surface is not null) s
   on (s.id = d.id)
   when not matched then
     insert (d.id, d.delta_hash, d.batch_id,          d.name, d.year, d.code, d.url, d.slug, d.location, d.sgl_draw_url, d.sgl_pdf_url, d.indoor_outdoor, d.surface, d.series_id, d.start_dtm, d.finish_dtm, d.sgl_draw_qty, d.dbl_draw_qty, d.prize_money, d.prize_currency, d.country_code)
@@ -60,7 +61,7 @@ begin
       d.code           = s.code,
       d.url            = s.url,
       d.slug           = s.slug,
-      d.location       = nvl(s.location, d.location),
+      d.location       = s.location,
       d.sgl_draw_url   = s.sgl_draw_url,
       d.sgl_pdf_url    = s.sgl_pdf_url,
       d.indoor_outdoor = s.indoor_outdoor,
@@ -72,7 +73,7 @@ begin
       d.dbl_draw_qty   = s.dbl_draw_qty,
       d.prize_money    = s.prize_money,
       d.prize_currency = s.prize_currency,
-      d.country_code   = nvl(s.country_code, d.country_code)
+      d.country_code   = s.country_code
     where d.delta_hash != s.delta_hash;
   vn_qty := sql%rowcount;
   --
