@@ -16,9 +16,8 @@ class MatchesDCLoader(MatchesBaseLoader):
         #self.CSVFILE_NAME = os.path.splitext(os.path.basename(__file__))[0] + '.csv'
         self.CSVFILE_NAME = ''
         self.TABLE_NAME = 'stg_matches'
-        self.INSERT_STR = 'insert into stg_matches (id, tournament_id, stadie_id, match_order, match_ret, winner_code, winner_url, winner_first_name, winner_last_name, loser_code, loser_url, loser_first_name, loser_last_name, winner_seed, loser_seed, match_score, winner_sets_won, loser_sets_won, winner_games_won, loser_games_won, winner_tiebreaks_won, loser_tiebreaks_won, stats_url, match_duration, win_aces, win_double_faults, win_first_serves_in, win_first_serves_total, win_first_serve_points_won, win_first_serve_points_total, win_second_serve_points_won, win_second_serve_points_total, win_break_points_saved, win_break_points_serve_total, win_service_points_won, win_service_points_total, win_first_serve_return_won, win_first_serve_return_total, win_second_serve_return_won, win_second_serve_return_total, win_break_points_converted, win_break_points_return_total, win_service_games_played, win_return_games_played, win_return_points_won, win_return_points_total, win_total_points_won, win_total_points_total, win_winners, win_forced_errors, win_unforced_errors, win_net_points_won, win_net_points_total, win_fastest_first_serves, win_average_first_serves, win_fastest_second_serve, win_average_second_serve, los_aces, los_double_faults, los_first_serves_in, los_first_serves_total, los_first_serve_points_won, los_first_serve_points_total, los_second_serve_points_won, los_second_serve_points_total, los_break_points_saved, los_break_points_serve_total, los_service_points_won, los_service_points_total, los_first_serve_return_won, los_first_serve_return_total, los_second_serve_return_won, los_second_serve_return_total, los_break_points_converted, los_break_points_return_total, los_service_games_played, los_return_games_played, los_return_points_won, los_return_points_total, los_total_points_won, los_total_points_total, los_winners, los_forced_errors, los_unforced_errors, los_net_points_won, los_net_points_total, los_fastest_first_serves, los_average_first_serves, los_fastest_second_serve, los_average_second_serve) values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, :21, :22, :23, :12, :25, :26, :27, :28, :29, :30, :31, :32, :33, :34, :35, :36, :37, :38, :39, :40, :41, :42, :43, :44, :45, :46, :47, :48, :49, :50, :51, :52, :53, :54, :55, :56, :57, :58, :59, :60, :61, :62, :63, :64, :65, :66, :67, :68, :69, :70, :71, :72, :73, :74, :75, :76, :77, :78, :79, :80, :81, :82, :83, :84, :85, :86, :87, :88, :89, :90)'
-        #self.PROCESS_PROC_NAME = 'sp_process_match_scores'
-        self.PROCESS_PROC_NAME = ''
+        self.INSERT_STR = 'insert into stg_matches (id, tournament_id, stadie_id, match_order, match_ret, winner_code, winner_url, winner_first_name, winner_last_name, loser_code, loser_url, loser_first_name, loser_last_name, winner_seed, loser_seed, match_score, winner_sets_won, loser_sets_won, winner_games_won, loser_games_won, winner_tiebreaks_won, loser_tiebreaks_won, stats_url, match_duration, win_aces, win_double_faults, win_first_serves_in, win_first_serves_total, win_first_serve_points_won, win_first_serve_points_total, win_second_serve_points_won, win_second_serve_points_total, win_break_points_saved, win_break_points_serve_total, win_service_points_won, win_service_points_total, win_first_serve_return_won, win_first_serve_return_total, win_second_serve_return_won, win_second_serve_return_total, win_break_points_converted, win_break_points_return_total, win_service_games_played, win_return_games_played, win_return_points_won, win_return_points_total, win_total_points_won, win_total_points_total, win_winners, win_forced_errors, win_unforced_errors, win_net_points_won, win_net_points_total, win_fastest_first_serves_kmh, win_average_first_serves_kmh, win_fastest_second_serve_kmh, win_average_second_serve_kmh, los_aces, los_double_faults, los_first_serves_in, los_first_serves_total, los_first_serve_points_won, los_first_serve_points_total, los_second_serve_points_won, los_second_serve_points_total, los_break_points_saved, los_break_points_serve_total, los_service_points_won, los_service_points_total, los_first_serve_return_won, los_first_serve_return_total, los_second_serve_return_won, los_second_serve_return_total, los_break_points_converted, los_break_points_return_total, los_service_games_played, los_return_games_played, los_return_points_won, los_return_points_total, los_total_points_won, los_total_points_total, los_winners, los_forced_errors, los_unforced_errors, los_net_points_won, los_net_points_total, los_fastest_first_serves_kmh, los_average_first_serves_kmh, los_fastest_second_serve_kmh, los_average_second_serve_kmh) values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, :21, :22, :23, :12, :25, :26, :27, :28, :29, :30, :31, :32, :33, :34, :35, :36, :37, :38, :39, :40, :41, :42, :43, :44, :45, :46, :47, :48, :49, :50, :51, :52, :53, :54, :55, :56, :57, :58, :59, :60, :61, :62, :63, :64, :65, :66, :67, :68, :69, :70, :71, :72, :73, :74, :75, :76, :77, :78, :79, :80, :81, :82, :83, :84, :85, :86, :87, :88, :89, :90)'
+        self.PROCESS_PROC_NAME = 'sp_process_dc_matches'
         super()._init()
 
     def _fill_tournaments_list(self):
@@ -124,10 +123,10 @@ class MatchesDCLoader(MatchesBaseLoader):
                         win_unforced_errors = match_statistics.get('Side1UnforcedErrors')
                         win_net_points_won = match_statistics.get('Side1NetPointsWon')
                         win_net_points_total = match_statistics.get('Side1NetPointsTotal')
-                        win_fastest_first_serves = match_statistics.get('Side1Player1Fastest1stServeKPH')
-                        win_average_first_serves = match_statistics.get('Side1Player1Average1stServeKPH')
-                        win_fastest_second_serve = match_statistics.get('Side1Player1Fastest2ndServeKPH')
-                        win_average_second_serve = match_statistics.get('Side1Player1Average2ndServeKPH')
+                        win_fastest_first_serves_kmh = match_statistics.get('Side1Player1Fastest1stServeKPH')
+                        win_average_first_serves_kmh = match_statistics.get('Side1Player1Average1stServeKPH')
+                        win_fastest_second_serve_kmh = match_statistics.get('Side1Player1Fastest2ndServeKPH')
+                        win_average_second_serve_kmh = match_statistics.get('Side1Player1Average2ndServeKPH')
                         # 2nd
                         los_aces = match_statistics.get('Side2AceCount')
                         los_double_faults = match_statistics.get('Side2DoubleFaultCount')
@@ -158,10 +157,10 @@ class MatchesDCLoader(MatchesBaseLoader):
                         los_unforced_errors = match_statistics.get('Side2UnforcedErrors')
                         los_net_points_won = match_statistics.get('Side2NetPointsWon')
                         los_net_points_total = match_statistics.get('Side2NetPointsTotal')
-                        los_fastest_first_serves = match_statistics.get('Side2Player2Fastest1stServeKPH')
-                        los_average_first_serves = match_statistics.get('Side2Player2Average1stServeKPH')
-                        los_fastest_second_serve = match_statistics.get('Side2Player2Fastest2ndServeKPH')
-                        los_average_second_serve = match_statistics.get('Side2Player2Average2ndServeKPH')
+                        los_fastest_first_serves_kmh = match_statistics.get('Side2Player1Fastest1stServeKPH')
+                        los_average_first_serves_kmh = match_statistics.get('Side2Player1Average1stServeKPH')
+                        los_fastest_second_serve_kmh = match_statistics.get('Side2Player1Fastest2ndServeKPH')
+                        los_average_second_serve_kmh = match_statistics.get('Side2Player1Average2ndServeKPH')
                     elif winning_side == 2:
                         # 1st
                         win_aces = match_statistics.get('Side2AceCount')
@@ -193,10 +192,10 @@ class MatchesDCLoader(MatchesBaseLoader):
                         win_unforced_errors = match_statistics.get('Side2UnforcedErrors')
                         win_net_points_won = match_statistics.get('Side2NetPointsWon')
                         win_net_points_total = match_statistics.get('Side2NetPointsTotal')
-                        win_fastest_first_serves = match_statistics.get('Side2Player2Fastest1stServeKPH')
-                        win_average_first_serves = match_statistics.get('Side2Player2Average1stServeKPH')
-                        win_fastest_second_serve = match_statistics.get('Side2Player2Fastest2ndServeKPH')
-                        win_average_second_serve = match_statistics.get('Side2Player2Average2ndServeKPH')
+                        win_fastest_first_serves_kmh = match_statistics.get('Side2Player1Fastest1stServeKPH')
+                        win_average_first_serves_kmh = match_statistics.get('Side2Player1Average1stServeKPH')
+                        win_fastest_second_serve_kmh = match_statistics.get('Side2Player1Fastest2ndServeKPH')
+                        win_average_second_serve_kmh = match_statistics.get('Side2Player1Average2ndServeKPH')
                         # 2nd
                         los_aces = match_statistics.get('Side1AceCount')
                         los_double_faults = match_statistics.get('Side1DoubleFaultCount')
@@ -227,12 +226,12 @@ class MatchesDCLoader(MatchesBaseLoader):
                         los_unforced_errors = match_statistics.get('Side1UnforcedErrors')
                         los_net_points_won = match_statistics.get('Side1NetPointsWon')
                         los_net_points_total = match_statistics.get('Side1NetPointsTotal')
-                        los_fastest_first_serves = match_statistics.get('Side1Player1Fastest1stServeKPH')
-                        los_average_first_serves = match_statistics.get('Side1Player1Average1stServeKPH')
-                        los_fastest_second_serve = match_statistics.get('Side1Player1Fastest2ndServeKPH')
-                        los_average_second_serve = match_statistics.get('Side1Player1Average2ndServeKPH')
+                        los_fastest_first_serves_kmh = match_statistics.get('Side1Player1Fastest1stServeKPH')
+                        los_average_first_serves_kmh = match_statistics.get('Side1Player1Average1stServeKPH')
+                        los_fastest_second_serve_kmh = match_statistics.get('Side1Player1Fastest2ndServeKPH')
+                        los_average_second_serve_kmh = match_statistics.get('Side1Player1Average2ndServeKPH')
                     self.data.append([match_id, tournament_id, stadie_id, match_order, score_array[0], winner_code, None, winner_first_name, winner_last_name, loser_code, None, loser_first_name, loser_last_name, winner_seed, loser_seed, match_score] + score_array[1:] + [match_stats_url, match_duration,
-                                      win_aces, win_double_faults, win_first_serves_in, win_first_serves_total, win_first_serve_points_won, win_first_serve_points_total, win_second_serve_points_won, win_second_serve_points_total, win_break_points_saved, win_break_points_serve_total, win_service_points_won, win_service_points_total, win_first_serve_return_won, win_first_serve_return_total, win_second_serve_return_won, win_second_serve_return_total, win_break_points_converted, win_break_points_return_total, win_service_games_played, win_return_games_played, win_return_points_won, win_return_points_total, win_total_points_won, win_total_points_total, win_winners, win_forced_errors, win_unforced_errors, win_net_points_won, win_net_points_total, win_fastest_first_serves, win_average_first_serves, win_fastest_second_serve, win_average_second_serve,
-                                      los_aces, los_double_faults, los_first_serves_in, los_first_serves_total, los_first_serve_points_won, los_first_serve_points_total, los_second_serve_points_won, los_second_serve_points_total, los_break_points_saved, los_break_points_serve_total, los_service_points_won, los_service_points_total, los_first_serve_return_won, los_first_serve_return_total, los_second_serve_return_won, los_second_serve_return_total, los_break_points_converted, los_break_points_return_total, los_service_games_played, los_return_games_played, los_return_points_won, los_return_points_total, los_total_points_won, los_total_points_total, los_winners, los_forced_errors, los_unforced_errors, los_net_points_won, los_net_points_total, los_fastest_first_serves, los_average_first_serves, los_fastest_second_serve, los_average_second_serve])
+                                      win_aces, win_double_faults, win_first_serves_in, win_first_serves_total, win_first_serve_points_won, win_first_serve_points_total, win_second_serve_points_won, win_second_serve_points_total, win_break_points_saved, win_break_points_serve_total, win_service_points_won, win_service_points_total, win_first_serve_return_won, win_first_serve_return_total, win_second_serve_return_won, win_second_serve_return_total, win_break_points_converted, win_break_points_return_total, win_service_games_played, win_return_games_played, win_return_points_won, win_return_points_total, win_total_points_won, win_total_points_total, win_winners, win_forced_errors, win_unforced_errors, win_net_points_won, win_net_points_total, win_fastest_first_serves_kmh, win_average_first_serves_kmh, win_fastest_second_serve_kmh, win_average_second_serve_kmh,
+                                      los_aces, los_double_faults, los_first_serves_in, los_first_serves_total, los_first_serve_points_won, los_first_serve_points_total, los_second_serve_points_won, los_second_serve_points_total, los_break_points_saved, los_break_points_serve_total, los_service_points_won, los_service_points_total, los_first_serve_return_won, los_first_serve_return_total, los_second_serve_return_won, los_second_serve_return_total, los_break_points_converted, los_break_points_return_total, los_service_games_played, los_return_games_played, los_return_points_won, los_return_points_total, los_total_points_won, los_total_points_total, los_winners, los_forced_errors, los_unforced_errors, los_net_points_won, los_net_points_total, los_fastest_first_serves_kmh, los_average_first_serves_kmh, los_fastest_second_serve_kmh, los_average_second_serve_kmh])
         except Exception as e:
             logzero.logger.error(f'Error: {str(e)}')
