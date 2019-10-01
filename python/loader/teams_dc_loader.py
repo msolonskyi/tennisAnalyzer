@@ -11,7 +11,7 @@ class TeamsDCLoader(BaseLoader):
         self.CSVFILE_NAME = None
         self.TABLE_NAME = 'stg_teams_dc'
         self.INSERT_STR = 'insert into stg_teams_dc(country_code, name, url) values (:1, :2, :3)'
-        self.PROCESS_PROC_NAME = 'sp_process_teams_dc'
+        self.PROCESS_PROC_NAME = 'sp_process_dc_teams'
         super()._init()
 
     def _parse(self):
