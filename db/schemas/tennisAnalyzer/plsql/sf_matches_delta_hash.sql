@@ -45,6 +45,11 @@ create or replace function sf_matches_delta_hash(
   pn_win_forced_errors          matches.win_forced_errors%type,
   pn_win_unforced_errors        matches.win_unforced_errors%type,
   pn_win_net_points_won         matches.win_net_points_won%type,
+  pn_win_net_points_total       matches.win_net_points_total%type,
+  pn_win_fastest_first_serves_k matches.win_fastest_first_serves_kmh%type,
+  pn_win_average_first_serves_k matches.win_average_first_serves_kmh%type,
+  pn_win_fastest_second_serve_k matches.win_fastest_second_serve_kmh%type,
+  pn_win_average_second_serve_k matches.win_average_second_serve_kmh%type,
   pn_los_aces                   matches.los_aces%type,
   pn_los_double_faults          matches.los_double_faults%type,
   pn_los_first_serves_in        matches.los_first_serves_in%type,
@@ -73,6 +78,11 @@ create or replace function sf_matches_delta_hash(
   pn_los_forced_errors          matches.los_forced_errors%type,
   pn_los_unforced_errors        matches.los_unforced_errors%type,
   pn_los_net_points_won         matches.los_net_points_won%type,
+  pn_los_net_points_total       matches.los_net_points_total%type,
+  pn_los_fastest_first_serves_k matches.los_fastest_first_serves_kmh%type,
+  pn_los_average_first_serves_k matches.los_average_first_serves_kmh%type,
+  pn_los_fastest_second_serve_k matches.los_fastest_second_serve_kmh%type,
+  pn_los_average_second_serve_k matches.los_average_second_serve_kmh%type,
   pn_win_h2h_qty_3y             matches.win_h2h_qty_3y%type,
   pn_los_h2h_qty_3y             matches.los_h2h_qty_3y%type,
   pn_win_win_qty_3y             matches.win_win_qty_3y%type,
@@ -152,12 +162,14 @@ begin
                   pn_win_service_points_won || '|' || pn_win_service_points_total || '|' || pn_win_first_serve_return_won || '|' || pn_win_first_serve_return_tot || '|' || pn_win_second_serve_return_wo || '|' || 
                   pn_win_second_serve_return_to || '|' || pn_win_break_points_converted || '|' || pn_win_break_points_return_to || '|' || pn_win_service_games_played || '|' || pn_win_return_games_played || '|' || 
                   pn_win_return_points_won || '|' || pn_win_return_points_total || '|' || pn_win_total_points_won || '|' || pn_win_total_points_total || '|' || pn_win_winners || '|' || 
-                  pn_win_forced_errors || '|' || pn_win_unforced_errors || '|' || pn_win_net_points_won || '|' || pn_los_aces || '|' || pn_los_double_faults || '|' || pn_los_first_serves_in || '|' || 
+                  pn_win_forced_errors || '|' || pn_win_unforced_errors || '|' || pn_win_net_points_won || '|' || pn_win_net_points_total || '|' || pn_win_fastest_first_serves_k || '|' || 
+                  pn_win_average_first_serves_k || '|' || pn_win_fastest_second_serve_k || '|' || pn_win_average_second_serve_k || '|' || pn_los_aces || '|' || pn_los_double_faults || '|' || pn_los_first_serves_in || '|' || 
                   pn_los_first_serves_total || '|' || pn_los_first_serve_points_won || '|' || pn_los_first_serve_points_tot || '|' || pn_los_second_serve_points_wo || '|' || pn_los_second_serve_points_to || '|' || 
                   pn_los_break_points_saved || '|' || pn_los_break_points_serve_tot || '|' || pn_los_service_points_won || '|' || pn_los_service_points_total || '|' || pn_los_first_serve_return_won || '|' || 
                   pn_los_first_serve_return_tot || '|' || pn_los_second_serve_return_wo || '|' || pn_los_second_serve_return_to || '|' || pn_los_break_points_converted || '|' || pn_los_break_points_return_to || '|' || 
                   pn_los_service_games_played || '|' || pn_los_return_games_played || '|' || pn_los_return_points_won || '|' || pn_los_return_points_total || '|' || pn_los_total_points_won || '|' || 
-                  pn_los_total_points_total || '|' || pn_los_winners || '|' || pn_los_forced_errors || '|' || pn_los_unforced_errors || '|' || pn_los_net_points_won || '|' || pn_win_h2h_qty_3y || '|' || 
+                  pn_los_total_points_total || '|' || pn_los_winners || '|' || pn_los_forced_errors || '|' || pn_los_unforced_errors || '|' || pn_los_net_points_won || '|' || pn_los_net_points_total || '|' || 
+                  pn_los_fastest_first_serves_k || '|' || pn_los_average_first_serves_k || '|' || pn_los_fastest_second_serve_k || '|' || pn_los_average_second_serve_k || '|' || pn_win_h2h_qty_3y || '|' || 
                   pn_los_h2h_qty_3y || '|' || pn_win_win_qty_3y || '|' || pn_win_los_qty_3y || '|' || pn_los_win_qty_3y || '|' || pn_los_los_qty_3y || '|' || pn_win_avg_tiebreaks_3y || '|' || 
                   pn_los_avg_tiebreaks_3y || '|' || pn_win_h2h_qty_3y_current || '|' || pn_los_h2h_qty_3y_current || '|' || pn_win_win_qty_3y_current || '|' || pn_win_los_qty_3y_current || '|' || 
                   pn_los_win_qty_3y_current || '|' || pn_los_los_qty_3y_current || '|' || pn_win_avg_tiebreaks_3y_curre || '|' || pn_los_avg_tiebreaks_3y_curre || '|' || pn_win_ace_pct_3y || '|' || 
