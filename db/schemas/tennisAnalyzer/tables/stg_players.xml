@@ -9,7 +9,7 @@
     <column name="flag_code"      type="varchar2(10)"/>
     <column name="residence"      type="varchar2(60)"/>
     <column name="birthplace"     type="varchar2(60)"/>
-    <column name="birthdate"      type="varchar2(15)"/>
+    <column name="birthdate"      type="varchar2(32)"/>
     <column name="turned_pro"     type="number"/>
     <column name="weight_kg"      type="number"/>
     <column name="height_cm"      type="number"/>

@@ -24,6 +24,7 @@
     <constraint name="pk_players"             type="primary key" columns_list="code"/>
     <constraint name="unq_players$code_dc"    type="unique"      columns_list="code_dc"/>
     <constraint name="unq_players$url"        type="unique"      columns_list="url"/>
+    <constraint name="unq_players$main"       type="unique"      columns_list="first_name, last_name, birth_date"/>
     <constraint name="unq_players$url_dc"     type="unique"      columns_list="url_dc"/>
     <constraint name="fk_players$citizenship" type="foreign key" columns_list="citizenship" foreign_table="countries" foreign_columns_list="code"/>
   </constraints>
