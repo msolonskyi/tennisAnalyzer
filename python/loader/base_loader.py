@@ -96,6 +96,9 @@ class BaseLoader(object):
     def _parse(self):
         pass
 
+    def _post_process_data(self):
+        pass
+
     def load(self):
         try:
             self._request_url()
@@ -104,6 +107,7 @@ class BaseLoader(object):
             self._store_in_CSV()
             self._load_to_stg()
             self._process_data()
+            self._post_process_data()
             logzero.logger.info('')
             logzero.logger.info('completed successfully')
             logzero.logger.info('==========')
