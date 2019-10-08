@@ -45,7 +45,7 @@ class MatchesDCLoader(MatchesBaseLoader):
         for tournament_code in self._tournaments_list:
             self._parse_tournament('https://media.itfdataservices.com/tieresultsweb/dc/en/' + tournament_code[0])
 
-    def _post_process_data(self):
+    def _pre_process_data(self):
         self._fill_players_list()
         matches_loader = PlayersDCLoader(self._players_list)
         matches_loader.load()
