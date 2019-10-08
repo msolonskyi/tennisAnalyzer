@@ -1,4 +1,4 @@
-from constants import CONNECTION_STRING, INDOOR_OUTDOOR_MAP, SURFACE_MAP, COUNTRY_MAP, STADIE_CODES_MAP
+from constants import CONNECTION_STRING, INDOOR_OUTDOOR_MAP, SURFACE_MAP, COUNTRY_NAME_MAP, COUNTRY_CODE_MAP, STADIE_CODES_MAP
 from ctypes import Array
 import cx_Oracle
 import requests
@@ -43,10 +43,17 @@ class BaseLoader(object):
 
     @staticmethod
     def remap_country_name(country_name: str) -> str:
-        if country_name in COUNTRY_MAP:
-            return COUNTRY_MAP.get(country_name)
+        if country_name in COUNTRY_NAME_MAP:
+            return COUNTRY_NAME_MAP.get(country_name)
         else:
             return country_name
+
+    @staticmethod
+    def remap_country_code(country_code: str) -> str:
+        if country_code in COUNTRY_CODE_MAP:
+            return COUNTRY_CODE_MAP.get(country_code)
+        else:
+            return country_code
 
     def _request_url(self):
         if self.url is not None and self.url != '':
@@ -99,6 +106,9 @@ class BaseLoader(object):
     def _post_process_data(self):
         pass
 
+    def _pre_process_data(self):
+        pass
+
     def load(self):
         try:
             self._request_url()
@@ -106,6 +116,7 @@ class BaseLoader(object):
             self._truncate_table()
             self._store_in_CSV()
             self._load_to_stg()
+            self._pre_process_data()
             self._process_data()
             self._post_process_data()
             logzero.logger.info('')

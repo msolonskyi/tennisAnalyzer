@@ -5,11 +5,17 @@ ATP_URL_PREFIX = 'http://www.atpworldtour.com'
 DC_URL_PREFIX = 'https://www.daviscup.com'
 ATP_TOURNAMENT_SERIES = ('gs', '1000', 'atp', 'ch')
 DC_TOURNAMENT_SERIES = ('dc',)
-DURATION_IN_DAYS = 17
+DURATION_IN_DAYS = 18
 CSV_PATH = ''
 SLEEP_DURATION = 10
 
-COUNTRY_MAP = {
+COUNTRY_CODE_MAP = {
+    'LIB': 'LBN',
+    'SIN': 'SGP',
+    'bra': 'BRA',
+    'ROM': 'ROU'}
+
+COUNTRY_NAME_MAP = {
     'Slovak Republic': 'Slovakia',
     'Bosnia-Herzegovina': 'Bosnia and Herzegovina'}
 
