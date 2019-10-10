@@ -3,6 +3,7 @@ import os
 from lxml import html
 import logzero
 
+
 class PlayersATPLoader(BaseLoader):
 
     def __init__(self, year: int):
@@ -83,7 +84,7 @@ where m.winner_id = l.id
             residence = ''
             birthplace = ''
 
-            ## yyyy.mm.dd format
+            # yyyy.mm.dd format
             birthdate_array = tree.xpath("//span[contains(@class, 'table-birthday')]/text()")
             if len(birthdate_array) > 1:
                 birthdate = birthdate_array[1].replace('\n', '').replace('\r', '').replace('\t', '').replace('(', '').replace(')', '').strip()

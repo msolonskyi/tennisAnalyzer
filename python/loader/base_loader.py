@@ -6,6 +6,7 @@ import logzero
 import csv
 import os
 
+
 class BaseLoader(object):
     def __init__(self):
         self.url = ''
@@ -91,10 +92,10 @@ class BaseLoader(object):
     def _load_to_stg(self):
         try:
             cur = self.CON.cursor()
-            # insert
-            cur.executemany(self.INSERT_STR, self.data)
-            self.CON.commit()
-            logzero.logger.info(f'{len(self.data)} row(s) inserted')
+            if self.INSERT_STR is not None and self.INSERT_STR != '':
+                cur.executemany(self.INSERT_STR, self.data)
+                self.CON.commit()
+                logzero.logger.info(f'{len(self.data)} row(s) inserted')
         finally:
             cur.close()
 

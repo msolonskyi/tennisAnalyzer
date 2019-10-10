@@ -44,7 +44,7 @@ begin
                i.winner_seed,
                i.loser_seed,
                case
-                 when length(i.match_score) > length(m.match_score) then i.match_score
+                 when nvl(length(i.match_score), 0) > nvl(length(m.match_score), 0) then i.match_score
                  else m.match_score
                end as match_score,
                i.winner_sets_won,
@@ -65,7 +65,7 @@ begin
                  pn_winner_seed                => i.winner_seed,
                  pn_loser_seed                 => i.loser_seed,
                  pn_match_score                => case
-                                                    when length(i.match_score) > length(m.match_score) then i.match_score
+                                                    when nvl(length(i.match_score), 0) > nvl(length(m.match_score), 0) then i.match_score
                                                     else m.match_score
                                                   end,
                  pn_winner_sets_won            => i.winner_sets_won,
@@ -257,7 +257,8 @@ begin
       d.winner_tiebreaks_won = s.winner_tiebreaks_won,
       d.loser_tiebreaks_won  = s.loser_tiebreaks_won,
       d.stats_url            = nvl(d.stats_url, s.stats_url)
-    where d.delta_hash != s.delta_hash;
+--    where d.delta_hash != s.delta_hash
+    ;
   vn_qty := sql%rowcount;
   --
   commit;

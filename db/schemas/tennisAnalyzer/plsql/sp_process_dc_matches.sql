@@ -251,7 +251,7 @@ begin
                      sm.winner_seed,
                      sm.loser_seed,
                      case
-                       when length(sm.match_score) > length(m.match_score) then sm.match_score
+                       when nvl(length(sm.match_score), 0) > nvl(length(m.match_score), 0) then sm.match_score
                        else m.match_score
                      end as match_score,
                      sm.winner_sets_won,
@@ -574,7 +574,8 @@ begin
       d.los_average_first_serves_kmh  = s.los_average_first_serves_kmh,
       d.los_fastest_second_serve_kmh  = s.los_fastest_second_serve_kmh,
       d.los_average_second_serve_kmh  = s.los_average_second_serve_kmh
-    where d.delta_hash != s.delta_hash;
+--    where d.delta_hash != s.delta_hash
+;
   vn_qty := sql%rowcount;
   --
   commit;
