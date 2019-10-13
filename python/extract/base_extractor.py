@@ -4,6 +4,7 @@ import logzero
 import csv
 import os
 
+
 class BaseExtractor(object):
     def __init__(self):
         self.sql = ''
@@ -13,7 +14,7 @@ class BaseExtractor(object):
         self._init()
 
     def _init(self):
-        self.CON = cx_Oracle.connect(CONNECTION_STRING, encoding="UTF-8")
+        self.con = cx_Oracle.connect(CONNECTION_STRING, encoding="UTF-8")
         logzero.logfile(self.LOGFILE_NAME, loglevel=logzero.logging.INFO)
         logzero.logger.info('')
         logzero.logger.info('==========')
@@ -36,12 +37,13 @@ class BaseExtractor(object):
         except Exception as e:
             logzero.logger.error(f'Error: {str(e)}')
         finally:
-            self.CON.close()
+            self.con.close()
+
 
 class BaseFullExtractor(BaseExtractor):
     def _store(self):
         try:
-            cur = self.CON.cursor()
+            cur = self.con.cursor()
             cur.execute(self.sql)
             column_names = [row[0].lower() for row in cur.description]
             csv_file = open(self.CSVFILE_NAME, 'w', encoding='utf-8')
@@ -54,6 +56,7 @@ class BaseFullExtractor(BaseExtractor):
             csv_file.close()
             cur.close()
 
+
 class BaseYearlyExtractor(BaseExtractor):
     def __init__(self, year: int):
         super().__init__()
@@ -61,7 +64,7 @@ class BaseYearlyExtractor(BaseExtractor):
 
     def _store(self):
         try:
-            cur = self.CON.cursor()
+            cur = self.con.cursor()
             cur.execute(self.sql, {'year': self.year})
             column_names = [row[0].lower() for row in cur.description]
             csv_file = open(self.CSVFILE_NAME, 'w', encoding='utf-8')
