@@ -15,12 +15,14 @@ class BaseLoader(object):
         self.TABLE_NAME = ''
         self.INSERT_STR = ''
         self.PROCESS_PROC_NAME = ''
-        self.LOGFILE_NAME = os.path.splitext(self.get_script_name())[0] + '.log'
-        self.CSVFILE_NAME = os.path.splitext(self.get_script_name())[0] + '.csv'
+        # self.LOGFILE_NAME = os.path.splitext(self.get_script_name())[0] + '.log'
+        self.LOGFILE_NAME = ''
+        # self.CSVFILE_NAME = os.path.splitext(self.get_script_name())[0] + '.csv'
+        self.CSVFILE_NAME = ''
         self._init()
 
     def _init(self):
-        self.CON = cx_Oracle.connect(CONNECTION_STRING, encoding="UTF-8")
+        self.con = cx_Oracle.connect(CONNECTION_STRING, encoding="UTF-8")
         logzero.logfile(self.LOGFILE_NAME, loglevel=logzero.logging.INFO)
         logzero.logger.info('')
         logzero.logger.info('==========')
@@ -66,7 +68,7 @@ class BaseLoader(object):
 
     def _truncate_table(self):
         try:
-            cur = self.CON.cursor()
+            cur = self.con.cursor()
             if self.TABLE_NAME is not None and self.TABLE_NAME != '':
                 cur.execute(f'truncate table {self.TABLE_NAME}')
         finally:
@@ -82,7 +84,7 @@ class BaseLoader(object):
 
     def _process_data(self):
         try:
-            cur = self.CON.cursor()
+            cur = self.con.cursor()
             if self.PROCESS_PROC_NAME is not None and self.PROCESS_PROC_NAME != '':
                 logzero.logger.info('start data processing')
                 cur.callproc(self.PROCESS_PROC_NAME)
@@ -91,10 +93,10 @@ class BaseLoader(object):
 
     def _load_to_stg(self):
         try:
-            cur = self.CON.cursor()
+            cur = self.con.cursor()
             if self.INSERT_STR is not None and self.INSERT_STR != '':
                 cur.executemany(self.INSERT_STR, self.data)
-                self.CON.commit()
+                self.con.commit()
                 logzero.logger.info(f'{len(self.data)} row(s) inserted')
         finally:
             cur.close()
@@ -127,4 +129,4 @@ class BaseLoader(object):
         except Exception as e:
             logzero.logger.error(f'Error: {str(e)}')
         finally:
-            self.CON.close()
+            self.con.close()

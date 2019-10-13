@@ -11,7 +11,7 @@ class MatchesBaseLoader(BaseLoader):
 
     def _fill_dic_match_scores_adj(self):
         try:
-            cur = self.CON.cursor()
+            cur = self.con.cursor()
             sql = 'select match_id, set_score from match_scores_adjustments where set_score is not null'
             adjustments_list = cur.execute(sql).fetchall()
             for rec in adjustments_list:
@@ -21,7 +21,7 @@ class MatchesBaseLoader(BaseLoader):
 
     def _fill_dic_match_scores_stats_url_adj(self):
         try:
-            cur = self.CON.cursor()
+            cur = self.con.cursor()
             sql = 'select match_id, stats_url from match_scores_adjustments where stats_url is not null'
             adjustments_list = cur.execute(sql).fetchall()
             for rec in adjustments_list:
@@ -31,7 +31,7 @@ class MatchesBaseLoader(BaseLoader):
 
     def _fill_dic_match_scores_skip_adj(self):
         try:
-            cur = self.CON.cursor()
+            cur = self.con.cursor()
             sql = 'select match_id, to_skip from match_scores_adjustments where to_skip is not null'
             adjustments_list = cur.execute(sql).fetchall()
             for rec in adjustments_list:

@@ -13,7 +13,6 @@ class PlayersATPLoader(BaseLoader):
 
     def _init(self):
         self.LOGFILE_NAME = os.path.splitext(os.path.basename(__file__))[0] + '.log'
-        # self.CSVFILE_NAME = os.path.splitext(os.path.basename(__file__))[0] + '.csv'
         self.CSVFILE_NAME = ''
         self.TABLE_NAME = 'stg_players'
         self.INSERT_STR = 'insert into stg_players(player_code, player_slug, first_name, last_name, player_url, flag_code, residence, birthplace, birthdate, turned_pro, weight_kg, height_cm, handedness, backhand) values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14)'
@@ -22,10 +21,10 @@ class PlayersATPLoader(BaseLoader):
 
     def _fill_players_url_list(self):
         try:
-            cur = self.CON.cursor()
+            cur = self.con.cursor()
             if self.year is None:
                 sql = "select url from players where first_name is null"
-                self._players_url_list = cur.execute(sql).fetchall()[0]
+                self._players_url_list = cur.execute(sql).fetchall()
                 logzero.logger.info('loading players with empty names only')
             else:
                 sql = '''select distinct w.url
@@ -48,7 +47,7 @@ where m.winner_id = l.id
     def _parse(self):
         self._fill_players_url_list()
         for player_url in self._players_url_list:
-            self._parse_player(player_url)
+            self._parse_player(player_url[0])
 
     def _parse_player(self, url: str):
         try:

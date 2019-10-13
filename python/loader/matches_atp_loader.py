@@ -5,6 +5,7 @@ from lxml import html
 import os
 import logzero
 
+
 class MatchesATPLoader(MatchesBaseLoader):
     def __init__(self, year: int):
         super().__init__()
@@ -13,8 +14,7 @@ class MatchesATPLoader(MatchesBaseLoader):
 
     def _init(self):
         self.LOGFILE_NAME = os.path.splitext(os.path.basename(__file__))[0] + '.log'
-        #self.CSVFILE_NAME = os.path.splitext(os.path.basename(__file__))[0] + '.csv'
-        self.CSVFILE_NAME = None
+        self.CSVFILE_NAME = ''
         self.TABLE_NAME = 'stg_matches'
         self.INSERT_STR = 'insert into stg_matches (id, tournament_id, stadie_id, match_order, winner_code, winner_url, loser_code, loser_url, winner_seed, loser_seed, match_score, stats_url, match_ret, winner_sets_won, loser_sets_won, winner_games_won, loser_games_won, winner_tiebreaks_won, loser_tiebreaks_won) values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19)'
         self.PROCESS_PROC_NAME = 'sp_process_atp_matches'
@@ -22,7 +22,7 @@ class MatchesATPLoader(MatchesBaseLoader):
 
     def _fill_tournaments_list(self):
         try:
-            cur = self.CON.cursor()
+            cur = self.con.cursor()
             if self.year is None:
                 sql = "select url from tournaments where start_dtm > sysdate - :duration and series_id != 'dc'"
                 self._tournaments_list = cur.execute(sql, {'duration': DURATION_IN_DAYS}).fetchall()
@@ -54,14 +54,14 @@ class MatchesATPLoader(MatchesBaseLoader):
             else:
                 tournament_year = str(self.year)
             tournament_id = tournament_year + '-' + tournament_code
-            #
+
             tree = html.fromstring(self.responce_str.replace('<sup>', '(').replace('</sup>', ')'))
             stadie_name_array = tree.xpath("//table[contains(@class, 'day-table')]/thead/tr/th/text()")
-            #
+
             for i in range(0, len(stadie_name_array)):
                 stadie_id = self.remap_stadie_code(stadie_name_array[i])
                 stadie_count_array = tree.xpath("//table[contains(@class, 'day-table')]/tbody[" + str(i + 1) + "]/tr/td[contains(@class, 'day-table-name')][1]/a/text()")
-                #
+
                 for j in range(0, len(stadie_count_array)):
                     match_order = j + 1
                     # Winner

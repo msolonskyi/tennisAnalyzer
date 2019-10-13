@@ -25,7 +25,7 @@ class MatchesScoreUpdater(MatchesBaseLoader):
 
     def _fill_matches_list(self):
         try:
-            cur = self.CON.cursor()
+            cur = self.con.cursor()
             sql = '''select id, tournament_code, match_score
 from vw_matches
 where tournament_year = :year

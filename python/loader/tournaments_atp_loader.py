@@ -5,6 +5,7 @@ import os
 import logzero
 import requests
 
+
 class TournamentsATPLoader(BaseLoader):
     def __init__(self, year: int):
         super().__init__()
@@ -13,8 +14,7 @@ class TournamentsATPLoader(BaseLoader):
 
     def _init(self):
         self.LOGFILE_NAME = os.path.splitext(os.path.basename(__file__))[0] + '.log'
-        #self.CSVFILE_NAME = os.path.splitext(os.path.basename(__file__))[0] + '.csv'
-        self.CSVFILE_NAME = None
+        self.CSVFILE_NAME = ''
         self.TABLE_NAME = 'stg_tournaments'
         self.INSERT_STR = 'insert into stg_tournaments(id, name, year, code, url, slug, location, sgl_draw_url, sgl_pdf_url, indoor_outdoor, surface, series, start_dtm, finish_dtm, sgl_draw_qty, dbl_draw_qty, prize_money, prize_currency, country_name) values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19)'
         self.PROCESS_PROC_NAME = 'sp_process_atp_tournaments'
@@ -78,7 +78,6 @@ class TournamentsATPLoader(BaseLoader):
             tournament_fin_commit_details = tree.xpath("//tr[contains(@class, 'tourney-result')][" + str(i + 1) + "]/td[contains(@class, 'tourney-details fin-commit')]/div/div/span/text()")
             if len(tournament_fin_commit_details) > 0:
                 tournament_fin_commit = tournament_fin_commit_details[0].strip()
-                #logzero.logger.info(f'tournament_fin_commit_details: {tournament_fin_commit}')
                 if tournament_fin_commit[0] == 'A':
                     tournament_prize_currency = tournament_fin_commit[0:2]
                     tournament_prize_money = tournament_fin_commit[2:].replace(',', '').replace('.', '')
@@ -90,7 +89,7 @@ class TournamentsATPLoader(BaseLoader):
                 tournament_prize_money = None
                 tournament_prize_currency = None
 
-            if tournament_code != '602': # doubles
+            if tournament_code != '602':  # doubles
                 self.data.append([tournament_id, tournament_name, self.year, tournament_code, tournament_url, tournament_slug,
                                   tournament_location, tournament_sgl_draw_url, tournament_sgl_pdf_url, tournament_indoor_outdoor,
                                   tournament_surface, tournament_serie, tournament_start_dtm, None, tournament_sgl_draw_qty,
