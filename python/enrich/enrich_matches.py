@@ -1,11 +1,8 @@
 from constants import CONNECTION_STRING, DURATION_IN_DAYS
-#from lxml import html
-#from ctypes import Array
-#from datetime import datetime
 import cx_Oracle
 import sys
-#import requests
 import logzero
+
 
 # main
 # logging support
@@ -21,7 +18,7 @@ if len(sys.argv) >= 2:
 else:
     year = None
 
-logzero.logger.info ('')
+logzero.logger.info('')
 
 try:
     con = cx_Oracle.connect(CONNECTION_STRING, encoding='UTF-8')
