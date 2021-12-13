@@ -1,5 +1,5 @@
 from base_extractor import BaseFullExtractor, BaseYearlyExtractor
-from constants import CSV_PATH
+from constants import ATP_CSV_PATH
 import os
 
 
@@ -8,7 +8,7 @@ class PlayersFullExtractor(BaseFullExtractor):
         super().__init__()
         self.LOGFILE_NAME = os.path.splitext(self.get_script_name())[0] + '.log'
         self.key = 'players'
-        self.CSVFILE_NAME = f'{CSV_PATH}{self.key}.csv'
+        self.CSVFILE_NAME = f'{ATP_CSV_PATH}{self.key}.csv'
         self.sql = '''select code,
        url,
        first_name,
@@ -34,7 +34,7 @@ class TournamentsFullExtractor(BaseFullExtractor):
         super().__init__()
         self.LOGFILE_NAME = os.path.splitext(self.get_script_name())[0] + '.log'
         self.key = 'tournaments'
-        self.CSVFILE_NAME = f'{CSV_PATH}{self.key}.csv'
+        self.CSVFILE_NAME = f'{ATP_CSV_PATH}{self.key}.csv'
         self.sql = '''select id,
        name,
        year,
@@ -55,6 +55,7 @@ class TournamentsFullExtractor(BaseFullExtractor):
        prize_currency,
        country_code
 from tournaments
+where series_id != 'dc'
 order by start_dtm, code'''
 
 
@@ -63,7 +64,7 @@ class MatchesYearlyExtractor(BaseYearlyExtractor):
         super().__init__(year)
         self.LOGFILE_NAME = os.path.splitext(self.get_script_name())[0] + '.log'
         self.key = 'matches'
-        self.CSVFILE_NAME = f'{CSV_PATH}{self.key}_{year}.csv'
+        self.CSVFILE_NAME = f'{ATP_CSV_PATH}{self.key}_{year}.csv'
         self.sql = '''select id,
        tournament_id,
        stadie_id,
@@ -156,4 +157,5 @@ class MatchesYearlyExtractor(BaseYearlyExtractor):
        los_average_second_serve_kmh
 from vw_matches v
 where tournament_year = :year
+  and series_id != 'dc'
 order by tournament_start_dtm, tournament_code, stadie_ord, id'''

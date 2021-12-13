@@ -6,7 +6,8 @@ DC_URL_PREFIX = 'https://www.daviscup.com'
 ATP_TOURNAMENT_SERIES = ('gs', '1000', 'atp', 'ch')
 DC_TOURNAMENT_SERIES = ('dc',)
 DURATION_IN_DAYS = 18
-CSV_PATH = ''
+ATP_CSV_PATH = ''
+DC_CSV_PATH = ''
 SLEEP_DURATION = 10
 
 COUNTRY_CODE_MAP = {

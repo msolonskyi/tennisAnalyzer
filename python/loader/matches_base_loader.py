@@ -202,6 +202,8 @@ class MatchesBaseLoader(BaseLoader):
             match_ret = '(RET)'
         elif 'UNP' in match_score:  # covers '(UNP)' and 'UNP'
             match_ret = '(RET)'
+        elif 'WEA' in match_score:  # covers '(UNP)' and 'UNP'
+            match_ret = '(WEA)'
         else:
             match_ret = None
         return match_ret

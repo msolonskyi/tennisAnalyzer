@@ -28,11 +28,11 @@ class TournamentsATPLoader(BaseLoader):
         self.url = f'http://www.atpworldtour.com/en/scores/results-archive?year={self.year}&tournamentType={tournament_serie}'
         self._request_url()
         tree = html.fromstring(self.responce_str)
-        tournament_title_array = tree.xpath("//span[contains(@class, 'tourney-title')]/text()")
+        tournament_title_array = tree.xpath("//a[contains(@class, 'tourney-title')]/text()")
         tournament_loc_array = tree.xpath("//span[contains(@class, 'tourney-location')]/text()")
         tournament_dates_array = tree.xpath("//span[contains(@class, 'tourney-dates')]/text()")
         tournament_singles_draw_array = tree.xpath("//div[contains(., 'SGL')]/a[1]/span/text()")
-        tournament_doubles_draw_array = tree.xpath("//div[contains(., 'DBL')]/a[1]/span/text()")
+        tournament_doubles_draw_array = tree.xpath("//div[contains(., 'DBL')]/a[2]/span/text()")
         tournament_indoor_outdoor_array = tree.xpath("//div[contains(., 'Outdoor') or contains(., 'Indoor')]/text()[normalize-space()]")
         tournament_surface_array = tree.xpath("//div[contains(., 'Outdoor') or contains(., 'Indoor')]/span/text()[normalize-space()]")
 

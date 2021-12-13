@@ -2,6 +2,7 @@ from matches_base_loader import MatchesBaseLoader
 from constants import ATP_URL_PREFIX, DURATION_IN_DAYS
 from datetime import datetime
 from lxml import html
+from lxml import etree
 import os
 import logzero
 
@@ -59,9 +60,12 @@ class MatchesATPLoader(MatchesBaseLoader):
             stadie_name_array = tree.xpath("//table[contains(@class, 'day-table')]/thead/tr/th/text()")
 
             for i in range(0, len(stadie_name_array)):
+                if 'Wheelchair' in stadie_name_array[i]:
+                    continue
+                if 'Champions Tour' in stadie_name_array[i]:
+                    continue
                 stadie_id = self.remap_stadie_code(stadie_name_array[i])
                 stadie_count_array = tree.xpath("//table[contains(@class, 'day-table')]/tbody[" + str(i + 1) + "]/tr/td[contains(@class, 'day-table-name')][1]/a/text()")
-
                 for j in range(0, len(stadie_count_array)):
                     match_order = j + 1
                     # Winner
@@ -115,13 +119,15 @@ class MatchesATPLoader(MatchesBaseLoader):
                         match_score = self._dic_match_scores_adj[match_id]
                         logzero.logger.warning(f'adjustment of match_id: {match_id}; match_score: {match_score}')
                     else:
-                        match_score_array = tree.xpath("//table[contains(@class, 'day-table')]/tbody[" + str(i + 1) + "]/tr[" + str(j + 1) + "]/td[contains(@class, 'day-table-score')]/a/text()")
+                        match_score_array = tree.xpath("//table[contains(@class, 'day-table-score')]/tbody[" + str(i + 1) + "]/tr[" + str(j + 1) + "]/td[contains(@class, 'day-table-score')]/a/text()")
                         if len(match_score_array) > 0:
                             match_score = match_score_array[0].replace('\n', '').replace('\r', '').replace('\t', '').strip()
 
                         match_score_array = tree.xpath("//table[contains(@class, 'day-table')]/tbody[" + str(i + 1) + "]/tr[" + str(j + 1) + "]/td[contains(@class, 'day-table-score')]/a/text()")
                         if len(match_score_array) > 0:
                             match_score = ''.join(match_score_array).replace('\n', '').replace('\r', '').replace('\t', '').replace('     ', ' ').strip()
+                    for tr in range(0, 16):
+                        match_score = match_score.replace('  ', ' ')
                     score_array = self._parse_score(match_score, match_id, tournament_code)
                     # Match stats URL
                     if match_id in self._dic_match_scores_stats_url_adj:

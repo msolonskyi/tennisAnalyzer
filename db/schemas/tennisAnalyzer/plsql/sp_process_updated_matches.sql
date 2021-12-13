@@ -1,6 +1,6 @@
-create or replace procedure sp_process_atp_matches
+﻿create or replace procedure sp_process_updated_matches
 is
-  cv_module_name constant varchar2(200) := 'process atp matches';
+  cv_module_name constant varchar2(200) := 'process updated matches';
   vn_qty         number;
 begin
   pkg_log.sp_start_batch(pv_module => cv_module_name);
@@ -35,18 +35,7 @@ begin
   --
   merge into matches d
   using(select i.id,
-               i.tournament_id,
-               nvl(i.stats_url, m.stats_url) as stats_url,
-               i.stadie_id,
-               i.match_order,
-               i.winner_code,
-               i.loser_code,
-               i.winner_seed,
-               i.loser_seed,
-               case
-                 when nvl(length(i.match_score), 0) > nvl(length(m.match_score), 0) then i.match_score
-                 else m.match_score
-               end as match_score,
+               i.match_score,
                i.winner_sets_won,
                i.loser_sets_won,
                i.winner_games_won,
@@ -56,18 +45,15 @@ begin
                i.match_ret,
                sf_matches_delta_hash(
                  pn_id                         => i.id,
-                 pn_tournament_id              => i.tournament_id,
-                 pn_stadie_id                  => i.stadie_id,
-                 pn_match_order                => i.match_order,
+                 pn_tournament_id              => m.tournament_id,
+                 pn_stadie_id                  => m.stadie_id,
+                 pn_match_order                => m.match_order,
                  pn_match_ret                  => i.match_ret,
                  pn_winner_code                => i.winner_code,
                  pn_loser_code                 => i.loser_code,
                  pn_winner_seed                => i.winner_seed,
                  pn_loser_seed                 => i.loser_seed,
-                 pn_match_score                => case
-                                                    when nvl(length(i.match_score), 0) > nvl(length(m.match_score), 0) then i.match_score
-                                                    else m.match_score
-                                                  end,
+                 pn_match_score                => i.match_score,
                  pn_winner_sets_won            => i.winner_sets_won,
                  pn_loser_sets_won             => i.loser_sets_won,
                  pn_winner_games_won           => i.winner_games_won,
@@ -234,29 +220,18 @@ begin
         where m.id(+) = i.id
           and i.rn = 1) s
   on (s.id = d.id)
-  when not matched then
-    insert (d.id, d.delta_hash, d.batch_id,          d.tournament_id, d.stadie_id, d.match_order, d.match_ret, d.winner_code, d.loser_code, d.winner_seed, d.loser_seed, d.match_score, d.winner_sets_won, d.loser_sets_won, d.winner_games_won, d.loser_games_won, d.winner_tiebreaks_won, d.loser_tiebreaks_won, d.stats_url)
-    values (s.id, s.delta_hash, pkg_log.gn_batch_id, s.tournament_id, s.stadie_id, s.match_order, s.match_ret, s.winner_code, s.loser_code, s.winner_seed, s.loser_seed, s.match_score, s.winner_sets_won, s.loser_sets_won, s.winner_games_won, s.loser_games_won, s.winner_tiebreaks_won, s.loser_tiebreaks_won, s.stats_url)
   when matched then
     update set
       d.delta_hash           = s.delta_hash,
       d.batch_id             = pkg_log.gn_batch_id,
-      d.tournament_id        = s.tournament_id,
-      d.stadie_id            = s.stadie_id,
-      d.match_order          = s.match_order,
       d.match_ret            = s.match_ret,
-      d.winner_code          = s.winner_code,
-      d.loser_code           = s.loser_code,
-      d.winner_seed          = s.winner_seed,
-      d.loser_seed           = s.loser_seed,
       d.match_score          = s.match_score,
       d.winner_sets_won      = s.winner_sets_won,
       d.loser_sets_won       = s.loser_sets_won,
       d.winner_games_won     = s.winner_games_won,
       d.loser_games_won      = s.loser_games_won,
       d.winner_tiebreaks_won = s.winner_tiebreaks_won,
-      d.loser_tiebreaks_won  = s.loser_tiebreaks_won,
-      d.stats_url            = nvl(s.stats_url, d.stats_url)
+      d.loser_tiebreaks_won  = s.loser_tiebreaks_won
     where d.delta_hash != s.delta_hash;
   vn_qty := sql%rowcount;
   --
@@ -269,5 +244,5 @@ exception
     pkg_log.sp_log_message(pv_text => 'errors stack', pv_clob => dbms_utility.format_error_stack || pkg_utils.CRLF || dbms_utility.format_error_backtrace, pv_type => 'E');
     pkg_log.sp_finish_batch_with_errors;
     raise;
-end sp_process_atp_matches;
+end sp_process_updated_matches;
 /

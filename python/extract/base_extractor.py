@@ -1,4 +1,4 @@
-from constants import CONNECTION_STRING, CSV_PATH
+from constants import CONNECTION_STRING
 import cx_Oracle
 import logzero
 import csv

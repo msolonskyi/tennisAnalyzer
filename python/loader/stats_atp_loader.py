@@ -3,6 +3,7 @@ from base_loader import BaseLoader
 from lxml import html
 import os
 import logzero
+import time
 
 
 class StatsATPLoader(BaseLoader):
@@ -24,7 +25,7 @@ class StatsATPLoader(BaseLoader):
             cur = self.con.cursor()
             if self.year is None:
                 # last couple weeks
-                sql = '''select winner_code, loser_code, stats_url
+                sql = '''select winner_code, loser_code, replace(stats_url, 'stats-centre', 'match-stats') stats_url
 from vw_matches
 where stats_url is not null
   and series_id != 'dc'
@@ -34,12 +35,13 @@ where stats_url is not null
                 logzero.logger.info(f'Parse stats for last {DURATION_IN_DAYS} days...')
             else:
                 # historical data
-                sql = '''select winner_code, loser_code, stats_url
+                sql = '''select winner_code, loser_code, replace(stats_url, 'stats-centre', 'match-stats') stats_url
 from vw_matches
 where stats_url is not null
   and series_id != 'dc'
   and (win_aces is null or los_aces is null)
-  and tournament_year = :year'''
+  and tournament_year = :year
+'''
                 self._stats_tpl_list = cur.execute(sql, {'year': self.year}).fetchall()
                 logzero.logger.info(f'Parse stats for {self.year} ...')
         finally:
@@ -60,6 +62,7 @@ where stats_url is not null
         self._fill_stats_tpl_list()
         for stats_tpl in self._stats_tpl_list:
             self._parse_stats(stats_tpl)
+            time.sleep(31)
 
     def _parse_stats(self, url_tpl: tuple):
         try:
