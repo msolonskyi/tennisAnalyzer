@@ -3,7 +3,7 @@ import os
 import logzero
 
 
-class MatchesScoreUpdater(MatchesBaseLoader):
+class MatchesATPScoreUpdater(MatchesBaseLoader):
     def __init__(self, year: int):
         super().__init__()
         self.year = year
@@ -29,6 +29,7 @@ class MatchesScoreUpdater(MatchesBaseLoader):
             sql = '''select id, tournament_code, match_score
 from vw_matches
 where tournament_year = :year
+and series_id != 'dc'
 order by tournament_start_dtm, tournament_code, stadie_ord'''
             self._matches_list = cur.execute(sql, {'year': self.year}).fetchall()
             logzero.logger.info(f'checking {cur.rowcount} matches for {self.year} year')

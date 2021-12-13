@@ -113,6 +113,10 @@ where code_dc is not null'''
                         stats = json.loads(self.responce_str)
                         match_statistics = stats.get('MatchStatistics')
                         match_duration = match_statistics.get('DurationInHours') * 60 + match_statistics.get('DurationInMins')
+                        if match_duration < 0:
+                            match_duration = None
+                        if match_duration > 9999:
+                            match_duration = None
                         stats_url = None
                         if winning_side == 1:
                             # 1st

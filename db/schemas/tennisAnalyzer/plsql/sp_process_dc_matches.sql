@@ -480,8 +480,8 @@ begin
                            ii.los_fastest_second_serve_kmh,
                            ii.los_average_second_serve_kmh
                     from stg_matches ii, players w, players l
-                    where ii.winner_code = w.code_dc(+)
-                      and ii.loser_code = l.code_dc(+)) sm
+                    where ii.winner_code = w.code_dc
+                      and ii.loser_code = l.code_dc) sm
               where m.id(+) = sm.id) i) s
   on (s.id = d.id)
   when not matched then
@@ -574,8 +574,7 @@ begin
       d.los_average_first_serves_kmh  = s.los_average_first_serves_kmh,
       d.los_fastest_second_serve_kmh  = s.los_fastest_second_serve_kmh,
       d.los_average_second_serve_kmh  = s.los_average_second_serve_kmh
---    where d.delta_hash != s.delta_hash
-;
+    where d.delta_hash != s.delta_hash;
   vn_qty := sql%rowcount;
   --
   commit;

@@ -1,4 +1,4 @@
-set feedback off
+﻿set feedback off
 set define off
 prompt Loading COUNTRIES...
 insert into COUNTRIES (code, name)
@@ -13,6 +13,8 @@ insert into COUNTRIES (code, name)
 values ('AND', 'Andorra');
 insert into COUNTRIES (code, name)
 values ('ANG', 'Angola');
+insert into COUNTRIES (code, name)
+values ('AIA', 'Anguilla');
 insert into COUNTRIES (code, name)
 values ('ANT', 'Antigua and Barbuda');
 insert into COUNTRIES (code, name)
@@ -166,6 +168,8 @@ values ('FIN', 'Finland');
 insert into COUNTRIES (code, name)
 values ('FRA', 'France');
 insert into COUNTRIES (code, name)
+values ('FGU', 'French Guiana');
+insert into COUNTRIES (code, name)
 values ('GAB', 'Gabon');
 insert into COUNTRIES (code, name)
 values ('GEO', 'Georgia');
@@ -174,9 +178,15 @@ values ('GER', 'Germany');
 insert into COUNTRIES (code, name)
 values ('GHA', 'Ghana');
 insert into COUNTRIES (code, name)
+values ('GIB', 'Gibraltar');
+insert into COUNTRIES (code, name)
+values ('GIL', 'Gilbert Islands');
+insert into COUNTRIES (code, name)
 values ('GBR', 'Great Britain');
 insert into COUNTRIES (code, name)
 values ('GRE', 'Greece');
+insert into COUNTRIES (code, name)
+values ('GLD', 'Greenland');
 insert into COUNTRIES (code, name)
 values ('GRN', 'Grenada');
 insert into COUNTRIES (code, name)
@@ -191,6 +201,8 @@ insert into COUNTRIES (code, name)
 values ('GUY', 'Guyana');
 insert into COUNTRIES (code, name)
 values ('HAI', 'Haiti');
+commit;
+prompt 100 records committed...
 insert into COUNTRIES (code, name)
 values ('HON', 'Honduras');
 insert into COUNTRIES (code, name)
@@ -201,8 +213,6 @@ insert into COUNTRIES (code, name)
 values ('ISL', 'Iceland');
 insert into COUNTRIES (code, name)
 values ('IOA', 'Independent Olympic Athletes');
-commit;
-prompt 100 records committed...
 insert into COUNTRIES (code, name)
 values ('IOP', 'Independent Olympic Participants');
 insert into COUNTRIES (code, name)
@@ -284,6 +294,8 @@ values ('MLT', 'Malta');
 insert into COUNTRIES (code, name)
 values ('MHL', 'Marshall Islands');
 insert into COUNTRIES (code, name)
+values ('MRN', 'Martinique');
+insert into COUNTRIES (code, name)
 values ('MTN', 'Mauritania');
 insert into COUNTRIES (code, name)
 values ('MRI', 'Mauritius');
@@ -301,6 +313,8 @@ insert into COUNTRIES (code, name)
 values ('MGL', 'Mongolia');
 insert into COUNTRIES (code, name)
 values ('MNE', 'Montenegro');
+insert into COUNTRIES (code, name)
+values ('MNT', 'Montserrat');
 insert into COUNTRIES (code, name)
 values ('MAR', 'Morocco');
 insert into COUNTRIES (code, name)
@@ -329,6 +343,8 @@ insert into COUNTRIES (code, name)
 values ('NIG', 'Niger');
 insert into COUNTRIES (code, name)
 values ('NGR', 'Nigeria');
+insert into COUNTRIES (code, name)
+values ('NFK', 'Norfolk Island');
 insert into COUNTRIES (code, name)
 values ('NBO', 'North Borneo');
 insert into COUNTRIES (code, name)
@@ -387,6 +403,8 @@ insert into COUNTRIES (code, name)
 values ('RUS', 'Russia');
 insert into COUNTRIES (code, name)
 values ('RU1', 'Russian Empire');
+commit;
+prompt 200 records committed...
 insert into COUNTRIES (code, name)
 values ('RWA', 'Rwanda');
 insert into COUNTRIES (code, name)
@@ -403,8 +421,6 @@ insert into COUNTRIES (code, name)
 values ('SMR', 'San Marino');
 insert into COUNTRIES (code, name)
 values ('KSA', 'Saudi Arabia');
-commit;
-prompt 200 records committed...
 insert into COUNTRIES (code, name)
 values ('SEN', 'Senegal');
 insert into COUNTRIES (code, name)
@@ -474,6 +490,8 @@ values ('TUR', 'Turkey');
 insert into COUNTRIES (code, name)
 values ('TKM', 'Turkmenistan');
 insert into COUNTRIES (code, name)
+values ('TKS', 'Turks & Caicos Islands');
+insert into COUNTRIES (code, name)
 values ('TUV', 'Tuvalu');
 insert into COUNTRIES (code, name)
 values ('UGA', 'Uganda');
@@ -516,7 +534,7 @@ values ('ZAM', 'Zambia');
 insert into COUNTRIES (code, name)
 values ('ZIM', 'Zimbabwe');
 commit;
-prompt 255 records loaded
+prompt 264 records loaded
 set feedback on
 set define on
 prompt Done.
