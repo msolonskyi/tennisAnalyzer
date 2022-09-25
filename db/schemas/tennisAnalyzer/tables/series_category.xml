@@ -1,0 +1,13 @@
+﻿<?xml version="1.0"?>
+  <table name="series_category" type="normal">
+  <columns>
+    <column name="id"        type="varchar2(16)" nullable="n"/>
+    <column name="name"      type="varchar2(64)" nullable="n"/>
+    <column name="series_id" type="varchar2(8)"  nullable="n"/>
+  </columns>
+  <constraints>
+    <constraint name="pk_series_category"        type="primary key" columns_list="id"/>
+    <constraint name="fk_series_category$series" type="foreign key" columns_list="series_id" foreign_table="series" foreign_columns_list="id"/>
+    <constraint name="unq_series_category"       type="unique"      columns_list="name"/>
+  </constraints>
+</table>

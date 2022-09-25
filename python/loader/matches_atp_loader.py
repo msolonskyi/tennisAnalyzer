@@ -25,12 +25,12 @@ class MatchesATPLoader(MatchesBaseLoader):
         try:
             cur = self.con.cursor()
             if self.year is None:
-                sql = "select url from tournaments where start_dtm > sysdate - :duration and series_id != 'dc'"
+                sql = "select url from tournaments where start_dtm > sysdate - :duration and series_category_id != 'dc'"
                 self._tournaments_list = cur.execute(sql, {'duration': DURATION_IN_DAYS}).fetchall()
                 logzero.logger.info(f'loading matches for last {DURATION_IN_DAYS} days')
             else:
                 # historical data
-                sql = "select url from tournaments where year = :year and series_id != 'dc'"
+                sql = "select url from tournaments where year = :year and series_category_id != 'dc'"
                 self._tournaments_list = cur.execute(sql, {'year': self.year}).fetchall()
                 logzero.logger.info(f'loading matches for {self.year} year')
         finally:

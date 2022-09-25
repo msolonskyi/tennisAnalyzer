@@ -89,8 +89,33 @@ class TournamentsATPLoader(BaseLoader):
                 tournament_prize_money = None
                 tournament_prize_currency = None
 
+            tournament_series_category = tournament_serie
+            if tournament_serie == 'atp':
+                tournament_series_category_img_url = tree.xpath("//table/tbody/tr[" + str(i + 1) + "]/td[contains(@class, 'tourney-badge-wrapper')]/img/@src")
+                if len(tournament_series_category_img_url) > 0:
+                    if tournament_series_category_img_url[0] == '/assets/atpwt/images/tournament/badges/categorystamps_500.png':
+                        tournament_series_category = 'atp500'
+                    elif tournament_series_category_img_url[0] == '/assets/atpwt/images/tournament/badges/categorystamps_finals.svg':
+                        tournament_series_category = 'atpFinal'
+                    elif tournament_series_category_img_url[0] == '/assets/atpwt/images/tournament/badges/categorystamps_atpcup.svg':
+                        tournament_series_category = 'atpCup'
+                    elif tournament_series_category_img_url[0] == '/assets/atpwt/images/tournament/badges/categorystamps_lvr.png':
+                        tournament_series_category = 'laverCup'
+                    elif tournament_series_category_img_url[0] == '/assets/atpwt/images/tournament/badges/categorystamps_nextgen.svg':
+                        tournament_series_category = 'nextGen'
+                    else:
+                        tournament_series_category = 'atp250'
+                else:
+                    tournament_series_category = 'atp250'
+
+            if tournament_serie == 'ch':
+                if tournament_prize_money != None and int(tournament_prize_money) >= 75000:
+                    tournament_series_category = 'ch100'
+                else:
+                    tournament_series_category = 'ch50'
+
             if tournament_code != '602':  # doubles
                 self.data.append([tournament_id, tournament_name, self.year, tournament_code, tournament_url, tournament_slug,
                                   tournament_location, tournament_sgl_draw_url, tournament_sgl_pdf_url, tournament_indoor_outdoor,
-                                  tournament_surface, tournament_serie, tournament_start_dtm, None, tournament_sgl_draw_qty,
+                                  tournament_surface, tournament_series_category, tournament_start_dtm, None, tournament_sgl_draw_qty,
                                   tournament_dbl_draw_qty, tournament_prize_money, tournament_prize_currency, tournament_country_name])

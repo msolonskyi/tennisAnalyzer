@@ -11,8 +11,10 @@ select m.id,
        t.sgl_pdf_url as tournament_sgl_pdf_url,
        t.indoor_outdoor as tournament_indoor_outdoor,
        t.surface as tournament_surface,
-       t.series_id as series_id,
+       se.id as series_id,
        se.name as series_name,
+       sc.id as series_category_id,
+       sc.name as series_category_name,
        t.start_dtm as tournament_start_dtm,
        to_date(to_char(t.start_dtm, 'yyyymmdd') || lpad(st.ord, 2, '0'), 'yyyymmddhh24') as tournament_ord_start_dtm,
        t.finish_dtm as tournament_finish_dtm,
@@ -57,6 +59,7 @@ select m.id,
        end as loser_age,
        st.name as stadie_name,
        st.ord as stadie_ord,
+       st.draw as stadie_draw,
        m.stadie_id,
        m.match_order,
        m.match_ret,
@@ -201,10 +204,11 @@ select m.id,
        m.los_bp_won_pct_3y_current,
        m.los_return_won_pct_3y_current,
        m.los_total_won_pct_3y_current
-from matches m, tournaments t, players w, players l, stadies st, series se
+from matches m, tournaments t, players w, players l, stadies st, series_category sc, series se
 where m.winner_code = w.code
   and m.loser_code = l.code
   and m.tournament_id = t.id
   and m.stadie_id = st.id
-  and t.series_id = se.id
+  and t.series_category_id = sc.id
+  and sc.series_id = se.id
 /

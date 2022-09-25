@@ -1,0 +1,14 @@
+﻿<?xml version="1.0"?>
+  <table name="points_rules" type="normal">
+  <columns>
+    <column name="id"                 type="varchar2(16)" nullable="n"/>
+    <column name="name"               type="varchar2(32)" nullable="n"/>
+    <column name="series_category_id" type="varchar2(16)" nullable="n"/>
+    <column name="first_stadie_id"    type="varchar2(4)"  nullable="y"/>
+  </columns>
+  <constraints>
+    <constraint name="pk_points_rules"       type="primary key" columns_list="id"/>
+    <constraint name="fk_pr$series_category" type="foreign key" columns_list="series_category_id" foreign_table="series_category" foreign_columns_list="id"/>
+    <constraint name="fk_pr$first_stadies"   type="foreign key" columns_list="first_stadie_id" foreign_table="stadies" foreign_columns_list="id"/>
+  </constraints>
+</table>

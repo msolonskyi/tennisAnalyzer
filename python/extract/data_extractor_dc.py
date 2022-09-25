@@ -9,27 +9,29 @@ class TournamentsFullExtractor(BaseFullExtractor):
         self.LOGFILE_NAME = os.path.splitext(self.get_script_name())[0] + '.log'
         self.key = 'tournaments'
         self.CSVFILE_NAME = f'{DC_CSV_PATH}{self.key}.csv'
-        self.sql = '''select id,
-       name,
-       year,
-       code,
-       url,
-       slug,
-       location,
-       sgl_draw_url,
-       sgl_pdf_url,
-       indoor_outdoor,
-       surface,
-       series_id,
-       to_char(start_dtm, 'yyyymmdd') as start_dtm,
-       to_char(finish_dtm, 'yyyymmdd') as finish_dtm,
-       sgl_draw_qty,
-       dbl_draw_qty,
-       prize_money,
-       prize_currency,
-       country_code
-from tournaments
+        self.sql = '''select t.id,
+       t.name,
+       t.year,
+       t.code,
+       t.url,
+       t.slug,
+       t.location,
+       t.sgl_draw_url,
+       t.sgl_pdf_url,
+       t.indoor_outdoor,
+       t.surface,
+       c.series_id,
+       t.series_category_id,
+       to_char(t.start_dtm, 'yyyymmdd') as start_dtm,
+       to_char(t.finish_dtm, 'yyyymmdd') as finish_dtm,
+       t.sgl_draw_qty,
+       t.dbl_draw_qty,
+       t.prize_money,
+       t.prize_currency,
+       t.country_code
+from tournaments t, series_category c
 where series_id = 'dc'
+  and c.id = t.series_category_id
 order by start_dtm, code'''
 
 

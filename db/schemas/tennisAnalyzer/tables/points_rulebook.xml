@@ -1,0 +1,15 @@
+﻿<?xml version="1.0"?>
+  <table name="points_rulebook" type="normal">
+  <columns>
+    <column name="points_rule_id" type="varchar2(16)" nullable="n"/>
+    <column name="stadie_id"      type="varchar2(4)"  nullable="n"/>
+    <column name="result"         type="varchar2(1)"  nullable="n"/>
+    <column name="points"         type="number(4)"    nullable="n"/>
+  </columns>
+  <constraints>
+    <constraint name="pk_points_rulebook" type="primary key" columns_list="points_rule_id,stadie_id,result"/>
+    <constraint name="fk_prb$points_rule" type="foreign key" columns_list="points_rule_id" foreign_table="points_rules" foreign_columns_list="id"/>
+    <constraint name="fk_prb$stadies"     type="foreign key" columns_list="stadie_id" foreign_table="stadies" foreign_columns_list="id"/>
+    <constraint name="chk_pr$result"      type="check" condition="result in ('W', 'L')"/>
+  </constraints>
+</table>

@@ -4,9 +4,11 @@
     <column name="id"         type="varchar2(4)"  nullable="n"/>
     <column name="name"       type="varchar2(64)" nullable="n"/>
     <column name="ord"        type="number(2)"    nullable="n"/>
+    <column name="draw"       type="varchar2(1)"  nullable="n"/>
   </columns>
   <constraints>
-    <constraint name="pk_stadies"  type="primary key" columns_list="id"/>
-    <constraint name="unq_stadies" type="unique" columns_list="name"/>
+    <constraint name="pk_stadies"       type="primary key" columns_list="id"/>
+    <constraint name="unq_stadies"      type="unique" columns_list="name"/>
+    <constraint name="chk_stadies$draw" type="check" condition="draw in ('Q', 'M')"/>
   </constraints>
 </table>

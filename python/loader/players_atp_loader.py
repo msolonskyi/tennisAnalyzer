@@ -27,19 +27,20 @@ class PlayersATPLoader(BaseLoader):
                 self._players_url_list = cur.execute(sql).fetchall()
                 logzero.logger.info('loading players with empty names only')
             else:
-                sql = '''select distinct w.url
-from players w, match_scores m, tournaments t
-where m.winner_id = w.id
+                sql = '''
+select distinct w.url url
+from players w, matches m, tournaments t
+where m.winner_code = w.code
   and m.tournament_id = t.id
   and t.year = :year
 union
 select l.url
-from players l, match_scores m, tournaments t
-where m.winner_id = l.id
+from players l, matches m, tournaments t
+where m.loser_code = l.code
   and m.tournament_id = t.id
   and t.year = :year
 '''
-                self._players_url_list = cur.execute(sql, {'year': self.year}).fetchall()[0]
+                self._players_url_list = cur.execute(sql, {'year': self.year}).fetchall()
                 logzero.logger.info(f'loading players for {self.year} year')
         finally:
             cur.close()
@@ -104,7 +105,7 @@ where m.winner_id = l.id
             else:
                 height_cm = ''
 
-            handedness_backhand_array = tree.xpath("//tr[2]/td[3]/div/div[contains(@class, 'table-value')]/text()")
+            handedness_backhand_array = tree.xpath("//tr[2]/td[2]/div[contains(@class, 'wrap')]/div[contains(@class, 'table-value')]/text()")
             if len(handedness_backhand_array) > 0:
                 handedness_backhand = handedness_backhand_array[0].replace('\n', '').replace('\r', '').replace('\t', '').strip()
                 handedness_backhand_array = handedness_backhand.split(',')
