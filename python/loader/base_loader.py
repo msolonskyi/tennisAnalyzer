@@ -5,6 +5,7 @@ import requests
 import logzero
 import csv
 import os
+from selenium import webdriver
 
 
 class BaseLoader(object):
@@ -57,6 +58,17 @@ class BaseLoader(object):
             return COUNTRY_CODE_MAP.get(country_code)
         else:
             return country_code
+
+    def _request_url_by_webdriver(self):
+        if self.url is not None and self.url != '':
+            logzero.logger.info(f'processing {self.url} by webdriver')
+            browser = webdriver.PhantomJS(executable_path=r"C:\usr\projects\phantomjs-2.1.1-windows\bin\phantomjs.exe")
+            browser.get(self.url)
+            content = browser.page_source
+            browser.close()
+            self.responce_str = content
+        else:
+            responce_str = None
 
     def _request_url(self):
         if self.url is not None and self.url != '':

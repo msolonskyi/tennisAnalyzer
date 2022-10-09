@@ -26,12 +26,12 @@ class MatchesDCLoader(MatchesBaseLoader):
         try:
             cur = self.con.cursor()
             if self.year is None:
-                sql = "select code from tournaments where start_dtm > sysdate - :duration and series_id = 'dc'"
+                sql = "select code from tournaments where start_dtm > sysdate - :duration and series_category_id = 'dc'"
                 self._tournaments_list = cur.execute(sql, {'duration': DURATION_IN_DAYS}).fetchall()
                 logzero.logger.info(f'loading matches for last {DURATION_IN_DAYS} days')
             else:
                 # historical data
-                sql = "select code from tournaments where year = :year and series_id = 'dc'"
+                sql = "select code from tournaments where year = :year and series_category_id = 'dc'"
                 self._tournaments_list = cur.execute(sql, {'year': self.year}).fetchall()
                 logzero.logger.info(f'loading matches for {self.year} year')
         finally:
@@ -109,10 +109,14 @@ where code_dc is not null'''
                     match_stats_url = f'https://www.daviscup.com/cup/livescores/daviscup/{tournament_code}_{match_order}.json'
                     self.url = match_stats_url
                     try:
-                        self._request_url()
-                        stats = json.loads(self.responce_str)
+                        self._request_url_by_webdriver()
+                        json_str = self.responce_str.replace('<html><head></head><body><pre style="word-wrap: break-word; white-space: pre-wrap;">', '').replace('</pre></body></html>', '')
+                        stats = json.loads(json_str)
                         match_statistics = stats.get('MatchStatistics')
-                        match_duration = match_statistics.get('DurationInHours') * 60 + match_statistics.get('DurationInMins')
+                        try:
+                            match_duration = match_statistics.get('DurationInHours') * 60 + match_statistics.get('DurationInMins')
+                        except Exception as e:
+                            match_duration = None
                         if match_duration < 0:
                             match_duration = None
                         if match_duration > 9999:
@@ -120,142 +124,514 @@ where code_dc is not null'''
                         stats_url = None
                         if winning_side == 1:
                             # 1st
-                            win_aces = match_statistics.get('Side1AceCount')
-                            win_double_faults = match_statistics.get('Side1DoubleFaultCount')
-                            win_first_serves_in = match_statistics.get('Side1FirstServeInCount')
-                            win_first_serves_total = match_statistics.get('Side1FirstServeCount')
-                            win_first_serve_points_won = match_statistics.get('Side1FirstServeInWonCount')
-                            win_first_serve_points_total = match_statistics.get('Side1FirstServeInCount')
-                            win_second_serve_points_won = match_statistics.get('Side1SecondServeInWonCount')
-                            win_second_serve_points_total = match_statistics.get('Side1SecondServeCount')
-                            win_break_points_saved = match_statistics.get('Side2BreakPointsCount') - match_statistics.get('Side2BreakPointsWonCount')
-                            win_break_points_serve_total = match_statistics.get('Side2BreakPointsCount')
-                            win_service_points_won = int(match_statistics.get('Side1FirstServeCount')) + int(match_statistics.get('Side1SecondServeInWonCount'))
-                            win_service_points_total = match_statistics.get('Side1FirstServeCount')
-                            win_first_serve_return_won = int(match_statistics.get('Side2FirstServeInCount')) - int(match_statistics.get('Side2FirstServeInWonCount'))
-                            win_first_serve_return_total = match_statistics.get('Side2FirstServeInCount')
-                            win_second_serve_return_won = int(match_statistics.get('Side2SecondServeCount')) - int(match_statistics.get('Side2SecondServeInWonCount'))
-                            win_second_serve_return_total = match_statistics.get('Side2SecondServeCount')
-                            win_break_points_converted = match_statistics.get('Side1BreakPointsWonCount')
-                            win_break_points_return_total = match_statistics.get('Side1BreakPointsCount')
+                            try:
+                                win_aces = match_statistics.get('Side1AceCount')
+                            except Exception as e:
+                                win_aces = None
+                            try:
+                                win_double_faults = match_statistics.get('Side1DoubleFaultCount')
+                            except Exception as e:
+                                win_double_faults = None
+                            try:
+                                win_first_serves_in = match_statistics.get('Side1FirstServeInCount')
+                            except Exception as e:
+                                win_first_serves_in = None
+                            try:
+                                win_first_serves_total = match_statistics.get('Side1FirstServeCount')
+                            except Exception as e:
+                                win_first_serves_total = None
+                            try:
+                                win_first_serve_points_won = match_statistics.get('Side1FirstServeInWonCount')
+                            except Exception as e:
+                                win_first_serve_points_won = None
+                            try:
+                                win_first_serve_points_total = match_statistics.get('Side1FirstServeInCount')
+                            except Exception as e:
+                                win_first_serve_points_total = None
+                            try:
+                                win_second_serve_points_won = match_statistics.get('Side1SecondServeInWonCount')
+                            except Exception as e:
+                                win_second_serve_points_won = None
+                            try:
+                                win_second_serve_points_total = match_statistics.get('Side1SecondServeCount')
+                            except Exception as e:
+                                win_second_serve_points_total = None
+                            try:
+                                win_break_points_saved = match_statistics.get('Side2BreakPointsCount') - match_statistics.get('Side2BreakPointsWonCount')
+                            except Exception as e:
+                                win_break_points_saved = None
+                            try:
+                                win_break_points_serve_total = match_statistics.get('Side2BreakPointsCount')
+                            except Exception as e:
+                                win_break_points_serve_total = None
+                            try:
+                                win_service_points_won = int(match_statistics.get('Side1FirstServeCount')) + int(match_statistics.get('Side1SecondServeInWonCount'))
+                            except Exception as e:
+                                win_service_points_won = None
+                            try:
+                                win_service_points_total = match_statistics.get('Side1FirstServeCount')
+                            except Exception as e:
+                                win_service_points_total = None
+                            try:
+                                win_first_serve_return_won = int(match_statistics.get('Side2FirstServeInCount')) - int(match_statistics.get('Side2FirstServeInWonCount'))
+                            except Exception as e:
+                                win_first_serve_return_won = None
+                            try:
+                                win_first_serve_return_total = match_statistics.get('Side2FirstServeInCount')
+                            except Exception as e:
+                                win_first_serve_return_total = None
+                            try:
+                                win_second_serve_return_won = int(match_statistics.get('Side2SecondServeCount')) - int(match_statistics.get('Side2SecondServeInWonCount'))
+                            except Exception as e:
+                                win_second_serve_return_won = None
+                            try:
+                                win_second_serve_return_total = match_statistics.get('Side2SecondServeCount')
+                            except Exception as e:
+                                win_second_serve_return_total = None
+                            try:
+                                win_break_points_converted = match_statistics.get('Side1BreakPointsWonCount')
+                            except Exception as e:
+                                win_break_points_converted = None
+                            try:
+                                win_break_points_return_total = match_statistics.get('Side1BreakPointsCount')
+                            except Exception as e:
+                                win_break_points_return_total = None
                             win_service_games_played = None
                             win_return_games_played = None
-                            win_return_points_won = win_first_serve_return_won + win_second_serve_return_won
-                            win_return_points_total = match_statistics.get('Side2FirstServeCount')
-                            win_total_points_won = match_statistics.get('Side1TotalPointsWonCount')
-                            win_total_points_total = int(match_statistics.get('Side1TotalPointsWonCount')) + int(match_statistics.get('Side2TotalPointsWonCount'))
-                            win_winners = match_statistics.get('Side1TotalWinners')
-                            win_forced_errors = match_statistics.get('Side1ForcedErrors')
-                            win_unforced_errors = match_statistics.get('Side1UnforcedErrors')
-                            win_net_points_won = match_statistics.get('Side1NetPointsWon')
-                            win_net_points_total = match_statistics.get('Side1NetPointsTotal')
-                            win_fastest_first_serves_kmh = match_statistics.get('Side1Player1Fastest1stServeKPH')
-                            win_average_first_serves_kmh = match_statistics.get('Side1Player1Average1stServeKPH')
-                            win_fastest_second_serve_kmh = match_statistics.get('Side1Player1Fastest2ndServeKPH')
-                            win_average_second_serve_kmh = match_statistics.get('Side1Player1Average2ndServeKPH')
+                            try:
+                                win_return_points_won = win_first_serve_return_won + win_second_serve_return_won
+                            except Exception as e:
+                                win_return_points_won = None
+                            try:
+                                win_return_points_total = match_statistics.get('Side2FirstServeCount')
+                            except Exception as e:
+                                win_return_points_total = None
+                            try:
+                                win_total_points_won = match_statistics.get('Side1TotalPointsWonCount')
+                            except Exception as e:
+                                win_total_points_won = None
+                            try:
+                                win_total_points_total = int(match_statistics.get('Side1TotalPointsWonCount')) + int(match_statistics.get('Side2TotalPointsWonCount'))
+                            except Exception as e:
+                                win_total_points_total = None
+                            try:
+                                win_winners = match_statistics.get('Side1TotalWinners')
+                            except Exception as e:
+                                win_winners = None
+                            try:
+                                win_forced_errors = match_statistics.get('Side1ForcedErrors')
+                            except Exception as e:
+                                win_forced_errors = None
+                            try:
+                                win_unforced_errors = match_statistics.get('Side1UnforcedErrors')
+                            except Exception as e:
+                                win_unforced_errors = None
+                            try:
+                                win_net_points_won = match_statistics.get('Side1NetPointsWon')
+                            except Exception as e:
+                                win_net_points_won = None
+                            try:
+                                win_net_points_total = match_statistics.get('Side1NetPointsTotal')
+                            except Exception as e:
+                                win_net_points_total = None
+                            try:
+                                win_fastest_first_serves_kmh = match_statistics.get('Side1Player1Fastest1stServeKPH')
+                            except Exception as e:
+                                win_fastest_first_serves_kmh = None
+                            try:
+                                win_average_first_serves_kmh = match_statistics.get('Side1Player1Average1stServeKPH')
+                            except Exception as e:
+                                win_average_first_serves_kmh = None
+                            try:
+                                win_fastest_second_serve_kmh = match_statistics.get('Side1Player1Fastest2ndServeKPH')
+                            except Exception as e:
+                                win_fastest_second_serve_kmh = None
+                            try:
+                                win_average_second_serve_kmh = match_statistics.get('Side1Player1Average2ndServeKPH')
+                            except Exception as e:
+                                win_average_second_serve_kmh = None
                             # 2nd
-                            los_aces = match_statistics.get('Side2AceCount')
-                            los_double_faults = match_statistics.get('Side2DoubleFaultCount')
-                            los_first_serves_in = match_statistics.get('Side2FirstServeInCount')
-                            los_first_serves_total = match_statistics.get('Side2FirstServeCount')
-                            los_first_serve_points_won = match_statistics.get('Side2FirstServeInWonCount')
-                            los_first_serve_points_total = match_statistics.get('Side2FirstServeInCount')
-                            los_second_serve_points_won = match_statistics.get('Side2SecondServeInWonCount')
-                            los_second_serve_points_total = match_statistics.get('Side2SecondServeCount')
-                            los_break_points_saved = int(match_statistics.get('Side1BreakPointsCount')) - int(match_statistics.get('Side1BreakPointsWonCount'))
-                            los_break_points_serve_total = match_statistics.get('Side1BreakPointsCount')
-                            los_service_points_won = int(match_statistics.get('Side2FirstServeCount')) + int(match_statistics.get('Side2SecondServeInWonCount'))
-                            los_service_points_total = match_statistics.get('Side2FirstServeCount')
-                            los_first_serve_return_won = int(match_statistics.get('Side1FirstServeInCount')) - int(match_statistics.get('Side1FirstServeInWonCount'))
-                            los_first_serve_return_total = match_statistics.get('Side1FirstServeInCount')
-                            los_second_serve_return_won = int(match_statistics.get('Side1SecondServeCount')) - int(match_statistics.get('Side1SecondServeInWonCount'))
-                            los_second_serve_return_total = match_statistics.get('Side1SecondServeCount')
-                            los_break_points_converted = match_statistics.get('Side2BreakPointsWonCount')
-                            los_break_points_return_total = match_statistics.get('Side2BreakPointsCount')
+                            try:
+                                los_aces = match_statistics.get('Side2AceCount')
+                            except Exception as e:
+                                los_aces = None
+                            try:
+                                los_double_faults = match_statistics.get('Side2DoubleFaultCount')
+                            except Exception as e:
+                                los_double_faults = None
+                            try:
+                                los_first_serves_in = match_statistics.get('Side2FirstServeInCount')
+                            except Exception as e:
+                                los_first_serves_in = None
+                            try:
+                                los_first_serves_total = match_statistics.get('Side2FirstServeCount')
+                            except Exception as e:
+                                los_first_serves_total = None
+                            try:
+                                los_first_serve_points_won = match_statistics.get('Side2FirstServeInWonCount')
+                            except Exception as e:
+                                los_first_serve_points_won = None
+                            try:
+                                los_first_serve_points_total = match_statistics.get('Side2FirstServeInCount')
+                            except Exception as e:
+                                los_first_serve_points_total = None
+                            try:
+                                los_second_serve_points_won = match_statistics.get('Side2SecondServeInWonCount')
+                            except Exception as e:
+                                los_second_serve_points_won = None
+                            try:
+                                los_second_serve_points_total = match_statistics.get('Side2SecondServeCount')
+                            except Exception as e:
+                                los_second_serve_points_total = None
+                            try:
+                                los_break_points_saved = int(match_statistics.get('Side1BreakPointsCount')) - int(match_statistics.get('Side1BreakPointsWonCount'))
+                            except Exception as e:
+                                los_break_points_saved = None
+                            try:
+                                los_break_points_serve_total = match_statistics.get('Side1BreakPointsCount')
+                            except Exception as e:
+                                los_break_points_serve_total = None
+                            try:
+                                los_service_points_won = int(match_statistics.get('Side2FirstServeCount')) + int(match_statistics.get('Side2SecondServeInWonCount'))
+                            except Exception as e:
+                                los_service_points_won = None
+                            try:
+                                los_service_points_total = match_statistics.get('Side2FirstServeCount')
+                            except Exception as e:
+                                los_service_points_total = None
+                            try:
+                                los_first_serve_return_won = int(match_statistics.get('Side1FirstServeInCount')) - int(match_statistics.get('Side1FirstServeInWonCount'))
+                            except Exception as e:
+                                los_first_serve_return_won = None
+                            try:
+                                los_first_serve_return_total = match_statistics.get('Side1FirstServeInCount')
+                            except Exception as e:
+                                los_first_serve_return_total = None
+                            try:
+                                los_second_serve_return_won = int(match_statistics.get('Side1SecondServeCount')) - int(match_statistics.get('Side1SecondServeInWonCount'))
+                            except Exception as e:
+                                los_second_serve_return_won = None
+                            try:
+                                los_second_serve_return_total = match_statistics.get('Side1SecondServeCount')
+                            except Exception as e:
+                                los_second_serve_return_total = None
+                            try:
+                                los_break_points_converted = match_statistics.get('Side2BreakPointsWonCount')
+                            except Exception as e:
+                                los_break_points_converted = None
+                            try:
+                                los_break_points_return_total = match_statistics.get('Side2BreakPointsCount')
+                            except Exception as e:
+                                los_break_points_return_total = None
                             los_service_games_played = None
                             los_return_games_played = None
-                            los_return_points_won = los_first_serve_return_won + los_second_serve_return_won
-                            los_return_points_total = match_statistics.get('Side1FirstServeCount')
-                            los_total_points_won = match_statistics.get('Side2TotalPointsWonCount')
-                            los_total_points_total = int(match_statistics.get('Side2TotalPointsWonCount')) + int(match_statistics.get('Side1TotalPointsWonCount'))
-                            los_winners = match_statistics.get('Side2TotalWinners')
-                            los_forced_errors = match_statistics.get('Side2ForcedErrors')
-                            los_unforced_errors = match_statistics.get('Side2UnforcedErrors')
-                            los_net_points_won = match_statistics.get('Side2NetPointsWon')
-                            los_net_points_total = match_statistics.get('Side2NetPointsTotal')
-                            los_fastest_first_serves_kmh = match_statistics.get('Side2Player1Fastest1stServeKPH')
-                            los_average_first_serves_kmh = match_statistics.get('Side2Player1Average1stServeKPH')
-                            los_fastest_second_serve_kmh = match_statistics.get('Side2Player1Fastest2ndServeKPH')
-                            los_average_second_serve_kmh = match_statistics.get('Side2Player1Average2ndServeKPH')
+                            try:
+                                los_return_points_won = los_first_serve_return_won + los_second_serve_return_won
+                            except Exception as e:
+                                los_return_points_won = None
+                            try:
+                                los_return_points_total = match_statistics.get('Side1FirstServeCount')
+                            except Exception as e:
+                                los_return_points_total = None
+                            try:
+                                los_total_points_won = match_statistics.get('Side2TotalPointsWonCount')
+                            except Exception as e:
+                                los_total_points_won = None
+                            try:
+                                los_total_points_total = int(match_statistics.get('Side2TotalPointsWonCount')) + int(match_statistics.get('Side1TotalPointsWonCount'))
+                            except Exception as e:
+                                los_total_points_total = None
+                            try:
+                                los_winners = match_statistics.get('Side2TotalWinners')
+                            except Exception as e:
+                                los_winners = None
+                            try:
+                                los_forced_errors = match_statistics.get('Side2ForcedErrors')
+                            except Exception as e:
+                                los_forced_errors = None
+                            try:
+                                los_unforced_errors = match_statistics.get('Side2UnforcedErrors')
+                            except Exception as e:
+                                los_unforced_errors = None
+                            try:
+                                los_net_points_won = match_statistics.get('Side2NetPointsWon')
+                            except Exception as e:
+                                los_net_points_won = None
+                            try:
+                                los_net_points_total = match_statistics.get('Side2NetPointsTotal')
+                            except Exception as e:
+                                los_net_points_total = None
+                            try:
+                                los_fastest_first_serves_kmh = match_statistics.get('Side2Player1Fastest1stServeKPH')
+                            except Exception as e:
+                                los_fastest_first_serves_kmh = None
+                            try:
+                                los_average_first_serves_kmh = match_statistics.get('Side2Player1Average1stServeKPH')
+                            except Exception as e:
+                                los_average_first_serves_kmh = None
+                            try:
+                                los_fastest_second_serve_kmh = match_statistics.get('Side2Player1Fastest2ndServeKPH')
+                            except Exception as e:
+                                los_fastest_second_serve_kmh = None
+                            try:
+                                los_average_second_serve_kmh = match_statistics.get('Side2Player1Average2ndServeKPH')
+                            except Exception as e:
+                                los_average_second_serve_kmh = None
                         elif winning_side == 2:
                             # 1st
-                            win_aces = match_statistics.get('Side2AceCount')
-                            win_double_faults = match_statistics.get('Side2DoubleFaultCount')
-                            win_first_serves_in = match_statistics.get('Side2FirstServeInCount')
-                            win_first_serves_total = match_statistics.get('Side2FirstServeCount')
-                            win_first_serve_points_won = match_statistics.get('Side2FirstServeInWonCount')
-                            win_first_serve_points_total = match_statistics.get('Side2FirstServeInCount')
-                            win_second_serve_points_won = match_statistics.get('Side2SecondServeInWonCount')
-                            win_second_serve_points_total = match_statistics.get('Side2SecondServeCount')
-                            win_break_points_saved = int(match_statistics.get('Side1BreakPointsCount')) - int(match_statistics.get('Side1BreakPointsWonCount'))
-                            win_break_points_serve_total = match_statistics.get('Side1BreakPointsCount')
-                            win_service_points_won = int(match_statistics.get('Side2FirstServeCount')) + int(match_statistics.get('Side2SecondServeInWonCount'))
-                            win_service_points_total = match_statistics.get('Side2FirstServeCount')
-                            win_first_serve_return_won = int(match_statistics.get('Side1FirstServeInCount')) - int(match_statistics.get('Side1FirstServeInWonCount'))
-                            win_first_serve_return_total = match_statistics.get('Side1FirstServeInCount')
-                            win_second_serve_return_won = int(match_statistics.get('Side1SecondServeCount')) - int(match_statistics.get('Side1SecondServeInWonCount'))
-                            win_second_serve_return_total = match_statistics.get('Side1SecondServeCount')
-                            win_break_points_converted = match_statistics.get('Side2BreakPointsWonCount')
-                            win_break_points_return_total = match_statistics.get('Side2BreakPointsCount')
+                            try:
+                                win_aces = match_statistics.get('Side2AceCount')
+                            except Exception as e:
+                                win_aces = None
+                            try:
+                                win_double_faults = match_statistics.get('Side2DoubleFaultCount')
+                            except Exception as e:
+                                win_double_faults = None
+                            try:
+                                win_first_serves_in = match_statistics.get('Side2FirstServeInCount')
+                            except Exception as e:
+                                win_first_serves_in = None
+                            try:
+                                win_first_serves_total = match_statistics.get('Side2FirstServeCount')
+                            except Exception as e:
+                                win_first_serves_total = None
+                            try:
+                                win_first_serve_points_won = match_statistics.get('Side2FirstServeInWonCount')
+                            except Exception as e:
+                                win_first_serve_points_won = None
+                            try:
+                                win_first_serve_points_total = match_statistics.get('Side2FirstServeInCount')
+                            except Exception as e:
+                                win_first_serve_points_total = None
+                            try:
+                                win_second_serve_points_won = match_statistics.get('Side2SecondServeInWonCount')
+                            except Exception as e:
+                                win_second_serve_points_won = None
+                            try:
+                                win_second_serve_points_total = match_statistics.get('Side2SecondServeCount')
+                            except Exception as e:
+                                win_second_serve_points_total = None
+                            try:
+                                win_break_points_saved = int(match_statistics.get('Side1BreakPointsCount')) - int(match_statistics.get('Side1BreakPointsWonCount'))
+                            except Exception as e:
+                                win_break_points_saved = None
+                            try:
+                                win_break_points_serve_total = match_statistics.get('Side1BreakPointsCount')
+                            except Exception as e:
+                                win_break_points_serve_total = None
+                            try:
+                                win_service_points_won = int(match_statistics.get('Side2FirstServeCount')) + int(match_statistics.get('Side2SecondServeInWonCount'))
+                            except Exception as e:
+                                win_service_points_won = None
+                            try:
+                                win_service_points_total = match_statistics.get('Side2FirstServeCount')
+                            except Exception as e:
+                                win_service_points_total = None
+                            try:
+                                win_first_serve_return_won = int(match_statistics.get('Side1FirstServeInCount')) - int(match_statistics.get('Side1FirstServeInWonCount'))
+                            except Exception as e:
+                                win_first_serve_return_won = None
+                            try:
+                                win_first_serve_return_total = match_statistics.get('Side1FirstServeInCount')
+                            except Exception as e:
+                                win_first_serve_return_total = None
+                            try:
+                                win_second_serve_return_won = int(match_statistics.get('Side1SecondServeCount')) - int(match_statistics.get('Side1SecondServeInWonCount'))
+                            except Exception as e:
+                                win_second_serve_return_won = None
+                            try:
+                                win_second_serve_return_total = match_statistics.get('Side1SecondServeCount')
+                            except Exception as e:
+                                win_second_serve_return_total = None
+                            try:
+                                win_break_points_converted = match_statistics.get('Side2BreakPointsWonCount')
+                            except Exception as e:
+                                win_break_points_converted = None
+                            try:
+                                win_break_points_return_total = match_statistics.get('Side2BreakPointsCount')
+                            except Exception as e:
+                                win_break_points_return_total = None
                             win_service_games_played = None
                             win_return_games_played = None
-                            win_return_points_won = win_first_serve_return_won + win_second_serve_return_won
-                            win_return_points_total = match_statistics.get('Side1FirstServeCount')
-                            win_total_points_won = match_statistics.get('Side2TotalPointsWonCount')
-                            win_total_points_total = int(match_statistics.get('Side2TotalPointsWonCount')) + int(match_statistics.get('Side1TotalPointsWonCount'))
-                            win_winners = match_statistics.get('Side2TotalWinners')
-                            win_forced_errors = match_statistics.get('Side2ForcedErrors')
-                            win_unforced_errors = match_statistics.get('Side2UnforcedErrors')
-                            win_net_points_won = match_statistics.get('Side2NetPointsWon')
-                            win_net_points_total = match_statistics.get('Side2NetPointsTotal')
-                            win_fastest_first_serves_kmh = match_statistics.get('Side2Player1Fastest1stServeKPH')
-                            win_average_first_serves_kmh = match_statistics.get('Side2Player1Average1stServeKPH')
-                            win_fastest_second_serve_kmh = match_statistics.get('Side2Player1Fastest2ndServeKPH')
-                            win_average_second_serve_kmh = match_statistics.get('Side2Player1Average2ndServeKPH')
+                            try:
+                                win_return_points_won = win_first_serve_return_won + win_second_serve_return_won
+                            except Exception as e:
+                                win_return_points_won = None
+                            try:
+                                win_return_points_total = match_statistics.get('Side1FirstServeCount')
+                            except Exception as e:
+                                win_return_points_total = None
+                            try:
+                                win_total_points_won = match_statistics.get('Side2TotalPointsWonCount')
+                            except Exception as e:
+                                win_total_points_won = None
+                            try:
+                                win_total_points_total = int(match_statistics.get('Side2TotalPointsWonCount')) + int(match_statistics.get('Side1TotalPointsWonCount'))
+                            except Exception as e:
+                                win_total_points_total = None
+                            try:
+                                win_winners = match_statistics.get('Side2TotalWinners')
+                            except Exception as e:
+                                win_winners = None
+                            try:
+                                win_forced_errors = match_statistics.get('Side2ForcedErrors')
+                            except Exception as e:
+                                win_forced_errors = None
+                            try:
+                                win_unforced_errors = match_statistics.get('Side2UnforcedErrors')
+                            except Exception as e:
+                                win_unforced_errors = None
+                            try:
+                                win_net_points_won = match_statistics.get('Side2NetPointsWon')
+                            except Exception as e:
+                                win_net_points_won = None
+                            try:
+                                win_net_points_total = match_statistics.get('Side2NetPointsTotal')
+                            except Exception as e:
+                                win_net_points_total = None
+                            try:
+                                win_fastest_first_serves_kmh = match_statistics.get('Side2Player1Fastest1stServeKPH')
+                            except Exception as e:
+                                win_fastest_first_serves_kmh = None
+                            try:
+                                win_average_first_serves_kmh = match_statistics.get('Side2Player1Average1stServeKPH')
+                            except Exception as e:
+                                win_average_first_serves_kmh = None
+                            try:
+                                win_fastest_second_serve_kmh = match_statistics.get('Side2Player1Fastest2ndServeKPH')
+                            except Exception as e:
+                                win_fastest_second_serve_kmh = None
+                            try:
+                                win_average_second_serve_kmh = match_statistics.get('Side2Player1Average2ndServeKPH')
+                            except Exception as e:
+                                win_average_second_serve_kmh = None
                             # 2nd
-                            los_aces = match_statistics.get('Side1AceCount')
-                            los_double_faults = match_statistics.get('Side1DoubleFaultCount')
-                            los_first_serves_in = match_statistics.get('Side1FirstServeInCount')
-                            los_first_serves_total = match_statistics.get('Side1FirstServeCount')
-                            los_first_serve_points_won = match_statistics.get('Side1FirstServeInWonCount')
-                            los_first_serve_points_total = match_statistics.get('Side1FirstServeInCount')
-                            los_second_serve_points_won = match_statistics.get('Side1SecondServeInWonCount')
-                            los_second_serve_points_total = match_statistics.get('Side1SecondServeCount')
-                            los_break_points_saved = int(match_statistics.get('Side2BreakPointsCount')) - int(match_statistics.get('Side2BreakPointsWonCount'))
-                            los_break_points_serve_total = match_statistics.get('Side2BreakPointsCount')
-                            los_service_points_won = int(match_statistics.get('Side1FirstServeCount')) + int(match_statistics.get('Side1SecondServeInWonCount'))
-                            los_service_points_total = match_statistics.get('Side1FirstServeCount')
-                            los_first_serve_return_won = int(match_statistics.get('Side2FirstServeInCount')) - int(match_statistics.get('Side2FirstServeInWonCount'))
-                            los_first_serve_return_total = match_statistics.get('Side2FirstServeInCount')
-                            los_second_serve_return_won = int(match_statistics.get('Side2SecondServeCount')) - int(match_statistics.get('Side2SecondServeInWonCount'))
-                            los_second_serve_return_total = match_statistics.get('Side2SecondServeCount')
-                            los_break_points_converted = match_statistics.get('Side1BreakPointsWonCount')
-                            los_break_points_return_total = match_statistics.get('Side1BreakPointsCount')
+                            try:
+                                los_aces = match_statistics.get('Side1AceCount')
+                            except Exception as e:
+                                los_aces = None
+                            try:
+                                los_double_faults = match_statistics.get('Side1DoubleFaultCount')
+                            except Exception as e:
+                                los_double_faults = None
+                            try:
+                                los_first_serves_in = match_statistics.get('Side1FirstServeInCount')
+                            except Exception as e:
+                                los_first_serves_in = None
+                            try:
+                                los_first_serves_total = match_statistics.get('Side1FirstServeCount')
+                            except Exception as e:
+                                los_first_serves_total = None
+                            try:
+                                los_first_serve_points_won = match_statistics.get('Side1FirstServeInWonCount')
+                            except Exception as e:
+                                los_first_serve_points_won = None
+                            try:
+                                los_first_serve_points_total = match_statistics.get('Side1FirstServeInCount')
+                            except Exception as e:
+                                los_first_serve_points_total = None
+                            try:
+                                los_second_serve_points_won = match_statistics.get('Side1SecondServeInWonCount')
+                            except Exception as e:
+                                los_second_serve_points_won = None
+                            try:
+                                los_second_serve_points_total = match_statistics.get('Side1SecondServeCount')
+                            except Exception as e:
+                                los_second_serve_points_total = None
+                            try:
+                                los_break_points_saved = int(match_statistics.get('Side2BreakPointsCount')) - int(match_statistics.get('Side2BreakPointsWonCount'))
+                            except Exception as e:
+                                los_break_points_saved = None
+                            try:
+                                los_break_points_serve_total = match_statistics.get('Side2BreakPointsCount')
+                            except Exception as e:
+                                los_break_points_serve_total = None
+                            try:
+                                los_service_points_won = int(match_statistics.get('Side1FirstServeCount')) + int(match_statistics.get('Side1SecondServeInWonCount'))
+                            except Exception as e:
+                                los_service_points_won = None
+                            try:
+                                los_service_points_total = match_statistics.get('Side1FirstServeCount')
+                            except Exception as e:
+                                los_service_points_total = None
+                            try:
+                                los_first_serve_return_won = int(match_statistics.get('Side2FirstServeInCount')) - int(match_statistics.get('Side2FirstServeInWonCount'))
+                            except Exception as e:
+                                los_first_serve_return_won = None
+                            try:
+                                los_first_serve_return_total = match_statistics.get('Side2FirstServeInCount')
+                            except Exception as e:
+                                los_first_serve_return_total = None
+                            try:
+                                los_second_serve_return_won = int(match_statistics.get('Side2SecondServeCount')) - int(match_statistics.get('Side2SecondServeInWonCount'))
+                            except Exception as e:
+                                los_second_serve_return_won = None
+                            try:
+                                los_second_serve_return_total = match_statistics.get('Side2SecondServeCount')
+                            except Exception as e:
+                                los_second_serve_return_total = None
+                            try:
+                                los_break_points_converted = match_statistics.get('Side1BreakPointsWonCount')
+                            except Exception as e:
+                                los_break_points_converted = None
+                            try:
+                                los_break_points_return_total = match_statistics.get('Side1BreakPointsCount')
+                            except Exception as e:
+                                los_break_points_return_tota  = None
                             los_service_games_played = None
                             los_return_games_played = None
-                            los_return_points_won = los_first_serve_return_won + los_second_serve_return_won
-                            los_return_points_total = match_statistics.get('Side2FirstServeCount')
-                            los_total_points_won = match_statistics.get('Side1TotalPointsWonCount')
-                            los_total_points_total = int(match_statistics.get('Side1TotalPointsWonCount')) + int(match_statistics.get('Side2TotalPointsWonCount'))
-                            los_winners = match_statistics.get('Side1TotalWinners')
-                            los_forced_errors = match_statistics.get('Side1ForcedErrors')
-                            los_unforced_errors = match_statistics.get('Side1UnforcedErrors')
-                            los_net_points_won = match_statistics.get('Side1NetPointsWon')
-                            los_net_points_total = match_statistics.get('Side1NetPointsTotal')
-                            los_fastest_first_serves_kmh = match_statistics.get('Side1Player1Fastest1stServeKPH')
-                            los_average_first_serves_kmh = match_statistics.get('Side1Player1Average1stServeKPH')
-                            los_fastest_second_serve_kmh = match_statistics.get('Side1Player1Fastest2ndServeKPH')
-                            los_average_second_serve_kmh = match_statistics.get('Side1Player1Average2ndServeKPH')
+                            try:
+                                los_return_points_won = los_first_serve_return_won + los_second_serve_return_won
+                            except Exception as e:
+                                los_return_points_won = None
+                            try:
+                                los_return_points_total = match_statistics.get('Side2FirstServeCount')
+                            except Exception as e:
+                                los_return_points_total = None
+                            try:
+                                los_total_points_won = match_statistics.get('Side1TotalPointsWonCount')
+                            except Exception as e:
+                                los_total_points_won = None
+                            try:
+                                los_total_points_total = int(match_statistics.get('Side1TotalPointsWonCount')) + int(match_statistics.get('Side2TotalPointsWonCount'))
+                            except Exception as e:
+                                los_total_points_total = None
+                            try:
+                                los_winners = match_statistics.get('Side1TotalWinners')
+                            except Exception as e:
+                                los_winners = None
+                            try:
+                                los_forced_errors = match_statistics.get('Side1ForcedErrors')
+                            except Exception as e:
+                                los_forced_errors = None
+                            try:
+                                los_unforced_errors = match_statistics.get('Side1UnforcedErrors')
+                            except Exception as e:
+                                los_unforced_errors = None
+                            try:
+                                los_net_points_won = match_statistics.get('Side1NetPointsWon')
+                            except Exception as e:
+                                los_net_points_won = None
+                            try:
+                                los_net_points_total = match_statistics.get('Side1NetPointsTotal')
+                            except Exception as e:
+                                los_net_points_total = None
+                            try:
+                                los_fastest_first_serves_kmh = match_statistics.get('Side1Player1Fastest1stServeKPH')
+                            except Exception as e:
+                                los_fastest_first_serves_kmh = None
+                            try:
+                                los_average_first_serves_kmh = match_statistics.get('Side1Player1Average1stServeKPH')
+                            except Exception as e:
+                                los_average_first_serves_kmh = None
+                            try:
+                                los_fastest_second_serve_kmh = match_statistics.get('Side1Player1Fastest2ndServeKPH')
+                            except Exception as e:
+                                los_fastest_second_serve_kmh = None
+                            try:
+                                los_average_second_serve_kmh = match_statistics.get('Side1Player1Average2ndServeKPH')
+                            except Exception as e:
+                                los_average_second_serve_kmh = None
                     except Exception as e:
                         logzero.logger.error(f'Error on statistics level: {str(e)}')
                         match_duration = None
