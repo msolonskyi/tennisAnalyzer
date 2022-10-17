@@ -18,7 +18,7 @@ values ('gs', 'R64', 'L', 45);
 insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
 values ('gs', 'R128', 'L', 10);
 insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
-values ('gs', 'Q', 'W', 25);
+values ('gs', 'Q3', 'W', 25);
 insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
 values ('1000-R128', 'F', 'W', 1000);
 insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
@@ -36,7 +36,7 @@ values ('1000-R128', 'R64', 'L', 25);
 insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
 values ('1000-R128', 'R128', 'L', 10);
 insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
-values ('1000-R128', 'Q', 'W', 12);
+values ('1000-R128', 'Q', 'W', 16);
 insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
 values ('1000-R64', 'F', 'W', 1000);
 insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
@@ -130,7 +130,7 @@ values ('ch50', 'QF', 'L', 9);
 insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
 values ('ch50', 'R16', 'L', 4);
 insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
-values ('ch50', 'Q', 'W', 3);
+values ('ch50', 'Q', 'W', 2);
 insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
 values ('gsCup', 'R16', 'L', 75);
 insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
@@ -141,8 +141,54 @@ insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
 values ('gsCup', 'F', 'L', 450);
 insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
 values ('gsCup', 'F', 'W', 600);
+insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
+values ('gs', 'Q3', 'L', 16);
+insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
+values ('gs', 'Q2', 'L', 8);
+insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
+values ('atp250-R32', 'Q', 'L', 6);
+insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
+values ('1000-R128', 'Q', 'L', 8);
+insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
+values ('1000-R64', 'Q', 'L', 16);
+insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
+values ('atp500-R32', 'Q', 'L', 10);
+insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
+values ('atp500-R64', 'Q', 'L', 4);
+insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
+values ('atp250-R64', 'Q', 'L', 3);
+insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
+values ('ch50', 'Q', 'L', 1);
+insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
+values ('ch100', 'Q', 'L', 2);
+insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
+values ('atpFinals', 'RR', 'W', 200);
+insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
+values ('atpFinals', 'F', 'W', 900);
+insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
+values ('atpFinals', 'F', 'L', 400);
+insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
+values ('fu25', 'F', 'W', 20);
+insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
+values ('fu25', 'F', 'L', 12);
+insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
+values ('fu25', 'SF', 'L', 6);
+insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
+values ('fu25', 'QF', 'L', 3);
+insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
+values ('fu25', 'R16', 'L', 1);
+insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
+values ('fu15', 'F', 'W', 10);
+insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
+values ('fu15', 'F', 'L', 6);
+insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
+values ('fu15', 'SF', 'L', 4);
+insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
+values ('fu15', 'QF', 'L', 2);
+insert into POINTS_RULEBOOK (points_rule_id, stadie_id, result, points)
+values ('fu15', 'R16', 'L', 1);
 commit;
-prompt 70 records loaded
+prompt 93 records loaded
 set feedback on
 set define on
 prompt Done.
