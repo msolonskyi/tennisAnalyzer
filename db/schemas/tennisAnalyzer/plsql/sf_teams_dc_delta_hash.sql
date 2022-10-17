@@ -3,7 +3,7 @@ create or replace function sf_dc_teams_delta_hash(
   pn_name         teams_dc.name%type,
   pn_url          teams_dc.url%type
 )
-  return players.delta_hash%type
+  return teams_dc.delta_hash%type
 is
   vn_delta_hash teams_dc.delta_hash%type;
 begin
