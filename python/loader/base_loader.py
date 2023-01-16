@@ -1,4 +1,4 @@
-from constants import CONNECTION_STRING, INDOOR_OUTDOOR_MAP, SURFACE_MAP, COUNTRY_NAME_MAP, COUNTRY_CODE_MAP, STADIE_CODES_MAP
+from constants import CONNECTION_STRING, INDOOR_OUTDOOR_MAP, SURFACE_MAP, COUNTRY_NAME_MAP, COUNTRY_CODE_MAP, STADIE_CODES_MAP, PLAYERS_ATP_URL_MAP
 from ctypes import Array
 import cx_Oracle
 import requests
@@ -58,6 +58,13 @@ class BaseLoader(object):
             return COUNTRY_CODE_MAP.get(country_code)
         else:
             return country_code
+
+    @staticmethod
+    def remap_player_atp_url(player_atp_url: str) -> str:
+        if player_atp_url in PLAYERS_ATP_URL_MAP:
+            return PLAYERS_ATP_URL_MAP.get(player_atp_url)
+        else:
+            return player_atp_url
 
     def _request_url_by_webdriver(self):
         if self.url is not None and self.url != '':

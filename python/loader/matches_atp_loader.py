@@ -72,7 +72,7 @@ class MatchesATPLoader(MatchesBaseLoader):
                     winner_url_array = tree.xpath("//table[contains(@class, 'day-table')]/tbody[" + str(i + 1) + "]/tr[" + str(j + 1) + "]/td[contains(@class, 'day-table-name')][1]/a/@href")
                     winner_name_array = tree.xpath("//table[contains(@class, 'day-table')]/tbody[" + str(i + 1) + "]/tr[" + str(j + 1) + "]/td[contains(@class, 'day-table-name')][1]/text()")
                     try:
-                        winner_url = ATP_URL_PREFIX + winner_url_array[0]
+                        winner_url = ATP_URL_PREFIX + self.remap_player_atp_url(winner_url_array[0])
                         winner_url_split = winner_url.split('/')
                         winner_code = winner_url_split[6]
                     except Exception as e:
@@ -86,7 +86,7 @@ class MatchesATPLoader(MatchesBaseLoader):
                     loser_url_array = tree.xpath("//table[contains(@class, 'day-table')]/tbody[" + str(i + 1) + "]/tr[" + str(j + 1) + "]/td[contains(@class, 'day-table-name')][2]/a/@href")
                     loser_name_array = tree.xpath("//table[contains(@class, 'day-table')]/tbody[" + str(i + 1) + "]/tr[" + str(j + 1) + "]/td[contains(@class, 'day-table-name')][2]/text()")
                     try:
-                        loser_url = ATP_URL_PREFIX + loser_url_array[0]
+                        loser_url = ATP_URL_PREFIX + self.remap_player_atp_url(loser_url_array[0])
                         loser_url_split = loser_url.split('/')
                         loser_code = loser_url_split[6]
                     except Exception as e:

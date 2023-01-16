@@ -63,3 +63,9 @@ STADIE_CODES_MAP = {
     '3rd Round Qualifying': 'Q3',
     '2nd Round Qualifying': 'Q2',
     '1st Round Qualifying': 'Q1'}
+
+PLAYERS_ATP_URL_MAP = {
+    '/en/players/derek-pham/sr:competitor:675135/overview': '/en/players/derek-pham/p0kj/overview',
+    '/en/players/adam-walton/sr:competitor:227358/overview': '/en/players/adam-walton/w09e/overview',
+    '/en/players/jeremy-jin/sr:competitor:754563/overview': '/en/players/jeremy-jin/j0d4/overview',
+    '': ''}
