@@ -1,4 +1,4 @@
-create or replace function sf_dc_teams_delta_hash(
+create or replace function sf_teams_dc_delta_hash(
   pn_country_code teams_dc.country_code%type,
   pn_name         teams_dc.name%type,
   pn_url          teams_dc.url%type
@@ -11,5 +11,5 @@ begin
   into vn_delta_hash
   from dual;
   return (vn_delta_hash);
-end sf_dc_teams_delta_hash;
+end sf_teams_dc_delta_hash;
 /

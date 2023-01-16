@@ -7,7 +7,7 @@ begin
   --
   merge into teams_dc d
   using(select country_code, name, url,
-               sf_dc_teams_delta_hash(
+               sf_teams_dc_delta_hash(
                  pn_country_code => country_code,
                  pn_name => name,
                  pn_url => url) as delta_hash
