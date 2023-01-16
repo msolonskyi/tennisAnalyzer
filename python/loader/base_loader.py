@@ -68,7 +68,7 @@ class BaseLoader(object):
             browser.close()
             self.responce_str = content
         else:
-            responce_str = None
+            self.responce_str = None
 
     def _request_url(self):
         if self.url is not None and self.url != '':
@@ -76,7 +76,18 @@ class BaseLoader(object):
             response = requests.get(self.url)
             self.responce_str = response.text
         else:
-            responce_str = None
+            self.responce_str = None
+
+    def _request_url_by_chrome(self):
+        if self.url is not None and self.url != '':
+            logzero.logger.info(f'processing {self.url} by webdriver')
+            browser = webdriver.Chrome(executable_path=r"C:\usr\projects\phantomjs-2.1.1-windows\bin\phantomjs.exe")
+            browser.get(self.url)
+            content = browser.page_source
+            browser.close()
+            self.responce_str = content
+        else:
+            self.responce_str = None
 
     def _truncate_table(self):
         try:
