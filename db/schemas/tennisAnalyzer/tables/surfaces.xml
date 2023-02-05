@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+  <table name="surfaces" type="normal">
+  <columns>
+    <column name="surface" type="varchar2(8)" nullable="n"/>
+  </columns>
+  <constraints>
+    <constraint name="pk_surfaces" type="primary key" columns_list="surface"/>
+  </constraints>
+</table>
