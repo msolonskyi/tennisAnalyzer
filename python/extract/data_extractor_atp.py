@@ -22,10 +22,8 @@ class PlayersFullExtractor(BaseFullExtractor):
        residence,
        handedness,
        backhand,
-       citizenship,
-       code_dc,
-       url_dc
-from players
+       citizenship
+from atp_players
 order by code'''
 
 
@@ -55,10 +53,10 @@ class TournamentsFullExtractor(BaseFullExtractor):
        t.prize_money,
        t.prize_currency,
        t.country_code
-from tournaments t, series_category c
+from atp_tournaments t, series_category c
 where series_id != 'dc'
   and c.id = t.series_category_id
-order by start_dtm, code'''
+order by t.start_dtm, t.code'''
 
 
 class MatchesYearlyExtractor(BaseYearlyExtractor):
@@ -82,7 +80,7 @@ class MatchesYearlyExtractor(BaseYearlyExtractor):
        loser_age,
        winner_seed,
        loser_seed,
-       match_score,
+       score,
        winner_sets_won,
        loser_sets_won,
        winner_games_won,

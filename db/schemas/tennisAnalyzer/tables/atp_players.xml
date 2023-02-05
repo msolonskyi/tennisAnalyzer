@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-  <table name="players" type="normal">
+  <table name="atp_players" type="normal">
   <columns>
-    <column name="code"        type="varchar2(12)"  nullable="n"/>
+    <column name="code"        type="varchar2(4)"  nullable="n"/>
     <column name="delta_hash"  type="number"        nullable="n"/>
     <column name="batch_id"    type="number(12)"    nullable="n"/>
     <column name="url"         type="varchar2(128)"/>
@@ -17,15 +17,11 @@
     <column name="handedness"  type="varchar2(128)"/>
     <column name="backhand"    type="varchar2(128)"/>
     <column name="citizenship" type="varchar2(3)"/>
-    <column name="code_dc"     type="varchar2(12)"/>
-    <column name="url_dc"      type="varchar2(128)"/>
   </columns>
   <constraints>
-    <constraint name="pk_players"             type="primary key" columns_list="code"/>
-    <constraint name="unq_players$code_dc"    type="unique"      columns_list="code_dc"/>
-    <constraint name="unq_players$url"        type="unique"      columns_list="url"/>
-    <constraint name="unq_players$main"       type="unique"      columns_list="first_name, last_name, birth_date"/>
-    <constraint name="unq_players$url_dc"     type="unique"      columns_list="url_dc"/>
-    <constraint name="fk_players$citizenship" type="foreign key" columns_list="citizenship" foreign_table="countries" foreign_columns_list="code"/>
+    <constraint name="pk_atp_players"             type="primary key" columns_list="code"/>
+    <constraint name="unq_atp_players$url"        type="unique"      columns_list="url"/>
+    <constraint name="unq_atp_players$main"       type="unique"      columns_list="first_name, last_name, birth_date"/>
+    <constraint name="fk_atp_players$citizenship" type="foreign key" columns_list="citizenship" foreign_table="countries" foreign_columns_list="code"/>
   </constraints>
 </table>

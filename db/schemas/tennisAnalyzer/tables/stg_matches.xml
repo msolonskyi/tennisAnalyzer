@@ -16,7 +16,7 @@
     <column name="loser_last_name"               type="varchar2(256)"/>
     <column name="winner_seed"                   type="varchar2(8)"/>
     <column name="loser_seed"                    type="varchar2(8)"/>
-    <column name="match_score"                   type="varchar2(32)"/>
+    <column name="score"                         type="varchar2(32)"/>
     <column name="winner_sets_won"               type="number(4)"/>
     <column name="loser_sets_won"                type="number(4)"/>
     <column name="winner_games_won"              type="number(4)"/>

@@ -7,33 +7,33 @@ begin
   --
   -- adding new players
   -- winners
-  insert into players(url, code, delta_hash, batch_id)
+  insert into atp_players(url, code, delta_hash, batch_id)
   select url, code,
-         sf_players_delta_hash(
-           pn_code => code,
-           pn_url =>  url) as delta_hash,
+         sf_atp_players_delta_hash(
+           pv_code => code,
+           pv_url =>  url) as delta_hash,
          pkg_log.gn_batch_id
   from (select distinct s.winner_url as url, s.winner_code as code
         from stg_matches s
-        where s.winner_code not in (select p.code from players p));
+        where s.winner_code not in (select p.code from atp_players p));
   --
   vn_qty := sql%rowcount;
   pkg_log.sp_log_message(pv_text => 'add new players (winners)', pn_qty => vn_qty);
   -- losers
-  insert into players(url, code, delta_hash, batch_id)
+  insert into atp_players(url, code, delta_hash, batch_id)
   select url, code,
-         sf_players_delta_hash(
-           pn_code => code,
-           pn_url =>  url) as delta_hash,
+         sf_atp_players_delta_hash(
+           pv_code => code,
+           pv_url =>  url) as delta_hash,
          pkg_log.gn_batch_id
   from (select distinct s.loser_url as url, s.loser_code as code
         from stg_matches s
-        where s.loser_code not in (select p.code from players p));
+        where s.loser_code not in (select p.code from atp_players p));
   --
   vn_qty := sql%rowcount;
   pkg_log.sp_log_message(pv_text => 'add new players (losers)', pn_qty => vn_qty);
   --
-  merge into matches d
+  merge into atp_matches d
   using(select i.id,
                i.tournament_id,
                nvl(i.stats_url, m.stats_url) as stats_url,
@@ -44,9 +44,9 @@ begin
                i.winner_seed,
                i.loser_seed,
                case
-                 when nvl(length(i.match_score), 0) > nvl(length(m.match_score), 0) then i.match_score
-                 else m.match_score
-               end as match_score,
+                 when nvl(length(i.score), 0) > nvl(length(m.score), 0) then i.score
+                 else m.score
+               end as score,
                i.winner_sets_won,
                i.loser_sets_won,
                i.winner_games_won,
@@ -54,19 +54,19 @@ begin
                i.winner_tiebreaks_won,
                i.loser_tiebreaks_won,
                i.match_ret,
-               sf_matches_delta_hash(
-                 pn_id                         => i.id,
-                 pn_tournament_id              => i.tournament_id,
-                 pn_stadie_id                  => i.stadie_id,
+               sf_atp_matches_delta_hash(
+                 pv_id                         => i.id,
+                 pv_tournament_id              => i.tournament_id,
+                 pv_stadie_id                  => i.stadie_id,
                  pn_match_order                => i.match_order,
-                 pn_match_ret                  => i.match_ret,
-                 pn_winner_code                => i.winner_code,
-                 pn_loser_code                 => i.loser_code,
-                 pn_winner_seed                => i.winner_seed,
-                 pn_loser_seed                 => i.loser_seed,
-                 pn_match_score                => case
-                                                    when nvl(length(i.match_score), 0) > nvl(length(m.match_score), 0) then i.match_score
-                                                    else m.match_score
+                 pv_match_ret                  => i.match_ret,
+                 pv_winner_code                => i.winner_code,
+                 pv_loser_code                 => i.loser_code,
+                 pv_winner_seed                => i.winner_seed,
+                 pv_loser_seed                 => i.loser_seed,
+                 pv_score                      => case
+                                                    when nvl(length(i.score), 0) > nvl(length(m.score), 0) then i.score
+                                                    else m.score
                                                   end,
                  pn_winner_sets_won            => i.winner_sets_won,
                  pn_loser_sets_won             => i.loser_sets_won,
@@ -74,7 +74,7 @@ begin
                  pn_loser_games_won            => i.loser_games_won,
                  pn_winner_tiebreaks_won       => i.winner_tiebreaks_won,
                  pn_loser_tiebreaks_won        => i.loser_tiebreaks_won,
-                 pn_stats_url                  => nvl(i.stats_url, m.stats_url),
+                 pv_stats_url                  => nvl(i.stats_url, m.stats_url),
                  pn_match_duration             => m.match_duration,
                  pn_win_aces                   => m.win_aces,
                  pn_win_double_faults          => m.win_double_faults,
@@ -220,7 +220,7 @@ begin
                      sm.loser_code,
                      sm.winner_seed,
                      sm.loser_seed,
-                     sm.match_score,
+                     sm.score,
                      sm.winner_sets_won,
                      sm.loser_sets_won,
                      sm.winner_games_won,
@@ -230,13 +230,13 @@ begin
                      sm.match_ret,
                      row_number() over (partition by sm.id order by sm.match_order) rn
               from stg_matches sm) i,
-             matches m
+             atp_matches m
         where m.id(+) = i.id
           and i.rn = 1) s
   on (s.id = d.id)
   when not matched then
-    insert (d.id, d.delta_hash, d.batch_id,          d.tournament_id, d.stadie_id, d.match_order, d.match_ret, d.winner_code, d.loser_code, d.winner_seed, d.loser_seed, d.match_score, d.winner_sets_won, d.loser_sets_won, d.winner_games_won, d.loser_games_won, d.winner_tiebreaks_won, d.loser_tiebreaks_won, d.stats_url)
-    values (s.id, s.delta_hash, pkg_log.gn_batch_id, s.tournament_id, s.stadie_id, s.match_order, s.match_ret, s.winner_code, s.loser_code, s.winner_seed, s.loser_seed, s.match_score, s.winner_sets_won, s.loser_sets_won, s.winner_games_won, s.loser_games_won, s.winner_tiebreaks_won, s.loser_tiebreaks_won, s.stats_url)
+    insert (d.id, d.delta_hash, d.batch_id,          d.tournament_id, d.stadie_id, d.match_order, d.match_ret, d.winner_code, d.loser_code, d.winner_seed, d.loser_seed, d.score, d.winner_sets_won, d.loser_sets_won, d.winner_games_won, d.loser_games_won, d.winner_tiebreaks_won, d.loser_tiebreaks_won, d.stats_url)
+    values (s.id, s.delta_hash, pkg_log.gn_batch_id, s.tournament_id, s.stadie_id, s.match_order, s.match_ret, s.winner_code, s.loser_code, s.winner_seed, s.loser_seed, s.score, s.winner_sets_won, s.loser_sets_won, s.winner_games_won, s.loser_games_won, s.winner_tiebreaks_won, s.loser_tiebreaks_won, s.stats_url)
   when matched then
     update set
       d.delta_hash           = s.delta_hash,
@@ -249,7 +249,7 @@ begin
       d.loser_code           = s.loser_code,
       d.winner_seed          = s.winner_seed,
       d.loser_seed           = s.loser_seed,
-      d.match_score          = s.match_score,
+      d.score          = s.score,
       d.winner_sets_won      = s.winner_sets_won,
       d.loser_sets_won       = s.loser_sets_won,
       d.winner_games_won     = s.winner_games_won,

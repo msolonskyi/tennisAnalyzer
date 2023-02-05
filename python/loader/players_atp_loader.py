@@ -16,26 +16,26 @@ class PlayersATPLoader(BaseLoader):
         self.CSVFILE_NAME = ''
         self.TABLE_NAME = 'stg_players'
         self.INSERT_STR = 'insert into stg_players(player_code, player_slug, first_name, last_name, player_url, flag_code, residence, birthplace, birthdate, turned_pro, weight_kg, height_cm, handedness, backhand) values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14)'
-        self.PROCESS_PROC_NAME = 'sp_process_atp_players'
+        self.PROCESS_PROC_NAMES = ['sp_process_atp_players']
         super()._init()
 
     def _fill_players_url_list(self):
         try:
             cur = self.con.cursor()
             if self.year is None:
-                sql = "select url from players where first_name is null"
+                sql = "select url from atp_players where first_name is null"
                 self._players_url_list = cur.execute(sql).fetchall()
                 logzero.logger.info('loading players with empty names only')
             else:
                 sql = '''
 select distinct w.url url
-from players w, matches m, tournaments t
+from atp_players w, atp_matches m, atp_tournaments t
 where m.winner_code = w.code
   and m.tournament_id = t.id
   and t.year = :year
 union
 select l.url
-from players l, matches m, tournaments t
+from atp_players l, atp_matches m, atp_tournaments t
 where m.loser_code = l.code
   and m.tournament_id = t.id
   and t.year = :year

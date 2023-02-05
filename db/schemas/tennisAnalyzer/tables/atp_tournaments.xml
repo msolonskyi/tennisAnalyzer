@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-  <table name="tournaments" type="normal">
+  <table name="atp_tournaments" type="normal">
   <columns>
     <column name="id"                 type="varchar2(64)"  nullable="n"/>
     <column name="delta_hash"         type="number"        nullable="n"/>
@@ -25,12 +25,13 @@
     <column name="points_rule_id"     type="varchar2(16)"/>
   </columns>
   <constraints>
-    <constraint name="pk_tournaments"                 type="primary key" columns_list="id"/>
-    <constraint name="unq_tourn$code$year"            type="unique" columns_list="code, year"/>
-    <constraint name="fk_tourn$series_category"       type="foreign key" columns_list="series_category_id" foreign_table="series_category" foreign_columns_list="id"/>
-    <constraint name="fk_tourn$country_code"          type="foreign key" columns_list="country_code"       foreign_table="countries"       foreign_columns_list="code"/>
-    <constraint name="fk_tourn$points_rule"           type="foreign key" columns_list="points_rule_id"     foreign_table="points_rules"    foreign_columns_list="id"/>
-    <constraint name="chk_tournaments$indoor_outdoor" type="check" condition="indoor_outdoor in ('Indoor', 'Outdoor')"/>
-    <constraint name="chk_tournaments$surface"        type="check" condition="surface in ('Hard', 'Clay', 'Carpet', 'Grass')"/>
+    <constraint name="pk_atp_tournaments"           type="primary key" columns_list="id"/>
+    <constraint name="unq_atp_tourn$code$year"      type="unique" columns_list="code, year"/>
+    <constraint name="fk_atp_tourn$series_category" type="foreign key" columns_list="series_category_id" foreign_table="series_category" foreign_columns_list="id"/>
+    <constraint name="fk_atp_tourn$country_code"    type="foreign key" columns_list="country_code"       foreign_table="countries"       foreign_columns_list="code"/>
+    <constraint name="fk_atp_tourn$indoor_outdoor"  type="foreign key" columns_list="indoor_outdoor"     foreign_table="indoor_outdoor"  foreign_columns_list="indoor_outdoor"/>
+    <constraint name="fk_atp_tourn$surface"         type="foreign key" columns_list="surface"            foreign_table="surfaces"        foreign_columns_list="surface"/>
+    <constraint name="fk_atp_tourn$points_rule"     type="foreign key" columns_list="points_rule_id"     foreign_table="points_rules"    foreign_columns_list="id"/>
+    <constraint name="chk_atp_tourn$series_cat_id"  type="check" condition="series_category_id != 'dc'"/>
   </constraints>
 </table>

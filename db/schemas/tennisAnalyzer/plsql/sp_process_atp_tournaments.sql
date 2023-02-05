@@ -5,28 +5,28 @@ is
 begin
   pkg_log.sp_start_batch(pv_module => cv_module_name);
   --
-  merge into tournaments d
+  merge into atp_tournaments d
   using(select i.*,
-               sf_tournaments_delta_hash(
-                 pn_id                 => i.id,
-                 pn_name               => i.name,
+               sf_atp_tournaments_delta_hash(
+                 pv_id                 => i.id,
+                 pv_name               => i.name,
                  pn_year               => i.year,
-                 pn_code               => i.code,
-                 pn_url                => i.url,
-                 pn_slug               => i.slug,
-                 pn_location           => i.location,
-                 pn_sgl_draw_url       => i.sgl_draw_url,
-                 pn_sgl_pdf_url        => i.sgl_pdf_url,
-                 pn_indoor_outdoor     => i.indoor_outdoor,
-                 pn_surface            => i.surface,
-                 pn_series_category_id => i.series_category_id,
-                 pn_start_dtm          => i.start_dtm,
-                 pn_finish_dtm         => i.finish_dtm,
+                 pv_code               => i.code,
+                 pv_url                => i.url,
+                 pv_slug               => i.slug,
+                 pv_location           => i.location,
+                 pv_sgl_draw_url       => i.sgl_draw_url,
+                 pv_sgl_pdf_url        => i.sgl_pdf_url,
+                 pv_indoor_outdoor     => i.indoor_outdoor,
+                 pv_surface            => i.surface,
+                 pv_series_category_id => i.series_category_id,
+                 pd_start_dtm          => i.start_dtm,
+                 pd_finish_dtm         => i.finish_dtm,
                  pn_sgl_draw_qty       => i.sgl_draw_qty,
                  pn_dbl_draw_qty       => i.dbl_draw_qty,
                  pn_prize_money        => i.prize_money,
-                 pn_prize_currency     => i.prize_currency,
-                 pn_country_code       => i.country_code,
+                 pv_prize_currency     => i.prize_currency,
+                 pv_country_code       => i.country_code,
                  pn_points_rule_id     => i.points_rule_id) as delta_hash
         from (select g.id,
                      g.name,
@@ -54,7 +54,7 @@ begin
                      nvl(c.code, t.country_code) as country_code,
                      points_rule_id as points_rule_id,
                      row_number() over (partition by g.id order by se.id) as rn
-              from stg_tournaments g, series se, countries c, tournaments t
+              from stg_tournaments g, series se, countries c, atp_tournaments t
               where g.series = se.id(+)
                 and g.code is not null
                 and g.country_name = c.name(+)

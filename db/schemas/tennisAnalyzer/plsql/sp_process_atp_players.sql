@@ -5,31 +5,29 @@ is
 begin
   pkg_log.sp_start_batch(pv_module => cv_module_name);
   --
-  merge into players d
+  merge into atp_players d
   using(select first_name, last_name, player_url as url, player_slug as slug, player_code as code, to_date(birthdate, 'yyyy.mm.dd') as birth_date, birthplace,
                turned_pro, weight_kg as weight, height_cm as height, residence, handedness, backhand, flag_code as citizenship, null as code_dc, null as url_dc,
-               sf_players_delta_hash(
-                 pn_code =>        player_code,
-                 pn_url =>         player_url,
-                 pn_first_name =>  first_name,
-                 pn_last_name =>   last_name,
-                 pn_slug =>        player_slug,
-                 pn_birth_date =>  to_date(birthdate, 'yyyy.mm.dd'),
-                 pn_birthplace =>  birthplace,
+               sf_atp_players_delta_hash(
+                 pv_code =>        player_code,
+                 pv_url =>         player_url,
+                 pv_first_name =>  first_name,
+                 pv_last_name =>   last_name,
+                 pv_slug =>        player_slug,
+                 pd_birth_date =>  to_date(birthdate, 'yyyy.mm.dd'),
+                 pv_birthplace =>  birthplace,
                  pn_turned_pro =>  turned_pro,
                  pn_weight =>      weight_kg,
                  pn_height =>      height_cm,
-                 pn_residence =>   residence,
-                 pn_handedness =>  handedness,
-                 pn_backhand =>    backhand,
-                 pn_citizenship => flag_code,
-                 pn_code_dc =>     null,
-                 pn_url_dc =>      null) as delta_hash
+                 pv_residence =>   residence,
+                 pv_handedness =>  handedness,
+                 pv_backhand =>    backhand,
+                 pv_citizenship => flag_code) as delta_hash
         from stg_players sp) s
   on (s.code = d.code)
   when not matched then
-    insert (d.code, d.delta_hash, d.batch_id,          d.url, d.first_name, d.last_name, d.slug, d.birth_date, d.birthplace, d.turned_pro, d.weight, d.height, d.residence, d.handedness, d.backhand, d.citizenship, d.code_dc, d.url_dc)
-    values (s.code, s.delta_hash, pkg_log.gn_batch_id, s.url, s.first_name, s.last_name, s.slug, s.birth_date, s.birthplace, s.turned_pro, s.weight, s.height, s.residence, s.handedness, s.backhand, s.citizenship, s.code_dc, s.url_dc)
+    insert (d.code, d.delta_hash, d.batch_id,          d.url, d.first_name, d.last_name, d.slug, d.birth_date, d.birthplace, d.turned_pro, d.weight, d.height, d.residence, d.handedness, d.backhand, d.citizenship)
+    values (s.code, s.delta_hash, pkg_log.gn_batch_id, s.url, s.first_name, s.last_name, s.slug, s.birth_date, s.birthplace, s.turned_pro, s.weight, s.height, s.residence, s.handedness, s.backhand, s.citizenship)
   when matched then
     update set
       d.delta_hash  = s.delta_hash,
@@ -46,9 +44,7 @@ begin
       d.residence   = nvl(s.residence,   d.residence),
       d.handedness  = nvl(s.handedness,  d.handedness),
       d.backhand    = nvl(s.backhand,    d.backhand),
-      d.citizenship = nvl(s.citizenship, d.citizenship),
-      d.code_dc     = nvl(s.code_dc,     d.code_dc),
-      d.url_dc      = nvl(s.url_dc,      d.url_dc)
+      d.citizenship = nvl(s.citizenship, d.citizenship)
     where d.delta_hash != s.delta_hash;
   --
   vn_qty := sql%rowcount;

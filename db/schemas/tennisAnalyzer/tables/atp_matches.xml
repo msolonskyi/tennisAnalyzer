@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-  <table name="matches" type="normal">
+  <table name="atp_matches" type="normal">
   <columns>
     <column name="id"                            type="varchar2(64)" nullable="n"/>
     <column name="delta_hash"                    type="number"       nullable="n"/>
@@ -8,11 +8,11 @@
     <column name="stadie_id"                     type="varchar2(4)"  nullable="n"/>
     <column name="match_order"                   type="number(4)"/>
     <column name="match_ret"                     type="varchar2(10)"/>
-    <column name="winner_code"                   type="varchar2(12)" nullable="n"/>
-    <column name="loser_code"                    type="varchar2(12)" nullable="n"/>
+    <column name="winner_code"                   type="varchar2(4)"  nullable="n"/>
+    <column name="loser_code"                    type="varchar2(4)"  nullable="n"/>
     <column name="winner_seed"                   type="varchar2(8)"/>
     <column name="loser_seed"                    type="varchar2(8)"/>
-    <column name="match_score"                   type="varchar2(32)"/>
+    <column name="score"                         type="varchar2(32)"/>
     <column name="winner_sets_won"               type="number(4)"/>
     <column name="loser_sets_won"                type="number(4)"/>
     <column name="winner_games_won"              type="number(4)"/>
@@ -155,17 +155,17 @@
     <column name="los_total_won_pct_3y_current"  type="number"/>
   </columns>
   <constraints>
-    <constraint name="pk_matches"               type="primary key" columns_list="id"/>
-    <constraint name="unq_matches"              type="unique"      columns_list="tournament_id, winner_code, loser_code, stadie_id"/>
-    <constraint name="unq_matches$stats_url"    type="unique"      columns_list="stats_url"/>
-    <constraint name="fk_matches$tournament_id" type="foreign key" columns_list="tournament_id" foreign_table="tournaments" foreign_columns_list="id"/>
-    <constraint name="fk_matches$stadie_id"     type="foreign key" columns_list="stadie_id"     foreign_table="stadies"     foreign_columns_list="id"/>
-    <constraint name="fk_matches$winner_code"   type="foreign key" columns_list="winner_code"   foreign_table="players"     foreign_columns_list="code"/>
-    <constraint name="fk_matches$loser_code"    type="foreign key" columns_list="loser_code"    foreign_table="players"     foreign_columns_list="code"/>
+    <constraint name="pk_atp_matches"               type="primary key" columns_list="id"/>
+    <constraint name="unq_atp_matches"              type="unique"      columns_list="tournament_id, winner_code, loser_code, stadie_id"/>
+    <constraint name="unq_atp_matches$stats_url"    type="unique"      columns_list="stats_url"/>
+    <constraint name="fk_atp_matches$tournament_id" type="foreign key" columns_list="tournament_id" foreign_table="atp_tournaments" foreign_columns_list="id"/>
+    <constraint name="fk_atp_matches$stadie_id"     type="foreign key" columns_list="stadie_id"     foreign_table="stadies"         foreign_columns_list="id"/>
+    <constraint name="fk_atp_matches$winner_code"   type="foreign key" columns_list="winner_code"   foreign_table="atp_players"     foreign_columns_list="code"/>
+    <constraint name="fk_atp_matches$loser_code"    type="foreign key" columns_list="loser_code"    foreign_table="atp_players"     foreign_columns_list="code"/>
   </constraints>
   <indexes>
-    <index name="ind_matches$winner_code"   type="normal" clause="winner_code"/>
-    <index name="ind_matches$loser_code"    type="normal" clause="loser_code"/>
-    <index name="ind_matches$tournament_id" type="normal" clause="tournament_id"/>
+    <index name="ind_atp_matches$winner_code"   type="normal" clause="winner_code"/>
+    <index name="ind_atp_matches$loser_code"    type="normal" clause="loser_code"/>
+    <index name="ind_atp_matches$tournament_id" type="normal" clause="tournament_id"/>
   </indexes>
 </table>

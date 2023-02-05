@@ -8,8 +8,8 @@ begin
   merge into player_points d
   using(select tournament_id, player_code, points,
                sf_player_points_delta_hash(
-                 pn_tournament_id => tournament_id,
-                 pn_player_code => player_code,
+                 pv_tournament_id => tournament_id,
+                 pv_player_code => player_code,
                  pn_points => points) as delta_hash
         from (select tournament_id, player_code, sum(points) as points
               from (-- winners

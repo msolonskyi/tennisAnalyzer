@@ -17,7 +17,7 @@ class StatsATPLoader(BaseLoader):
         self.CSVFILE_NAME = ''
         self.TABLE_NAME = 'stg_matches'
         self.INSERT_STR = 'insert into stg_matches(stats_url, match_duration, win_aces, win_double_faults, win_first_serves_in, win_first_serves_total, win_first_serve_points_won, win_first_serve_points_total, win_second_serve_points_won, win_second_serve_points_total, win_break_points_saved, win_break_points_serve_total, win_service_points_won, win_service_points_total, win_first_serve_return_won, win_first_serve_return_total, win_second_serve_return_won, win_second_serve_return_total, win_break_points_converted, win_break_points_return_total, win_service_games_played, win_return_games_played, win_return_points_won, win_return_points_total, win_total_points_won, win_total_points_total, los_aces, los_double_faults, los_first_serves_in, los_first_serves_total, los_first_serve_points_won, los_first_serve_points_total, los_second_serve_points_won, los_second_serve_points_total, los_break_points_saved, los_break_points_serve_total, los_service_points_won, los_service_points_total, los_first_serve_return_won, los_first_serve_return_total, los_second_serve_return_won, los_second_serve_return_total, los_break_points_converted, los_break_points_return_total, los_service_games_played, los_return_games_played, los_return_points_won, los_return_points_total, los_total_points_won, los_total_points_total) values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, :21, :22, :23, :24, :25, :26, :27, :28, :29, :30, :31, :32, :33, :34, :35, :36, :37, :38, :39, :40, :41, :42, :43, :44, :45, :46, :47, :48, :49, :50)'
-        self.PROCESS_PROC_NAME = 'sp_process_atp_stats'
+        self.PROCESS_PROC_NAMES = ['sp_process_atp_stats']
         super()._init()
 
     def _fill_stats_tpl_list(self):
@@ -46,6 +46,7 @@ where stats_url is not null
                 logzero.logger.info(f'Parse stats for {self.year} ...')
         finally:
             cur.close()
+        logzero.logger.info(f'Loading {len(self._stats_tpl_list)} row(s).')
 
     @staticmethod
     def _strip(val: str):

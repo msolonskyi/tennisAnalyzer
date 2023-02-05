@@ -13,7 +13,7 @@ begin
   --
   pkg_log.sp_log_message(pv_text => 'empty atp stats', pn_qty => vn_qty);
   --
-  merge into matches d
+  merge into atp_matches d
   using(select m.stats_url,
                nvl(s.match_duration,                m.match_duration)                as match_duration,
                nvl(s.win_aces,                      m.win_aces)                      as win_aces,
@@ -72,24 +72,24 @@ begin
                nvl(s.los_forced_errors,             m.los_forced_errors)             as los_forced_errors,
                nvl(s.los_unforced_errors,           m.los_unforced_errors)           as los_unforced_errors,
                nvl(s.los_net_points_won,            m.los_net_points_won)            as los_net_points_won,
-               sf_matches_delta_hash(
-                 pn_id                         => m.id,
-                 pn_tournament_id              => m.tournament_id,
-                 pn_stadie_id                  => m.stadie_id,
+               sf_atp_matches_delta_hash(
+                 pv_id                         => m.id,
+                 pv_tournament_id              => m.tournament_id,
+                 pv_stadie_id                  => m.stadie_id,
                  pn_match_order                => m.match_order,
-                 pn_match_ret                  => m.match_ret,
-                 pn_winner_code                => m.winner_code,
-                 pn_loser_code                 => m.loser_code,
-                 pn_winner_seed                => m.winner_seed,
-                 pn_loser_seed                 => m.loser_seed,
-                 pn_match_score                => m.match_score,
+                 pv_match_ret                  => m.match_ret,
+                 pv_winner_code                => m.winner_code,
+                 pv_loser_code                 => m.loser_code,
+                 pv_winner_seed                => m.winner_seed,
+                 pv_loser_seed                 => m.loser_seed,
+                 pv_score                      => m.score,
                  pn_winner_sets_won            => m.winner_sets_won,
                  pn_loser_sets_won             => m.loser_sets_won,
                  pn_winner_games_won           => m.winner_games_won,
                  pn_loser_games_won            => m.loser_games_won,
                  pn_winner_tiebreaks_won       => m.winner_tiebreaks_won,
                  pn_loser_tiebreaks_won        => m.loser_tiebreaks_won,
-                 pn_stats_url                  => m.stats_url,
+                 pv_stats_url                  => m.stats_url,
                  pn_match_duration             => nvl(s.match_duration,                m.match_duration),
                  pn_win_aces                   => nvl(s.win_aces,                      m.win_aces),
                  pn_win_double_faults          => nvl(s.win_double_faults,             m.win_double_faults),
@@ -223,7 +223,7 @@ begin
                  pn_los_total_won_pct_3y_curre => m.los_total_won_pct_3y_current,
                  pn_loser_age                  => m.loser_age,
                  pn_winner_age                 => m.winner_age) as delta_hash
-        from stg_matches s, matches m
+        from stg_matches s, atp_matches m
         where s.match_duration || s.win_aces || s.win_double_faults || s.win_first_serves_in || s.win_first_serves_total || s.win_first_serve_points_won || s.win_first_serve_points_total || s.win_second_serve_points_won || s.win_second_serve_points_total || s.win_break_points_saved || s.win_break_points_serve_total || s.win_service_points_won || s.win_service_points_total || s.win_first_serve_return_won || s.win_first_serve_return_total || s.win_second_serve_return_won || s.win_second_serve_return_total || s.win_break_points_converted || s.win_break_points_return_total || s.win_service_games_played || s.win_return_games_played || s.win_return_points_won || s.win_return_points_total || s.win_total_points_won || s.win_total_points_total || s.los_aces || s.los_double_faults || s.los_first_serves_in || s.los_first_serves_total || s.los_first_serve_points_won || s.los_first_serve_points_total || s.los_second_serve_points_won || s.los_second_serve_points_total || s.los_break_points_saved || s.los_break_points_serve_total || s.los_service_points_won || s.los_service_points_total || s.los_first_serve_return_won || s.los_first_serve_return_total || s.los_second_serve_return_won || s.los_second_serve_return_total || s.los_break_points_converted || s.los_break_points_return_total || s.los_service_games_played || s.los_return_games_played || s.los_return_points_won || s.los_return_points_total || s.los_total_points_won || s.los_total_points_total is not null
           and /*s.stats_url = m.stats_url or */s.stats_url = replace(m.stats_url, 'stats-centre', 'match-stats')) s
   on (s.stats_url = d.stats_url)

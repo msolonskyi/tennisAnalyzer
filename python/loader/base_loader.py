@@ -15,7 +15,7 @@ class BaseLoader(object):
         self.responce_str = ''
         self.TABLE_NAME = ''
         self.INSERT_STR = ''
-        self.PROCESS_PROC_NAME = ''
+        self.PROCESS_PROC_NAMES = []
         # self.LOGFILE_NAME = os.path.splitext(self.get_script_name())[0] + '.log'
         self.LOGFILE_NAME = ''
         # self.CSVFILE_NAME = os.path.splitext(self.get_script_name())[0] + '.csv'
@@ -115,9 +115,9 @@ class BaseLoader(object):
     def _process_data(self):
         try:
             cur = self.con.cursor()
-            if self.PROCESS_PROC_NAME is not None and self.PROCESS_PROC_NAME != '':
-                logzero.logger.info('start data processing')
-                cur.callproc(self.PROCESS_PROC_NAME)
+            for proc in self.PROCESS_PROC_NAMES:
+                logzero.logger.info(f'calling {proc}')
+                cur.callproc(proc)
         finally:
             cur.close()
 

@@ -9,7 +9,7 @@
   </columns>
   <constraints>
     <constraint name="pk_player_points"               type="primary key" columns_list="tournament_id,player_code"/>
-    <constraint name="fk_player_points$player_code"   type="foreign key" columns_list="player_code" foreign_table="players"       foreign_columns_list="code"/>
-    <constraint name="fk_player_points$tournament_id" type="foreign key" columns_list="tournament_id" foreign_table="tournaments" foreign_columns_list="id"/>
+    <constraint name="fk_player_points$player_code"   type="foreign key" columns_list="player_code" foreign_table="atp_players"       foreign_columns_list="code"/>
+    <constraint name="fk_player_points$tournament_id" type="foreign key" columns_list="tournament_id" foreign_table="atp_tournaments" foreign_columns_list="id"/>
   </constraints>
 </table>
