@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
-  <table name="stg_teams_dc" type="normal">
+  <table name="stg_teams" type="normal">
   <columns>
+    <column name="team_code"    type="varchar2(3)"/>    
     <column name="country_code" type="varchar2(3)"/>
     <column name="name"         type="varchar2(64)"/>
     <column name="url"          type="varchar2(256)"/>

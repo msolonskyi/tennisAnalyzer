@@ -12,13 +12,14 @@ class TournamentDCLoader(BaseLoader):
         super().__init__()
         self.url = 'https://media.itfdataservices.com/nationwinlossrecords/dc/en?NationCode=' + country_code
         self.year = int(year)
+        logzero.logger.warning(f'country_code: {country_code}')
 
     def _init(self):
         self.LOGFILE_NAME = os.path.splitext(os.path.basename(__file__))[0] + '.log'
         self.CSVFILE_NAME = ''
         self.TABLE_NAME = 'stg_tournaments'
-        self.INSERT_STR = 'insert into stg_tournaments(id, name, year, code, url, slug, location, sgl_draw_url, sgl_pdf_url, indoor_outdoor, surface, series, start_dtm, finish_dtm, sgl_draw_qty, dbl_draw_qty, prize_money, prize_currency, country_code) values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19)'
-        self.PROCESS_PROC_NAME = 'sp_process_dc_tournaments'
+        self.INSERT_STR = 'insert into stg_tournaments(id, name, year, code, url, location, indoor_outdoor, surface, series, start_dtm, finish_dtm, country_code) values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12)'
+        self.PROCESS_PROC_NAMES = ['sp_process_dc_tournaments']
         super()._init()
 
     def _parse(self):
@@ -68,4 +69,4 @@ class TournamentDCLoader(BaseLoader):
 
                 host_nation_code = tie_details.get('HostNationCode')
 
-                self.data.append([tournament_id, tournament_name, year, tie_id, tournament_url, None, tournament_location, None, None, indoor_outdoor_name, surface_name, 'dc', start_date_str, end_date_str, None, None, None, None, host_nation_code])
+                self.data.append([tournament_id, tournament_name, year, tie_id, tournament_url, tournament_location, indoor_outdoor_name, surface_name, 'dc', start_date_str, end_date_str, host_nation_code])

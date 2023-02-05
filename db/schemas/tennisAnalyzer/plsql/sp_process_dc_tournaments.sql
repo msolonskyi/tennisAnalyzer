@@ -5,54 +5,39 @@ is
 begin
   pkg_log.sp_start_batch(pv_module => cv_module_name);
   --
-  merge into tournaments d
+  merge into dc_tournaments d
   using(select s.id,
                s.name,
                s.year,
                s.code,
                s.url,
                s.slug,
-               nvl(s.location, t.location) as location,
-               s.sgl_draw_url,
-               s.sgl_pdf_url,
-               s.indoor_outdoor,
-               s.surface,
+               nvl(nvl(s.location, t.location), nvl(s.country_code, t.country_code)) as location,
+               nvl(nvl(s.indoor_outdoor, t.indoor_outdoor), 'U') as indoor_outdoor,
+               nvl(nvl(s.surface, t.surface), 'U') as surface,
                s.series as series_category_id,
                to_date(s.start_dtm, 'yyyymmdd') as start_dtm,
                to_date(s.finish_dtm, 'yyyymmdd') as finish_dtm,
-               s.sgl_draw_qty,
-               s.dbl_draw_qty,
-               s.prize_money,
-               s.prize_currency,
-               nvl(s.country_code, t.country_code) as country_code,
-               sf_tournaments_delta_hash(
-                  pn_id                 => s.id,
-                  pn_name               => s.name,
+               nvl(s.country_code, t.country_code) as country_code,            
+               sf_dc_tournaments_delta_hash(
+                  pv_id                 => s.id,
+                  pv_name               => s.name,
                   pn_year               => s.year,
-                  pn_code               => s.code,
-                  pn_url                => s.url,
-                  pn_slug               => s.slug,
-                  pn_location           => nvl(s.location, t.location),
-                  pn_sgl_draw_url       => s.sgl_draw_url,
-                  pn_sgl_pdf_url        => s.sgl_pdf_url,
-                  pn_indoor_outdoor     => s.indoor_outdoor,
-                  pn_surface            => s.surface,
-                  pn_series_category_id => s.series,
-                  pn_start_dtm          => to_date(s.start_dtm, 'yyyymmdd'),
-                  pn_finish_dtm         => to_date(s.finish_dtm, 'yyyymmdd'),
-                  pn_sgl_draw_qty       => s.sgl_draw_qty,
-                  pn_dbl_draw_qty       => s.dbl_draw_qty,
-                  pn_prize_money        => s.prize_money,
-                  pn_prize_currency     => s.prize_currency,
-                  pn_country_code       => nvl(s.country_code, t.country_code),
-                  pn_points_rule_id     => null) as delta_hash
-        from stg_tournaments s, tournaments t
-        where s.id = t.id(+)
-          and s.surface is not null) s
+                  pv_code               => s.code,
+                  pv_url                => s.url,
+                  pv_location           => nvl(nvl(s.location, t.location), nvl(s.country_code, t.country_code)),
+                  pv_indoor_outdoor     => nvl(nvl(s.indoor_outdoor, t.indoor_outdoor), 'U'),
+                  pv_surface            => nvl(nvl(s.surface, t.surface), 'U'),
+                  pv_series_category_id => s.series,
+                  pd_start_dtm          => to_date(s.start_dtm, 'yyyymmdd'),
+                  pd_finish_dtm         => to_date(s.finish_dtm, 'yyyymmdd'),
+                  pv_country_code       => nvl(s.country_code, t.country_code)) as delta_hash
+        from stg_tournaments s, dc_tournaments t
+        where s.id = t.id(+)) s
   on (s.id = d.id)
   when not matched then
-    insert (d.id, d.delta_hash, d.batch_id,          d.name, d.year, d.code, d.url, d.slug, d.location, d.sgl_draw_url, d.sgl_pdf_url, d.indoor_outdoor, d.surface, d.series_category_id, d.start_dtm, d.finish_dtm, d.sgl_draw_qty, d.dbl_draw_qty, d.prize_money, d.prize_currency, d.country_code)
-    values (s.id, s.delta_hash, pkg_log.gn_batch_id, s.name, s.year, s.code, s.url, s.slug, s.location, s.sgl_draw_url, s.sgl_pdf_url, s.indoor_outdoor, s.surface, s.series_category_id, s.start_dtm, s.finish_dtm, s.sgl_draw_qty, s.dbl_draw_qty, s.prize_money, s.prize_currency, s.country_code)
+    insert (d.id, d.delta_hash, d.batch_id,          d.name, d.year, d.code, d.url, d.location, d.indoor_outdoor, d.surface, d.series_category_id, d.start_dtm, d.finish_dtm, d.country_code)
+    values (s.id, s.delta_hash, pkg_log.gn_batch_id, s.name, s.year, s.code, s.url, s.location, s.indoor_outdoor, s.surface, s.series_category_id, s.start_dtm, s.finish_dtm, s.country_code)
   when matched then
     update set
       d.delta_hash         = s.delta_hash,
@@ -61,19 +46,12 @@ begin
       d.year               = s.year,
       d.code               = s.code,
       d.url                = s.url,
-      d.slug               = s.slug,
       d.location           = s.location,
-      d.sgl_draw_url       = s.sgl_draw_url,
-      d.sgl_pdf_url        = s.sgl_pdf_url,
       d.indoor_outdoor     = s.indoor_outdoor,
       d.surface            = s.surface,
       d.series_category_id = s.series_category_id,
       d.start_dtm          = s.start_dtm,
       d.finish_dtm         = s.finish_dtm,
-      d.sgl_draw_qty       = s.sgl_draw_qty,
-      d.dbl_draw_qty       = s.dbl_draw_qty,
-      d.prize_money        = s.prize_money,
-      d.prize_currency     = s.prize_currency,
       d.country_code       = s.country_code
     where d.delta_hash != s.delta_hash;
   vn_qty := sql%rowcount;

@@ -5,23 +5,25 @@ is
 begin
   pkg_log.sp_start_batch(pv_module => cv_module_name);
   --
-  merge into teams_dc d
-  using(select country_code, name, url,
-               sf_teams_dc_delta_hash(
-                 pn_country_code => country_code,
-                 pn_name => name,
-                 pn_url => url) as delta_hash
-        from stg_teams_dc sp) s
-  on (s.country_code = d.country_code)
+  merge into dc_teams d
+  using(select team_code, country_code, name, url,
+               sf_dc_teams_delta_hash(
+                 pv_team_code => team_code,
+                 pv_country_code => country_code,
+                 pv_name => name,
+                 pv_url => url) as delta_hash
+        from stg_teams sp) s
+  on (s.team_code = d.team_code)
   when not matched then
-    insert (d.country_code, d.delta_hash, d.batch_id,          d.name, d.url)
-    values (s.country_code, s.delta_hash, pkg_log.gn_batch_id, s.name, s.url)
+    insert (d.team_code, d.country_code, d.delta_hash, d.batch_id,          d.name, d.url)
+    values (s.team_code, s.country_code, s.delta_hash, pkg_log.gn_batch_id, s.name, s.url)
   when matched then
     update set
-      d.delta_hash  = s.delta_hash,
-      d.batch_id    = pkg_log.gn_batch_id,
-      d.name        = s.name,
-      d.url         = s.url
+      d.delta_hash   = s.delta_hash,
+      d.batch_id     = pkg_log.gn_batch_id,
+      d.country_code = s.country_code,
+      d.name         = s.name,
+      d.url          = s.url
     where d.delta_hash != s.delta_hash;
   --
   vn_qty := sql%rowcount;
