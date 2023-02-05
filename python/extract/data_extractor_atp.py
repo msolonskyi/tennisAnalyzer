@@ -80,7 +80,7 @@ class MatchesYearlyExtractor(BaseYearlyExtractor):
        loser_age,
        winner_seed,
        loser_seed,
-       score,
+       score as match_score,
        winner_sets_won,
        loser_sets_won,
        winner_games_won,
