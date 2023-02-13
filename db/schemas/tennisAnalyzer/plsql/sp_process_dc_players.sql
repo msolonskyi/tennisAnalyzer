@@ -5,39 +5,38 @@ is
 begin
   pkg_log.sp_start_batch(pv_module => cv_module_name);
   --
-  merge into players d
-  using(select p.code,
-               sp.player_code as code_dc,
-               sp.player_url as url_dc,
-               sf_players_delta_hash(
-                 pn_code =>        p.code,
-                 pn_url =>         p.url,
-                 pn_first_name =>  p.first_name,
-                 pn_last_name =>   p.last_name,
-                 pn_slug =>        p.slug,
-                 pn_birth_date =>  p.birth_date,
-                 pn_birthplace =>  p.birthplace,
-                 pn_turned_pro =>  p.turned_pro,
-                 pn_weight =>      p.weight,
-                 pn_height =>      p.height,
-                 pn_residence =>   p.residence,
-                 pn_handedness =>  p.handedness,
-                 pn_backhand =>    p.backhand,
-                 pn_citizenship => p.citizenship,
-                 pn_code_dc =>     nvl(sp.player_code, p.code_dc),
-                 pn_url_dc =>      nvl(sp.player_url, p.url_dc)
-                 ) as delta_hash
-        from stg_players sp, players p
-        where upper(sp.first_name) || upper(sp.last_name) || to_date(sp.birthdate, 'dd mon yyyy') = upper(p.first_name) || upper(p.last_name) || p.birth_date
+  merge into dc_players d
+  using(select i.player_dc_id,
+               i.first_name,
+               i.last_name,
+               i.player_url,
+               i.flag_code as citizenship,
+               to_date(i.birthdate, 'dd mm yyyy') as birth_date,
+               sf_dc_players_delta_hash(
+                 pn_id          => i.player_dc_id, 
+                 pv_url         => i.player_url, 
+                 pv_first_name  => i.first_name, 
+                 pv_last_name   => i.last_name, 
+                 pd_birth_date  => to_date(i.birthdate, 'dd mm yyyy'), 
+                 pv_citizenship => i.flag_code, 
+                 pv_atp_code    => p.atp_code) as delta_hash
+        from stg_players i, dc_players p
+        where i.player_dc_id = p.id(+)
         ) s
-  on (s.code = d.code)
+  on (s.player_dc_id = d.id)
+  when not matched then
+    insert (d.id,           d.delta_hash, d.batch_id,          d.url,        d.first_name, d.last_name, d.birth_date, d.citizenship, d.atp_code)
+    values (s.player_dc_id, s.delta_hash, pkg_log.gn_batch_id, s.player_url, s.first_name, s.last_name, s.birth_date, s.citizenship, null)
     when matched then
       update set
-        d.delta_hash           = s.delta_hash,
-        d.batch_id             = pkg_log.gn_batch_id,
-        d.code_dc              = s.code_dc,
-        d.url_dc               = s.url_dc
-      where d.delta_hash != s.delta_hash;
+        d.delta_hash  = s.delta_hash,
+        d.batch_id    = pkg_log.gn_batch_id,
+        d.url         = s.player_url,
+        d.first_name  = s.first_name,
+        d.last_name   = s.last_name,
+        d.birth_date  = s.birth_date,
+        d.citizenship = s.citizenship
+   where d.delta_hash != s.delta_hash;
   --
   vn_qty := sql%rowcount;
   --

@@ -66,10 +66,37 @@ class BaseLoader(object):
         else:
             return player_atp_url
 
+    @staticmethod # "18 February 1995"
+    def nornalyze_date_str(date: str) -> str:
+        if date is None or date == '':
+            return ''
+
+        m = {
+        'January' : '01',
+        'February' : '02',
+        'March' : '03',
+        'April' : '04',
+        'May' : '05',
+        'June' : '06',
+        'July' : '07',
+        'August' : '08',
+        'September' : '09',
+        'October' : '10',
+        'November' : '11',
+        'December' : '12'
+        }
+        date_arr = date.split(' ')        
+        try:
+            date_arr[1] = m[date_arr[1]]
+            out = ' '.join(date_arr)
+            return out
+        except:
+            raise ValueError('Not a month')
+    
     def _request_url_by_webdriver(self):
         if self.url is not None and self.url != '':
             logzero.logger.info(f'processing {self.url} by webdriver')
-            browser = webdriver.PhantomJS(executable_path=r"C:\usr\projects\phantomjs-2.1.1-windows\bin\phantomjs.exe")
+            browser = webdriver.PhantomJS(executable_path=r"C:\\usr\\projects\\webdrivers\\phantomjs-2.1.1-windows\\bin\\phantomjs.exe")
             browser.get(self.url)
             content = browser.page_source
             browser.close()
@@ -87,8 +114,8 @@ class BaseLoader(object):
 
     def _request_url_by_chrome(self):
         if self.url is not None and self.url != '':
-            logzero.logger.info(f'processing {self.url} by webdriver')
-            browser = webdriver.Chrome(executable_path=r"C:\usr\projects\phantomjs-2.1.1-windows\bin\phantomjs.exe")
+            logzero.logger.info(f'processing {self.url} by chrome webdriver')
+            browser = webdriver.Chrome(executable_path=r"C:\\usr\\projects\\webdrivers\\ChromeDriver\\106.0.5249.61\\chromedriver.exe")
             browser.get(self.url)
             content = browser.page_source
             browser.close()
