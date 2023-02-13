@@ -170,6 +170,8 @@ values ('FRA', 'France');
 insert into COUNTRIES (code, name)
 values ('FGU', 'French Guiana');
 insert into COUNTRIES (code, name)
+values ('PYF', 'French Polynesia');
+insert into COUNTRIES (code, name)
 values ('GAB', 'Gabon');
 insert into COUNTRIES (code, name)
 values ('GEO', 'Georgia');
@@ -199,10 +201,10 @@ insert into COUNTRIES (code, name)
 values ('GBS', 'Guinea-Bissau');
 insert into COUNTRIES (code, name)
 values ('GUY', 'Guyana');
-insert into COUNTRIES (code, name)
-values ('HAI', 'Haiti');
 commit;
 prompt 100 records committed...
+insert into COUNTRIES (code, name)
+values ('HAI', 'Haiti');
 insert into COUNTRIES (code, name)
 values ('HON', 'Honduras');
 insert into COUNTRIES (code, name)
@@ -401,10 +403,10 @@ insert into COUNTRIES (code, name)
 values ('ROU', 'Romania');
 insert into COUNTRIES (code, name)
 values ('RUS', 'Russia');
-insert into COUNTRIES (code, name)
-values ('RU1', 'Russian Empire');
 commit;
 prompt 200 records committed...
+insert into COUNTRIES (code, name)
+values ('RU1', 'Russian Empire');
 insert into COUNTRIES (code, name)
 values ('RWA', 'Rwanda');
 insert into COUNTRIES (code, name)
@@ -534,7 +536,7 @@ values ('ZAM', 'Zambia');
 insert into COUNTRIES (code, name)
 values ('ZIM', 'Zimbabwe');
 commit;
-prompt 264 records loaded
+prompt 265 records loaded
 set feedback on
 set define on
 prompt Done.
