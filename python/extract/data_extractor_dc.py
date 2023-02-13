@@ -14,22 +14,15 @@ class TournamentsFullExtractor(BaseFullExtractor):
        t.year,
        t.code,
        t.url,
-       t.slug,
        t.location,
-       t.sgl_draw_url,
-       t.sgl_pdf_url,
        t.indoor_outdoor,
        t.surface,
        c.series_id,
        t.series_category_id,
        to_char(t.start_dtm, 'yyyymmdd') as start_dtm,
        to_char(t.finish_dtm, 'yyyymmdd') as finish_dtm,
-       t.sgl_draw_qty,
-       t.dbl_draw_qty,
-       t.prize_money,
-       t.prize_currency,
        t.country_code
-from tournaments t, series_category c
+from dc_tournaments t, series_category c
 where series_id = 'dc'
   and c.id = t.series_category_id
 order by start_dtm, code'''

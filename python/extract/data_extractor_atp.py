@@ -9,21 +9,24 @@ class PlayersFullExtractor(BaseFullExtractor):
         self.LOGFILE_NAME = os.path.splitext(self.get_script_name())[0] + '.log'
         self.key = 'players'
         self.CSVFILE_NAME = f'{ATP_CSV_PATH}{self.key}.csv'
-        self.sql = '''select code,
-       url,
-       first_name,
-       last_name,
-       slug,
-       to_char(birth_date, 'yyyymmdd') as birth_date,
-       birthplace,
-       turned_pro,
-       weight,
-       height,
-       residence,
-       handedness,
-       backhand,
-       citizenship
-from atp_players
+        self.sql = '''select a.code,
+       a.url,
+       a.first_name,
+       a.last_name,
+       a.slug,
+       to_char(a.birth_date, 'yyyymmdd') as birth_date,
+       a.birthplace,
+       a.turned_pro,
+       a.weight,
+       a.height,
+       a.residence,
+       a.handedness,
+       a.backhand,
+       a.citizenship,
+       d.id as code_dc,
+       d.url as url_dc
+from atp_players a, dc_players d
+where a.code = d.atp_code(+)
 order by code'''
 
 
