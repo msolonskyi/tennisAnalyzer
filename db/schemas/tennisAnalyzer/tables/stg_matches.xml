@@ -92,5 +92,7 @@
     <column name="los_fastest_second_serve_kmh"  type="number"/>
     <column name="los_average_second_serve_kmh"  type="number"/>
     <column name="batch_id"                      type="number(12)"/>
+    <column name="winner_id"                     type="number(12)"/>
+    <column name="loser_id"                      type="number(12)"/>
   </columns>
 </table>
