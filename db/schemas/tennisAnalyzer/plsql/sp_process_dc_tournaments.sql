@@ -15,7 +15,7 @@ begin
                nvl(nvl(s.location, t.location), nvl(s.country_code, t.country_code)) as location,
                nvl(nvl(s.indoor_outdoor, t.indoor_outdoor), 'U') as indoor_outdoor,
                nvl(nvl(s.surface, t.surface), 'U') as surface,
-               s.series as series_category_id,
+               replace(lower(substr(s.code, 11, 3)), '-', '') as series_category_id,
                to_date(s.start_dtm, 'yyyymmdd') as start_dtm,
                to_date(s.finish_dtm, 'yyyymmdd') as finish_dtm,
                nvl(s.country_code, t.country_code) as country_code,            
@@ -28,7 +28,7 @@ begin
                   pv_location           => nvl(nvl(s.location, t.location), nvl(s.country_code, t.country_code)),
                   pv_indoor_outdoor     => nvl(nvl(s.indoor_outdoor, t.indoor_outdoor), 'U'),
                   pv_surface            => nvl(nvl(s.surface, t.surface), 'U'),
-                  pv_series_category_id => s.series,
+                  pv_series_category_id => replace(lower(substr(s.code, 11, 3)), '-', ''),
                   pd_start_dtm          => to_date(s.start_dtm, 'yyyymmdd'),
                   pd_finish_dtm         => to_date(s.finish_dtm, 'yyyymmdd'),
                   pv_country_code       => nvl(s.country_code, t.country_code)) as delta_hash

@@ -23,6 +23,6 @@
     <constraint name="fk_dc_tourn$country_code"    type="foreign key" columns_list="country_code"       foreign_table="countries"       foreign_columns_list="code"/>
     <constraint name="fk_dc_tourn$indoor_outdoor"  type="foreign key" columns_list="indoor_outdoor"     foreign_table="indoor_outdoor"  foreign_columns_list="indoor_outdoor"/>
     <constraint name="fk_dc_tourn$surface"         type="foreign key" columns_list="surface"            foreign_table="surfaces"        foreign_columns_list="surface"/>
-    <constraint name="chk_dc_tourn$series_cat_id"  type="check" condition="series_category_id = 'dc'"/>
+    <constraint name="chk_dc_tourn$series_cat_id"  type="check" condition="series_category_id in ('fls','g1','g2','g3','g4','qls','wg','wg1','wg2','g5')"/>
   </constraints>
 </table>

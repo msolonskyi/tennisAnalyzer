@@ -32,6 +32,6 @@
     <constraint name="fk_atp_tourn$indoor_outdoor"  type="foreign key" columns_list="indoor_outdoor"     foreign_table="indoor_outdoor"  foreign_columns_list="indoor_outdoor"/>
     <constraint name="fk_atp_tourn$surface"         type="foreign key" columns_list="surface"            foreign_table="surfaces"        foreign_columns_list="surface"/>
     <constraint name="fk_atp_tourn$points_rule"     type="foreign key" columns_list="points_rule_id"     foreign_table="points_rules"    foreign_columns_list="id"/>
-    <constraint name="chk_atp_tourn$series_cat_id"  type="check" condition="series_category_id != 'dc'"/>
+    <constraint name="chk_atp_tourn$series_cat_id"  type="check" condition="series_category_id in ('laverCup','atpFinal','atpCup','nextGen','chFinal','gs','1000','atp250','atp500','og','fu15','fu25','ch100','ch50','teamCup','gsCup')"/>
   </constraints>
 </table>
