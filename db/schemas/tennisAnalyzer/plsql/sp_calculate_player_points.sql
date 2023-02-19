@@ -14,7 +14,7 @@ begin
         from (select tournament_id, player_code, sum(points) as points
               from (-- winners
                     select m.tournament_id, m.winner_code as player_code, r.points
-                      from points_rulebook r, vw_matches m
+                      from points_rulebook r, vw_atp_matches m
                       where m.tournament_points_rule_id = r.points_rule_id
                         and m.stadie_id = r.stadie_id
                         and m.stadie_id = 'F'
@@ -23,7 +23,7 @@ begin
                       union all
                       -- main
                       select m.tournament_id, m.loser_code as player_code, r.points
-                      from points_rulebook r, vw_matches m
+                      from points_rulebook r, vw_atp_matches m
                       where m.tournament_points_rule_id = r.points_rule_id
                         and m.stadie_id = r.stadie_id
                         and m.stadie_draw = 'M'
@@ -31,7 +31,7 @@ begin
                       union all
                       -- qualification Grand Slams
                       select m.tournament_id, m.winner_code as player_code, r.points
-                      from points_rulebook r, vw_matches m
+                      from points_rulebook r, vw_atp_matches m
                       where m.tournament_points_rule_id = r.points_rule_id
                         and m.stadie_id = r.stadie_id
                         and m.stadie_draw = 'Q'
@@ -39,7 +39,7 @@ begin
                         and m.series_category_id = 'gs'
                       union all
                       select m.tournament_id, m.loser_code as player_code, r.points
-                      from points_rulebook r, vw_matches m
+                      from points_rulebook r, vw_atp_matches m
                       where m.tournament_points_rule_id = r.points_rule_id
                         and m.stadie_id = r.stadie_id
                         and m.stadie_draw = 'Q'
@@ -49,12 +49,12 @@ begin
                       -- qualification winners
                       select m.tournament_id, m.winner_code as player_code, r.points
                       from (select m.tournament_id, max(m.stadie_ord) as stadie_ord
-                            from vw_matches m
+                            from vw_atp_matches m
                             where m.stadie_draw = 'Q'
                              and m.series_category_id != 'dc'
                             group by m.tournament_id) ii,
                            stadies s,
-                           vw_matches m,
+                           vw_atp_matches m,
                            points_rulebook r
                       where s.ord = ii.stadie_ord
                         and ii.tournament_id = m.tournament_id
@@ -67,12 +67,12 @@ begin
                       -- qualification losers
                       select m.tournament_id, m.loser_code as player_code, r.points
                       from (select m.tournament_id, max(m.stadie_ord) as stadie_ord
-                            from vw_matches m
+                            from vw_atp_matches m
                             where m.stadie_draw = 'Q'
                              and m.series_category_id != 'dc'
                             group by m.tournament_id) ii,
                            stadies s,
-                           vw_matches m,
+                           vw_atp_matches m,
                            points_rulebook r
                       where s.ord = ii.stadie_ord
                         and ii.tournament_id = m.tournament_id
@@ -84,7 +84,7 @@ begin
                       union all
                       -- ATP Finals RR
                       select m.tournament_id, m.winner_code as player_code, r.points
-                      from points_rulebook r, vw_matches m
+                      from points_rulebook r, vw_atp_matches m
                       where m.tournament_points_rule_id = r.points_rule_id
                         and m.stadie_id = r.stadie_id
                         and m.stadie_id = 'RR'

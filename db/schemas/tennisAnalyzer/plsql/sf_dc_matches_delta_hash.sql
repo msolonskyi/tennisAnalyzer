@@ -82,73 +82,7 @@
   pn_los_fastest_first_serves_k dc_matches.los_fastest_first_serves_kmh%type,
   pn_los_average_first_serves_k dc_matches.los_average_first_serves_kmh%type,
   pn_los_fastest_second_serve_k dc_matches.los_fastest_second_serve_kmh%type,
-  pn_los_average_second_serve_k dc_matches.los_average_second_serve_kmh%type,
-  pn_win_h2h_qty_3y             dc_matches.win_h2h_qty_3y%type,
-  pn_los_h2h_qty_3y             dc_matches.los_h2h_qty_3y%type,
-  pn_win_win_qty_3y             dc_matches.win_win_qty_3y%type,
-  pn_win_los_qty_3y             dc_matches.win_los_qty_3y%type,
-  pn_los_win_qty_3y             dc_matches.los_win_qty_3y%type,
-  pn_los_los_qty_3y             dc_matches.los_los_qty_3y%type,
-  pn_win_avg_tiebreaks_3y       dc_matches.win_avg_tiebreaks_3y%type,
-  pn_los_avg_tiebreaks_3y       dc_matches.los_avg_tiebreaks_3y%type,
-  pn_win_h2h_qty_3y_current     dc_matches.win_h2h_qty_3y_current%type,
-  pn_los_h2h_qty_3y_current     dc_matches.los_h2h_qty_3y_current%type,
-  pn_win_win_qty_3y_current     dc_matches.win_win_qty_3y_current%type,
-  pn_win_los_qty_3y_current     dc_matches.win_los_qty_3y_current%type,
-  pn_los_win_qty_3y_current     dc_matches.los_win_qty_3y_current%type,
-  pn_los_los_qty_3y_current     dc_matches.los_los_qty_3y_current%type,
-  pn_win_avg_tiebreaks_3y_curre dc_matches.win_avg_tiebreaks_3y_current%type,
-  pn_los_avg_tiebreaks_3y_curre dc_matches.los_avg_tiebreaks_3y_current%type,
-  pn_win_ace_pct_3y             dc_matches.win_ace_pct_3y%type,
-  pn_win_df_pct_3y              dc_matches.win_df_pct_3y%type,
-  pn_win_1st_pct_3y             dc_matches.win_1st_pct_3y%type,
-  pn_win_1st_won_pct_3y         dc_matches.win_1st_won_pct_3y%type,
-  pn_win_2nd_won_pct_3y         dc_matches.win_2nd_won_pct_3y%type,
-  pn_win_bp_saved_pct_3y        dc_matches.win_bp_saved_pct_3y%type,
-  pn_win_srv_won_pct_3y         dc_matches.win_srv_won_pct_3y%type,
-  pn_win_1st_return_won_pct_3y  dc_matches.win_1st_return_won_pct_3y%type,
-  pn_win_2nd_return_won_pct_3y  dc_matches.win_2nd_return_won_pct_3y%type,
-  pn_win_bp_won_pct_3y          dc_matches.win_bp_won_pct_3y%type,
-  pn_win_return_won_pct_3y      dc_matches.win_return_won_pct_3y%type,
-  pn_win_total_won_pct_3y       dc_matches.win_total_won_pct_3y%type,
-  pn_win_ace_pct_3y_current     dc_matches.win_ace_pct_3y_current%type,
-  pn_win_df_pct_3y_current      dc_matches.win_df_pct_3y_current%type,
-  pn_win_1st_pct_3y_current     dc_matches.win_1st_pct_3y_current%type,
-  pn_win_1st_won_pct_3y_current dc_matches.win_1st_won_pct_3y_current%type,
-  pn_win_2nd_won_pct_3y_current dc_matches.win_2nd_won_pct_3y_current%type,
-  pn_win_bp_saved_pct_3y_curren dc_matches.win_bp_saved_pct_3y_current%type,
-  pn_win_srv_won_pct_3y_current dc_matches.win_srv_won_pct_3y_current%type,
-  pn_win_1st_return_won_pct_3y_ dc_matches.win_1st_return_won_pct_3y_cur%type,
-  pn_win_2nd_return_won_pct_3y_ dc_matches.win_2nd_return_won_pct_3y_cur%type,
-  pn_win_bp_won_pct_3y_current  dc_matches.win_bp_won_pct_3y_current%type,
-  pn_win_return_won_pct_3y_curr dc_matches.win_return_won_pct_3y_current%type,
-  pn_win_total_won_pct_3y_curre dc_matches.win_total_won_pct_3y_current%type,
-  pn_los_ace_pct_3y             dc_matches.los_ace_pct_3y%type,
-  pn_los_df_pct_3y              dc_matches.los_df_pct_3y%type,
-  pn_los_1st_pct_3y             dc_matches.los_1st_pct_3y%type,
-  pn_los_1st_won_pct_3y         dc_matches.los_1st_won_pct_3y%type,
-  pn_los_2nd_won_pct_3y         dc_matches.los_2nd_won_pct_3y%type,
-  pn_los_bp_saved_pct_3y        dc_matches.los_bp_saved_pct_3y%type,
-  pn_los_srv_won_pct_3y         dc_matches.los_srv_won_pct_3y%type,
-  pn_los_1st_return_won_pct_3y  dc_matches.los_1st_return_won_pct_3y%type,
-  pn_los_2nd_return_won_pct_3y  dc_matches.los_2nd_return_won_pct_3y%type,
-  pn_los_bp_won_pct_3y          dc_matches.los_bp_won_pct_3y%type,
-  pn_los_return_won_pct_3y      dc_matches.los_return_won_pct_3y%type,
-  pn_los_total_won_pct_3y       dc_matches.los_total_won_pct_3y%type,
-  pn_los_ace_pct_3y_current     dc_matches.los_ace_pct_3y_current%type,
-  pn_los_df_pct_3y_current      dc_matches.los_df_pct_3y_current%type,
-  pn_los_1st_pct_3y_current     dc_matches.los_1st_pct_3y_current%type,
-  pn_los_1st_won_pct_3y_current dc_matches.los_1st_won_pct_3y_current%type,
-  pn_los_2nd_won_pct_3y_current dc_matches.los_2nd_won_pct_3y_current%type,
-  pn_los_bp_saved_pct_3y_curren dc_matches.los_bp_saved_pct_3y_current%type,
-  pn_los_srv_won_pct_3y_current dc_matches.los_srv_won_pct_3y_current%type,
-  pn_los_1st_return_won_pct_3y_ dc_matches.los_1st_return_won_pct_3y_cur%type,
-  pn_los_2nd_return_won_pct_3y_ dc_matches.los_2nd_return_won_pct_3y_cur%type,
-  pn_los_bp_won_pct_3y_current  dc_matches.los_bp_won_pct_3y_current%type,
-  pn_los_return_won_pct_3y_curr dc_matches.los_return_won_pct_3y_current%type,
-  pn_los_total_won_pct_3y_curre dc_matches.los_total_won_pct_3y_current%type,
-  pn_loser_age                  dc_matches.loser_age%type,
-  pn_winner_age                 dc_matches.winner_age%type
+  pn_los_average_second_serve_k dc_matches.los_average_second_serve_kmh%type
 )
   return dc_matches.delta_hash%type
 is
@@ -169,19 +103,7 @@ begin
                   pn_los_first_serve_return_tot || '|' || pn_los_second_serve_return_wo || '|' || pn_los_second_serve_return_to || '|' || pn_los_break_points_converted || '|' || pn_los_break_points_return_to || '|' ||
                   pn_los_service_games_played || '|' || pn_los_return_games_played || '|' || pn_los_return_points_won || '|' || pn_los_return_points_total || '|' || pn_los_total_points_won || '|' ||
                   pn_los_total_points_total || '|' || pn_los_winners || '|' || pn_los_forced_errors || '|' || pn_los_unforced_errors || '|' || pn_los_net_points_won || '|' || pn_los_net_points_total || '|' ||
-                  pn_los_fastest_first_serves_k || '|' || pn_los_average_first_serves_k || '|' || pn_los_fastest_second_serve_k || '|' || pn_los_average_second_serve_k || '|' || pn_win_h2h_qty_3y || '|' ||
-                  pn_los_h2h_qty_3y || '|' || pn_win_win_qty_3y || '|' || pn_win_los_qty_3y || '|' || pn_los_win_qty_3y || '|' || pn_los_los_qty_3y || '|' || pn_win_avg_tiebreaks_3y || '|' ||
-                  pn_los_avg_tiebreaks_3y || '|' || pn_win_h2h_qty_3y_current || '|' || pn_los_h2h_qty_3y_current || '|' || pn_win_win_qty_3y_current || '|' || pn_win_los_qty_3y_current || '|' ||
-                  pn_los_win_qty_3y_current || '|' || pn_los_los_qty_3y_current || '|' || pn_win_avg_tiebreaks_3y_curre || '|' || pn_los_avg_tiebreaks_3y_curre || '|' || pn_win_ace_pct_3y || '|' ||
-                  pn_win_df_pct_3y || '|' || pn_win_1st_pct_3y || '|' || pn_win_1st_won_pct_3y || '|' || pn_win_2nd_won_pct_3y || '|' || pn_win_bp_saved_pct_3y || '|' || pn_win_srv_won_pct_3y || '|' ||
-                  pn_win_1st_return_won_pct_3y || '|' || pn_win_2nd_return_won_pct_3y || '|' || pn_win_bp_won_pct_3y || '|' || pn_win_return_won_pct_3y || '|' || pn_win_total_won_pct_3y || '|' ||
-                  pn_win_ace_pct_3y_current || '|' || pn_win_df_pct_3y_current || '|' || pn_win_1st_pct_3y_current || '|' || pn_win_1st_won_pct_3y_current || '|' || pn_win_2nd_won_pct_3y_current || '|' ||
-                  pn_win_bp_saved_pct_3y_curren || '|' || pn_win_srv_won_pct_3y_current || '|' || pn_win_1st_return_won_pct_3y_ || '|' || pn_win_2nd_return_won_pct_3y_ || '|' || pn_win_bp_won_pct_3y_current || '|' ||
-                  pn_win_return_won_pct_3y_curr || '|' || pn_win_total_won_pct_3y_curre || '|' || pn_los_ace_pct_3y || '|' || pn_los_df_pct_3y || '|' || pn_los_1st_pct_3y || '|' || pn_los_1st_won_pct_3y || '|' ||
-                  pn_los_2nd_won_pct_3y || '|' || pn_los_bp_saved_pct_3y || '|' || pn_los_srv_won_pct_3y || '|' || pn_los_1st_return_won_pct_3y || '|' || pn_los_2nd_return_won_pct_3y || '|' || pn_los_bp_won_pct_3y || '|' ||
-                  pn_los_return_won_pct_3y || '|' || pn_los_total_won_pct_3y || '|' || pn_los_ace_pct_3y_current || '|' || pn_los_df_pct_3y_current || '|' || pn_los_1st_pct_3y_current || '|' ||
-                  pn_los_1st_won_pct_3y_current || '|' || pn_los_2nd_won_pct_3y_current || '|' || pn_los_bp_saved_pct_3y_curren || '|' || pn_los_srv_won_pct_3y_current || '|' || pn_los_1st_return_won_pct_3y_ || '|' ||
-                  pn_los_2nd_return_won_pct_3y_ || '|' || pn_los_bp_won_pct_3y_current || '|' || pn_los_return_won_pct_3y_curr || '|' || pn_los_total_won_pct_3y_curre || '|' || pn_loser_age || '|' || pn_winner_age)
+                  pn_los_fastest_first_serves_k || '|' || pn_los_average_first_serves_k || '|' || pn_los_fastest_second_serve_k || '|' || pn_los_average_second_serve_k)
   into vn_delta_hash
   from dual;
   return (vn_delta_hash);

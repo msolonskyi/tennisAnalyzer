@@ -30,7 +30,7 @@ begin
                  pn_points_rule_id     => i.points_rule_id) as delta_hash
         from (select t.id, t.name, t.year, t.code, t.url, t.slug, t.location, t.sgl_draw_url, t.sgl_pdf_url, t.indoor_outdoor, t.surface, t.series_category_id, t.start_dtm, t.finish_dtm, t.sgl_draw_qty, t.dbl_draw_qty, t.prize_money, t.prize_currency, t.country_code, r.id as points_rule_id
               from (select m.tournament_id, min(m.stadie_ord) as stadie_ord
-                    from vw_matches m
+                    from vw_atp_matches m
                     where m.stadie_draw = 'M'
                      and m.series_category_id != 'dc'
                     group by m.tournament_id) ii,
@@ -44,7 +44,7 @@ begin
               union all
               select t.id, t.name, t.year, t.code, t.url, t.slug, t.location, t.sgl_draw_url, t.sgl_pdf_url, t.indoor_outdoor, t.surface, t.series_category_id, t.start_dtm, t.finish_dtm, t.sgl_draw_qty, t.dbl_draw_qty, t.prize_money, t.prize_currency, t.country_code, r.id as points_rule_id
               from (select m.tournament_id, min(m.stadie_ord) as stadie_ord
-                    from vw_matches m
+                    from vw_atp_matches m
                     where m.stadie_draw = 'M'
                      and m.series_category_id != 'dc'
                     group by m.tournament_id) ii,

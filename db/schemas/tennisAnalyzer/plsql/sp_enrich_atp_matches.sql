@@ -1,89 +1,89 @@
-create or replace procedure sp_enrich_matches(p_tournament_id tournaments.id%type)
+create or replace procedure sp_enrich_atp_matches(p_match_ids t_list_of_varchar)
 is
-  cv_module_name constant varchar2(200) := 'enrich matches';
+  cv_module_name constant varchar2(200) := 'enrich atp matches';
+  cv_3_years     constant number(4) := 365 * 3;
+  cv_52_weeks    constant number(4) := 52 * 7 - 1;
   vn_qty         number;
 begin
-  pkg_log.sp_start_batch(pv_module => cv_module_name, pv_parameters => 'p_tournament_code: ' || p_tournament_id);
+  pkg_log.sp_start_batch(pv_module => cv_module_name);
   --
-  merge into matches d
+  merge into atp_matches_enriched d
   using(select i.*,
-               ora_hash(i.id || '|' || i.tournament_id || '|' || i.stadie_id || '|' || i.match_order || '|' || i.match_ret || '|' || i.winner_code || '|' || i.loser_code || '|' || i.winner_seed || '|' || i.loser_seed || '|' || i.match_score || '|' || i.winner_sets_won || '|' || i.loser_sets_won || '|' || i.winner_games_won || '|' || i.loser_games_won || '|' || i.winner_tiebreaks_won || '|' || i.loser_tiebreaks_won || '|' || i.stats_url || '|' || i.match_duration || '|' || i.win_aces || '|' || i.win_double_faults || '|' || i.win_first_serves_in || '|' || i.win_first_serves_total || '|' || i.win_first_serve_points_won || '|' || i.win_first_serve_points_total || '|' || i.win_second_serve_points_won || '|' || i.win_second_serve_points_total || '|' || i.win_break_points_saved || '|' || i.win_break_points_serve_total || '|' || i.win_service_points_won || '|' || i.win_service_points_total || '|' || i.win_first_serve_return_won || '|' || i.win_first_serve_return_total || '|' || i.win_second_serve_return_won || '|' || i.win_second_serve_return_total || '|' || i.win_break_points_converted || '|' || i.win_break_points_return_total || '|' || i.win_service_games_played || '|' || i.win_return_games_played || '|' || i.win_return_points_won || '|' || i.win_return_points_total || '|' || i.win_total_points_won || '|' || i.win_total_points_total || '|' || i.win_winners || '|' || i.win_forced_errors || '|' || i.win_unforced_errors || '|' || i.win_net_points_won || '|' || i.los_aces || '|' || i.los_double_faults || '|' || i.los_first_serves_in || '|' || i.los_first_serves_total || '|' || i.los_first_serve_points_won || '|' || i.los_first_serve_points_total || '|' || i.los_second_serve_points_won || '|' || i.los_second_serve_points_total || '|' || i.los_break_points_saved || '|' || i.los_break_points_serve_total || '|' || i.los_service_points_won || '|' || i.los_service_points_total || '|' || i.los_first_serve_return_won || '|' || i.los_first_serve_return_total || '|' || i.los_second_serve_return_won || '|' || i.los_second_serve_return_total || '|' || i.los_break_points_converted || '|' || i.los_break_points_return_total || '|' || i.los_service_games_played || '|' || i.los_return_games_played || '|' || i.los_return_points_won || '|' || i.los_return_points_total || '|' || i.los_total_points_won || '|' || i.los_total_points_total || '|' || i.los_winners || '|' || i.los_forced_errors || '|' || i.los_unforced_errors || '|' || i.los_net_points_won || '|' || i.win_h2h_qty_3y || '|' || i.los_h2h_qty_3y || '|' || i.win_win_qty_3y || '|' || i.win_los_qty_3y || '|' || i.los_win_qty_3y || '|' || i.los_los_qty_3y || '|' || i.win_avg_tiebreaks_3y || '|' || i.los_avg_tiebreaks_3y || '|' || i.win_h2h_qty_3y_current || '|' || i.los_h2h_qty_3y_current || '|' || i.win_win_qty_3y_current || '|' || i.win_los_qty_3y_current || '|' || i.los_win_qty_3y_current || '|' || i.los_los_qty_3y_current || '|' || i.win_avg_tiebreaks_3y_current || '|' || i.los_avg_tiebreaks_3y_current || '|' || i.win_ace_pct_3y || '|' || i.win_df_pct_3y || '|' || i.win_1st_pct_3y || '|' || i.win_1st_won_pct_3y || '|' || i.win_2nd_won_pct_3y || '|' || i.win_bp_saved_pct_3y || '|' || i.win_srv_won_pct_3y || '|' || i.win_1st_return_won_pct_3y || '|' || i.win_2nd_return_won_pct_3y || '|' || i.win_bp_won_pct_3y || '|' || i.win_return_won_pct_3y || '|' || i.win_total_won_pct_3y || '|' || i.win_ace_pct_3y_current || '|' || i.win_df_pct_3y_current || '|' || i.win_1st_pct_3y_current || '|' || i.win_1st_won_pct_3y_current || '|' || i.win_2nd_won_pct_3y_current || '|' || i.win_bp_saved_pct_3y_current || '|' || i.win_srv_won_pct_3y_current || '|' || i.win_1st_return_won_pct_3y_cur || '|' || i.win_2nd_return_won_pct_3y_cur || '|' || i.win_bp_won_pct_3y_current || '|' || i.win_return_won_pct_3y_current || '|' || i.win_total_won_pct_3y_current || '|' || i.los_ace_pct_3y || '|' || i.los_df_pct_3y || '|' || i.los_1st_pct_3y || '|' || i.los_1st_won_pct_3y || '|' || i.los_2nd_won_pct_3y || '|' || i.los_bp_saved_pct_3y || '|' || i.los_srv_won_pct_3y || '|' || i.los_1st_return_won_pct_3y || '|' || i.los_2nd_return_won_pct_3y || '|' || i.los_bp_won_pct_3y || '|' || i.los_return_won_pct_3y || '|' || i.los_total_won_pct_3y || '|' || i.los_ace_pct_3y_current || '|' || i.los_df_pct_3y_current || '|' || i.los_1st_pct_3y_current || '|' || i.los_1st_won_pct_3y_current || '|' || i.los_2nd_won_pct_3y_current || '|' || i.los_bp_saved_pct_3y_current || '|' || i.los_srv_won_pct_3y_current || '|' || i.los_1st_return_won_pct_3y_cur || '|' || i.los_2nd_return_won_pct_3y_cur || '|' || i.los_bp_won_pct_3y_current || '|' || i.los_return_won_pct_3y_current || '|' || i.los_total_won_pct_3y_current || '|' || i.loser_age || '|' || i.winner_age) as delta_hash
+               sf_atp_matches_enriched_dh(pv_id =>                          i.id,
+                                          pn_win_h2h_qty_3y =>              i.win_h2h_qty_3y,
+                                          pn_los_h2h_qty_3y =>              i.los_h2h_qty_3y,
+                                          pn_win_win_qty_3y =>              i.win_win_qty_3y,
+                                          pn_win_los_qty_3y =>              i.win_los_qty_3y,
+                                          pn_los_win_qty_3y =>              i.los_win_qty_3y,
+                                          pn_los_los_qty_3y =>              i.los_los_qty_3y,
+                                          pn_win_avg_tiebreaks_pml_3y =>    i.win_avg_tiebreaks_pml_3y,
+                                          pn_los_avg_tiebreaks_pml_3y =>    i.los_avg_tiebreaks_pml_3y,
+                                          pn_win_h2h_qty_3y_surface =>      i.win_h2h_qty_3y_surface,
+                                          pn_los_h2h_qty_3y_surface =>      i.los_h2h_qty_3y_surface,
+                                          pn_win_win_qty_3y_surface =>      i.win_win_qty_3y_surface,
+                                          pn_win_los_qty_3y_surface =>      i.win_los_qty_3y_surface,
+                                          pn_los_win_qty_3y_surface =>      i.los_win_qty_3y_surface,
+                                          pn_los_los_qty_3y_surface =>      i.los_los_qty_3y_surface,
+                                          pn_win_avg_tiebreaks_pml_3y_s =>  i.win_avg_tiebreaks_pml_3y_sur,
+                                          pn_los_avg_tiebreaks_pml_3y_s =>  i.los_avg_tiebreaks_pml_3y_sur,
+                                          pn_win_ace_pml_3y =>              i.win_ace_pml_3y,
+                                          pn_win_df_pml_3y =>               i.win_df_pml_3y,
+                                          pn_win_1st_pml_3y =>              i.win_1st_pml_3y,
+                                          pn_win_1st_won_pml_3y =>          i.win_1st_won_pml_3y,
+                                          pn_win_2nd_won_pml_3y =>          i.win_2nd_won_pml_3y,
+                                          pn_win_bp_saved_pml_3y =>         i.win_bp_saved_pml_3y,
+                                          pn_win_srv_won_pml_3y =>          i.win_srv_won_pml_3y,
+                                          pn_win_1st_return_won_pml_3y =>   i.win_1st_return_won_pml_3y,
+                                          pn_win_2nd_return_won_pml_3y =>   i.win_2nd_return_won_pml_3y,
+                                          pn_win_bp_won_pml_3y =>           i.win_bp_won_pml_3y,
+                                          pn_win_return_won_pml_3y =>       i.win_return_won_pml_3y,
+                                          pn_win_total_won_pml_3y =>        i.win_total_won_pml_3y,
+                                          pn_win_ace_pml_3y_surface =>      i.win_ace_pml_3y_surface,
+                                          pn_win_df_pml_3y_surface =>       i.win_df_pml_3y_surface,
+                                          pn_win_1st_pml_3y_surface =>      i.win_1st_pml_3y_surface,
+                                          pn_win_1st_won_pml_3y_surface =>  i.win_1st_won_pml_3y_surface,
+                                          pn_win_2nd_won_pml_3y_surface =>  i.win_2nd_won_pml_3y_surface,
+                                          pn_win_bp_saved_pml_3y_surface => i.win_bp_saved_pml_3y_surface,
+                                          pn_win_srv_won_pml_3y_surface =>  i.win_srv_won_pml_3y_surface,
+                                          pn_win_1st_return_won_pml_3y_s => i.win_1st_return_won_pml_3y_sur,
+                                          pn_win_2nd_return_won_pml_3y_s => i.win_2nd_return_won_pml_3y_sur,
+                                          pn_win_bp_won_pml_3y_surface =>   i.win_bp_won_pml_3y_surface,
+                                          pn_win_return_won_pml_3y_sur =>   i.win_return_won_pml_3y_surface,
+                                          pn_win_total_won_pml_3y_sur =>    i.win_total_won_pml_3y_surface,
+                                          pn_los_ace_pml_3y =>              i.los_ace_pml_3y,
+                                          pn_los_df_pml_3y =>               i.los_df_pml_3y,
+                                          pn_los_1st_pml_3y =>              i.los_1st_pml_3y,
+                                          pn_los_1st_won_pml_3y =>          i.los_1st_won_pml_3y,
+                                          pn_los_2nd_won_pml_3y =>          i.los_2nd_won_pml_3y,
+                                          pn_los_bp_saved_pml_3y =>         i.los_bp_saved_pml_3y,
+                                          pn_los_srv_won_pml_3y =>          i.los_srv_won_pml_3y,
+                                          pn_los_1st_return_won_pml_3y =>   i.los_1st_return_won_pml_3y,
+                                          pn_los_2nd_return_won_pml_3y =>   i.los_2nd_return_won_pml_3y,
+                                          pn_los_bp_won_pml_3y =>           i.los_bp_won_pml_3y,
+                                          pn_los_return_won_pml_3y =>       i.los_return_won_pml_3y,
+                                          pn_los_total_won_pml_3y =>        i.los_total_won_pml_3y,
+                                          pn_los_ace_pml_3y_surface =>      i.los_ace_pml_3y_surface,
+                                          pn_los_df_pml_3y_surface =>       i.los_df_pml_3y_surface,
+                                          pn_los_1st_pml_3y_surface =>      i.los_1st_pml_3y_surface,
+                                          pn_los_1st_won_pml_3y_surface =>  i.los_1st_won_pml_3y_surface,
+                                          pn_los_2nd_won_pml_3y_surface =>  i.los_2nd_won_pml_3y_surface,
+                                          pn_los_bp_saved_pml_3y_surface => i.los_bp_saved_pml_3y_surface,
+                                          pn_los_srv_won_pml_3y_surface =>  i.los_srv_won_pml_3y_surface,
+                                          pn_los_1st_return_won_pml_3y_s => i.los_1st_return_won_pml_3y_sur,
+                                          pn_los_2nd_return_won_pml_3y_s => i.los_2nd_return_won_pml_3y_sur,
+                                          pn_los_bp_won_pml_3y_surface =>   i.los_bp_won_pml_3y_surface,
+                                          pn_los_return_won_pml_3y_sur =>   i.los_return_won_pml_3y_surface,
+                                          pn_los_total_won_pml_3y_sur =>    i.los_total_won_pml_3y_surface,
+                                          pn_winner_3y_points =>            i.winner_3y_points,
+                                          pn_winner_1y_points =>            i.winner_1y_points,
+                                          pn_loser_3y_points =>             i.loser_3y_points,
+                                          pn_loser_1y_points =>             i.loser_1y_points,
+                                          pn_winner_3y_points_surface =>    i.winner_3y_points_surface,
+                                          pn_winner_1y_points_surface =>    i.winner_1y_points_surface,
+                                          pn_loser_3y_points_surface =>     i.loser_3y_points_surface,
+                                          pn_loser_1y_points_surface =>     i.loser_1y_points_surface) as delta_hash
         from ( select vw.id,
-                      vw.loser_age,
-                      vw.winner_age,
-                      vw.tournament_id,
-                      vw.stadie_id,
-                      vw.match_order,
-                      vw.match_ret,
-                      vw.winner_code,
-                      vw.loser_code,
-                      vw.winner_seed,
-                      vw.loser_seed,
-                      vw.match_score,
-                      vw.winner_sets_won,
-                      vw.loser_sets_won,
-                      vw.winner_games_won,
-                      vw.loser_games_won,
-                      vw.winner_tiebreaks_won,
-                      vw.loser_tiebreaks_won,
-                      vw.stats_url,
-                      vw.match_duration,
-                      vw.win_aces,
-                      vw.win_double_faults,
-                      vw.win_first_serves_in,
-                      vw.win_first_serves_total,
-                      vw.win_first_serve_points_won,
-                      vw.win_first_serve_points_total,
-                      vw.win_second_serve_points_won,
-                      vw.win_second_serve_points_total,
-                      vw.win_break_points_saved,
-                      vw.win_break_points_serve_total,
-                      vw.win_service_points_won,
-                      vw.win_service_points_total,
-                      vw.win_first_serve_return_won,
-                      vw.win_first_serve_return_total,
-                      vw.win_second_serve_return_won,
-                      vw.win_second_serve_return_total,
-                      vw.win_break_points_converted,
-                      vw.win_break_points_return_total,
-                      vw.win_service_games_played,
-                      vw.win_return_games_played,
-                      vw.win_return_points_won,
-                      vw.win_return_points_total,
-                      vw.win_total_points_won,
-                      vw.win_total_points_total,
-                      vw.win_winners,
-                      vw.win_forced_errors,
-                      vw.win_unforced_errors,
-                      vw.win_net_points_won,
-                      vw.los_aces,
-                      vw.los_double_faults,
-                      vw.los_first_serves_in,
-                      vw.los_first_serves_total,
-                      vw.los_first_serve_points_won,
-                      vw.los_first_serve_points_total,
-                      vw.los_second_serve_points_won,
-                      vw.los_second_serve_points_total,
-                      vw.los_break_points_saved,
-                      vw.los_break_points_serve_total,
-                      vw.los_service_points_won,
-                      vw.los_service_points_total,
-                      vw.los_first_serve_return_won,
-                      vw.los_first_serve_return_total,
-                      vw.los_second_serve_return_won,
-                      vw.los_second_serve_return_total,
-                      vw.los_break_points_converted,
-                      vw.los_break_points_return_total,
-                      vw.los_service_games_played,
-                      vw.los_return_games_played,
-                      vw.los_return_points_won,
-                      vw.los_return_points_total,
-                      vw.los_total_points_won,
-                      vw.los_total_points_total,
-                      vw.los_winners,
-                      vw.los_forced_errors,
-                      vw.los_unforced_errors,
-                      vw.los_net_points_won,
+                      pkg_log.gn_batch_id as batch_id,
                       -- 3 years
                       (select case
                                 when vw.match_ret is null then count(*)
@@ -93,7 +93,7 @@ begin
                        where vi.winner_code = vw.winner_code
                          and vi.loser_code = vw.loser_code
                          and vi.match_ret is null
-                         and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and vi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) as win_h2h_qty_3y,
                       (select case
@@ -104,7 +104,7 @@ begin
                        where vi.winner_code = vw.loser_code
                          and vi.loser_code = vw.winner_code
                          and vi.match_ret is null
-                         and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and vi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) as los_h2h_qty_3y,
                       (select case
@@ -114,7 +114,7 @@ begin
                        from vw_matches vi
                        where vi.winner_code = vw.winner_code
                          and vi.match_ret is null
-                         and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and vi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) as win_win_qty_3y,
                       (select case
@@ -124,7 +124,7 @@ begin
                        from vw_matches vi
                        where vi.loser_code = vw.winner_code
                          and vi.match_ret is null
-                         and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and vi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) as win_los_qty_3y,
                       (select case
@@ -134,7 +134,7 @@ begin
                        from vw_matches vi
                        where vi.winner_code = vw.loser_code
                          and vi.match_ret is null
-                         and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and vi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) as los_win_qty_3y,
                       (select case
@@ -144,7 +144,7 @@ begin
                        from vw_matches vi
                        where vi.loser_code = vw.loser_code
                          and vi.match_ret is null
-                         and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and vi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) as los_los_qty_3y,
                       (select case
@@ -154,9 +154,9 @@ begin
                        from vw_player_stats psi
                        where psi.match_ret is null
                          and psi.player_code = vw.winner_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) as win_avg_tiebreaks_3y,
+                      ) as win_avg_tiebreaks_pml_3y,
                       (select case
                                 when vw.match_ret is null then 1000 * trunc(avg((psi.player_tiebreaks_won + psi.player_tiebreaks_los) / (psi.player_sets_won + psi.player_sets_los)), 3)
                                 else null
@@ -164,10 +164,9 @@ begin
                        from vw_player_stats psi
                        where psi.match_ret is null
                          and psi.player_code = vw.loser_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) as los_avg_tiebreaks_3y,
-                      -- current surface
+                      ) as los_avg_tiebreaks_pml_3y,
                       (select case
                                 when vw.match_ret is null then count(*)
                                 else null
@@ -177,9 +176,9 @@ begin
                          and vi.winner_code = vw.winner_code
                          and vi.loser_code = vw.loser_code
                          and vi.match_ret is null
-                         and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and vi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) as win_h2h_qty_3y_current,
+                      ) as win_h2h_qty_3y_surface,
                       (select case
                                 when vw.match_ret is null then count(*)
                                 else null
@@ -189,9 +188,9 @@ begin
                          and vi.winner_code = vw.loser_code
                          and vi.loser_code = vw.winner_code
                          and vi.match_ret is null
-                         and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and vi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) as los_h2h_qty_3y_current,
+                      ) as los_h2h_qty_3y_surface,
                       (select case
                                 when vw.match_ret is null then count(*)
                                 else null
@@ -200,9 +199,9 @@ begin
                        where vi.tournament_surface = vw.tournament_surface
                          and vi.winner_code = vw.winner_code
                          and vi.match_ret is null
-                         and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and vi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) as win_win_qty_3y_current,
+                      ) as win_win_qty_3y_surface,
                       (select case
                                 when vw.match_ret is null then count(*)
                                 else null
@@ -211,9 +210,9 @@ begin
                        where vi.tournament_surface = vw.tournament_surface
                          and vi.loser_code = vw.winner_code
                          and vi.match_ret is null
-                         and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and vi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) as win_los_qty_3y_current,
+                      ) as win_los_qty_3y_surface,
                       (select case
                                 when vw.match_ret is null then count(*)
                                 else null
@@ -222,9 +221,9 @@ begin
                        where vi.tournament_surface = vw.tournament_surface
                          and vi.winner_code = vw.loser_code
                          and vi.match_ret is null
-                         and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and vi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) as los_win_qty_3y_current,
+                      ) as los_win_qty_3y_surface,
                       (select case
                                 when vw.match_ret is null then count(*)
                                 else null
@@ -233,9 +232,9 @@ begin
                        where vi.tournament_surface = vw.tournament_surface
                          and vi.loser_code = vw.loser_code
                          and vi.match_ret is null
-                         and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and vi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) as los_los_qty_3y_current,
+                      ) as los_los_qty_3y_surface,
                       (select case
                                 when vw.match_ret is null then 1000 * trunc(avg((psi.player_tiebreaks_won + psi.player_tiebreaks_los) / (psi.player_sets_won + psi.player_sets_los)), 3)
                                 else null
@@ -244,9 +243,9 @@ begin
                        where psi.tournament_surface = vw.tournament_surface
                          and psi.match_ret is null
                          and psi.player_code = vw.winner_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) as win_avg_tiebreaks_3y_current,
+                      ) as win_avg_tiebreaks_pml_3y_sur,
                       (select case
                                 when vw.match_ret is null then 1000 * trunc(avg((psi.player_tiebreaks_won + psi.player_tiebreaks_los) / (psi.player_sets_won + psi.player_sets_los)), 3)
                                 else null
@@ -255,9 +254,9 @@ begin
                        where psi.tournament_surface = vw.tournament_surface
                          and psi.match_ret is null
                          and psi.player_code = vw.loser_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) as los_avg_tiebreaks_3y_current,
+                      ) as los_avg_tiebreaks_pml_3y_sur,
                       (select case
                                 when vw.match_ret is null and nvl(sum(service_points_total), 0) > 0 then 1000 * trunc(sum(aces) / sum(service_points_total), 3)
                                 else null
@@ -265,9 +264,9 @@ begin
                        from vw_player_stats psi
                        where psi.match_ret is null
                          and psi.player_code = vw.winner_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) win_ace_pct_3y,
+                      ) win_ace_pml_3y,
                       (select case
                                 when vw.match_ret is null and nvl(sum(service_points_total), 0) > 0 then 1000 * trunc(sum(double_faults) / sum(service_points_total), 3)
                                 else null
@@ -275,9 +274,9 @@ begin
                        from vw_player_stats psi
                        where psi.match_ret is null
                          and psi.player_code = vw.winner_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) win_df_pct_3y,
+                      ) win_df_pml_3y,
                       (select case
                                 when vw.match_ret is null and nvl(sum(first_serves_total), 0) > 0 then 1000 * trunc(sum(first_serves_in) / sum(first_serves_total), 3)
                                 else null
@@ -285,9 +284,9 @@ begin
                        from vw_player_stats psi
                        where psi.match_ret is null
                          and psi.player_code = vw.winner_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) win_1st_pct_3y,
+                      ) win_1st_pml_3y,
                       (select case
                                 when vw.match_ret is null and nvl(sum(first_serves_in), 0) > 0 then 1000 * trunc(sum(first_serve_points_won) / sum(first_serves_in), 3)
                                 else null
@@ -295,9 +294,9 @@ begin
                        from vw_player_stats psi
                        where psi.match_ret is null
                          and psi.player_code = vw.winner_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) win_1st_won_pct_3y,
+                      ) win_1st_won_pml_3y,
                       (select case
                                 when vw.match_ret is null and nvl(sum(second_serve_points_total), 0) > 0 then 1000 * trunc(sum(second_serve_points_won) / sum(second_serve_points_total), 3)
                                 else null
@@ -305,9 +304,9 @@ begin
                        from vw_player_stats psi
                        where psi.match_ret is null
                          and psi.player_code = vw.winner_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) win_2nd_won_pct_3y,
+                      ) win_2nd_won_pml_3y,
                       (select case
                                 when vw.match_ret is null and nvl(sum(break_points_serve_total), 0) > 0 then 1000 * trunc(sum(break_points_saved) / sum(break_points_serve_total), 3)
                                 else null
@@ -315,9 +314,9 @@ begin
                        from vw_player_stats psi
                        where psi.match_ret is null
                          and psi.player_code = vw.winner_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) win_bp_saved_pct_3y,
+                      ) win_bp_saved_pml_3y,
                       (select case
                                 when vw.match_ret is null and nvl(sum(service_points_total), 0) > 0 then 1000 * trunc(sum(service_points_won) / sum(service_points_total), 3)
                                 else null
@@ -325,9 +324,9 @@ begin
                        from vw_player_stats psi
                        where psi.match_ret is null
                          and psi.player_code = vw.winner_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) win_srv_won_pct_3y,
+                      ) win_srv_won_pml_3y,
                       (select case
                                 when vw.match_ret is null and nvl(sum(first_serve_return_total), 0) > 0 then 1000 * trunc(sum(first_serve_return_won) / sum(first_serve_return_total), 3)
                                 else null
@@ -335,9 +334,9 @@ begin
                        from vw_player_stats psi
                        where psi.match_ret is null
                          and psi.player_code = vw.winner_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) win_1st_return_won_pct_3y,
+                      ) win_1st_return_won_pml_3y,
                       (select case
                                 when vw.match_ret is null and nvl(sum(second_serve_return_total), 0) > 0 then 1000 * trunc(sum(second_serve_return_won) / sum(second_serve_return_total), 3)
                                 else null
@@ -345,9 +344,9 @@ begin
                        from vw_player_stats psi
                        where psi.match_ret is null
                          and psi.player_code = vw.winner_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) win_2nd_return_won_pct_3y,
+                      ) win_2nd_return_won_pml_3y,
                       (select case
                                 when vw.match_ret is null and nvl(sum(break_points_return_total), 0) > 0 then 1000 * trunc(nvl(sum(break_points_converted), 0) / nvl(sum(break_points_return_total), 0), 3)
                                 else null
@@ -355,9 +354,9 @@ begin
                        from vw_player_stats psi
                        where psi.match_ret is null
                          and psi.player_code = vw.winner_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) win_bp_won_pct_3y,
+                      ) win_bp_won_pml_3y,
                       (select case
                                 when vw.match_ret is null and nvl(sum(return_points_total), 0) > 0 then 1000 * trunc(nvl(sum(return_points_won), 0) / nvl(sum(return_points_total), 0), 3)
                                 else null
@@ -365,9 +364,9 @@ begin
                        from vw_player_stats psi
                        where psi.match_ret is null
                          and psi.player_code = vw.winner_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) win_return_won_pct_3y,
+                      ) win_return_won_pml_3y,
                       (select case
                                 when vw.match_ret is null and nvl(sum(total_points_total), 0) > 0 then 1000 * trunc(nvl(sum(total_points_won), 0) / nvl(sum(total_points_total), 0), 3)
                                 else null
@@ -375,9 +374,9 @@ begin
                        from vw_player_stats psi
                        where psi.match_ret is null
                          and psi.player_code = vw.winner_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) win_total_won_pct_3y,
+                      ) win_total_won_pml_3y,
                       (select case
                                 when vw.match_ret is null and nvl(sum(service_points_total), 0) > 0 then 1000 * trunc(sum(aces) / sum(service_points_total), 3)
                                 else null
@@ -386,9 +385,9 @@ begin
                        where psi.match_ret is null
                          and psi.tournament_surface = vw.tournament_surface
                          and psi.player_code = vw.winner_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) win_ace_pct_3y_current,
+                      ) win_ace_pml_3y_surface,
                       (select case
                                 when vw.match_ret is null and nvl(sum(service_points_total), 0) > 0 then 1000 * trunc(sum(double_faults) / sum(service_points_total), 3)
                                 else null
@@ -397,9 +396,9 @@ begin
                        where psi.match_ret is null
                          and psi.tournament_surface = vw.tournament_surface
                          and psi.player_code = vw.winner_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) win_df_pct_3y_current,
+                      ) win_df_pml_3y_surface,
                       (select case
                                 when vw.match_ret is null and nvl(sum(first_serves_total), 0) > 0 then 1000 * trunc(sum(first_serves_in) / sum(first_serves_total), 3)
                                 else null
@@ -408,20 +407,20 @@ begin
                        where psi.match_ret is null
                          and psi.tournament_surface = vw.tournament_surface
                          and psi.player_code = vw.winner_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) win_1st_pct_3y_current,
+                      ) win_1st_pml_3y_surface,
                       (select case
                                 when vw.match_ret is null and nvl(sum(first_serves_in), 0) > 0 then 1000 * trunc(sum(first_serve_points_won) / sum(first_serves_in), 3)
                                 else null
-                              end win_1st_won_pct_3y
+                              end win_1st_won_pml_3y
                        from vw_player_stats psi
                        where psi.match_ret is null
                          and psi.tournament_surface = vw.tournament_surface
                          and psi.player_code = vw.winner_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) win_1st_won_pct_3y_current,
+                      ) win_1st_won_pml_3y_surface,
                       (select case
                                 when vw.match_ret is null and nvl(sum(second_serve_points_total), 0) > 0 then 1000 * trunc(sum(second_serve_points_won) / sum(second_serve_points_total), 3)
                                 else null
@@ -430,9 +429,9 @@ begin
                        where psi.match_ret is null
                          and psi.tournament_surface = vw.tournament_surface
                          and psi.player_code = vw.winner_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) win_2nd_won_pct_3y_current,
+                      ) win_2nd_won_pml_3y_surface,
                       (select case
                                 when vw.match_ret is null and nvl(sum(break_points_serve_total), 0) > 0 then 1000 * trunc(sum(break_points_saved) / sum(break_points_serve_total), 3)
                                 else null
@@ -441,9 +440,9 @@ begin
                        where psi.match_ret is null
                          and psi.tournament_surface = vw.tournament_surface
                          and psi.player_code = vw.winner_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) win_bp_saved_pct_3y_current,
+                      ) win_bp_saved_pml_3y_surface,
                       (select case
                                 when vw.match_ret is null and nvl(sum(service_points_total), 0) > 0 then 1000 * trunc(sum(service_points_won) / sum(service_points_total), 3)
                                 else null
@@ -452,9 +451,9 @@ begin
                        where psi.match_ret is null
                          and psi.tournament_surface = vw.tournament_surface
                          and psi.player_code = vw.winner_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) win_srv_won_pct_3y_current,
+                      ) win_srv_won_pml_3y_surface,
                       (select case
                                 when vw.match_ret is null and nvl(sum(first_serve_return_total), 0) > 0 then 1000 * trunc(sum(first_serve_return_won) / sum(first_serve_return_total), 3)
                                 else null
@@ -463,9 +462,9 @@ begin
                        where psi.match_ret is null
                          and psi.tournament_surface = vw.tournament_surface
                          and psi.player_code = vw.winner_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) win_1st_return_won_pct_3y_cur,
+                      ) win_1st_return_won_pml_3y_sur,
                       (select case
                                 when vw.match_ret is null and nvl(sum(second_serve_return_total), 0) > 0 then 1000 * trunc(sum(second_serve_return_won) / sum(second_serve_return_total), 3)
                                 else null
@@ -474,9 +473,9 @@ begin
                        where psi.match_ret is null
                          and psi.tournament_surface = vw.tournament_surface
                          and psi.player_code = vw.winner_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) win_2nd_return_won_pct_3y_cur,
+                      ) win_2nd_return_won_pml_3y_sur,
                       (select case
                                 when vw.match_ret is null and nvl(sum(break_points_return_total), 0) > 0 then 1000 * trunc(nvl(sum(break_points_converted), 0) / nvl(sum(break_points_return_total), 0), 3)
                                 else null
@@ -485,9 +484,9 @@ begin
                        where psi.match_ret is null
                          and psi.tournament_surface = vw.tournament_surface
                          and psi.player_code = vw.winner_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) win_bp_won_pct_3y_current,
+                      ) win_bp_won_pml_3y_surface,
                       (select case
                                 when vw.match_ret is null and nvl(sum(return_points_total), 0) > 0 then 1000 * trunc(nvl(sum(return_points_won), 0) / nvl(sum(return_points_total), 0), 3)
                                 else null
@@ -496,9 +495,9 @@ begin
                        where psi.match_ret is null
                          and psi.tournament_surface = vw.tournament_surface
                          and psi.player_code = vw.winner_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) win_return_won_pct_3y_current,
+                      ) win_return_won_pml_3y_surface,
                       (select case
                                 when vw.match_ret is null and nvl(sum(total_points_total), 0) > 0 then 1000 * trunc(nvl(sum(total_points_won), 0) / nvl(sum(total_points_total), 0), 3)
                                 else null
@@ -507,9 +506,9 @@ begin
                        where psi.match_ret is null
                          and psi.tournament_surface = vw.tournament_surface
                          and psi.player_code = vw.winner_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) win_total_won_pct_3y_current,
+                      ) win_total_won_pml_3y_surface,
                       (select case
                                 when vw.match_ret is null and nvl(sum(service_points_total), 0) > 0 then 1000 * trunc(sum(aces) / sum(service_points_total), 3)
                                 else null
@@ -517,9 +516,9 @@ begin
                        from vw_player_stats psi
                        where psi.match_ret is null
                          and psi.player_code = vw.loser_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) los_ace_pct_3y,
+                      ) los_ace_pml_3y,
                       (select case
                                 when vw.match_ret is null and sum(service_points_total) > 0 then 1000 * trunc(sum(double_faults) / sum(service_points_total), 3)
                                 else null
@@ -527,9 +526,9 @@ begin
                        from vw_player_stats psi
                        where psi.match_ret is null
                          and psi.player_code = vw.loser_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) los_df_pct_3y,
+                      ) los_df_pml_3y,
                       (select case
                                 when vw.match_ret is null and sum(first_serves_total) > 0 then 1000 * trunc(sum(first_serves_in) / sum(first_serves_total), 3)
                                 else null
@@ -537,9 +536,9 @@ begin
                        from vw_player_stats psi
                        where psi.match_ret is null
                          and psi.player_code = vw.loser_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) los_1st_pct_3y,
+                      ) los_1st_pml_3y,
                       (select case
                                 when vw.match_ret is null and sum(first_serves_in) > 0 then 1000 * trunc(sum(first_serve_points_won) / sum(first_serves_in), 3)
                                 else null
@@ -547,9 +546,9 @@ begin
                        from vw_player_stats psi
                        where psi.match_ret is null
                          and psi.player_code = vw.loser_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) los_1st_won_pct_3y,
+                      ) los_1st_won_pml_3y,
                       (select case
                                 when vw.match_ret is null and sum(second_serve_points_total) > 0 then 1000 * trunc(sum(second_serve_points_won) / sum(second_serve_points_total), 3)
                                 else null
@@ -557,9 +556,9 @@ begin
                        from vw_player_stats psi
                        where psi.match_ret is null
                          and psi.player_code = vw.loser_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) los_2nd_won_pct_3y,
+                      ) los_2nd_won_pml_3y,
                       (select case
                                 when vw.match_ret is null and sum(break_points_serve_total) > 0 then 1000 * trunc(sum(break_points_saved) / sum(break_points_serve_total), 3)
                                 else null
@@ -567,9 +566,9 @@ begin
                        from vw_player_stats psi
                        where psi.match_ret is null
                          and psi.player_code = vw.loser_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) los_bp_saved_pct_3y,
+                      ) los_bp_saved_pml_3y,
                       (select case
                                 when vw.match_ret is null and sum(service_points_total) > 0 then 1000 * trunc(sum(service_points_won) / sum(service_points_total), 3)
                                 else null
@@ -577,9 +576,9 @@ begin
                        from vw_player_stats psi
                        where psi.match_ret is null
                          and psi.player_code = vw.loser_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) los_srv_won_pct_3y,
+                      ) los_srv_won_pml_3y,
                       (select case
                                 when vw.match_ret is null and sum(first_serve_return_total) > 0 then 1000 * trunc(sum(first_serve_return_won) / sum(first_serve_return_total), 3)
                                 else null
@@ -587,9 +586,9 @@ begin
                        from vw_player_stats psi
                        where psi.match_ret is null
                          and psi.player_code = vw.loser_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) los_1st_return_won_pct_3y,
+                      ) los_1st_return_won_pml_3y,
                       (select case
                                 when vw.match_ret is null and sum(second_serve_return_total) > 0 then 1000 * trunc(sum(second_serve_return_won) / sum(second_serve_return_total), 3)
                                 else null
@@ -597,9 +596,9 @@ begin
                        from vw_player_stats psi
                        where psi.match_ret is null
                          and psi.player_code = vw.loser_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) los_2nd_return_won_pct_3y,
+                      ) los_2nd_return_won_pml_3y,
                       (select case
                                 when vw.match_ret is null and nvl(sum(break_points_return_total), 0) > 0 then 1000 * trunc(nvl(sum(break_points_converted), 0) / nvl(sum(break_points_return_total), 0), 3)
                                 else null
@@ -607,9 +606,9 @@ begin
                        from vw_player_stats psi
                        where psi.match_ret is null
                          and psi.player_code = vw.loser_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) los_bp_won_pct_3y,
+                      ) los_bp_won_pml_3y,
                       (select case
                                 when vw.match_ret is null and nvl(sum(return_points_total), 0) > 0 then 1000 * trunc(nvl(sum(return_points_won), 0) / nvl(sum(return_points_total), 0), 3)
                                 else null
@@ -617,9 +616,9 @@ begin
                        from vw_player_stats psi
                        where psi.match_ret is null
                          and psi.player_code = vw.loser_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) los_return_won_pct_3y,
+                      ) los_return_won_pml_3y,
                       (select case
                                 when vw.match_ret is null and nvl(sum(total_points_total), 0) > 0 then 1000 * trunc(nvl(sum(total_points_won), 0) / nvl(sum(total_points_total), 0), 3)
                                 else null
@@ -627,9 +626,9 @@ begin
                        from vw_player_stats psi
                        where psi.match_ret is null
                          and psi.player_code = vw.loser_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) los_total_won_pct_3y,
+                      ) los_total_won_pml_3y,
                       (select case
                                 when vw.match_ret is null and nvl(sum(service_points_total), 0) > 0 then 1000 * trunc(sum(aces) / sum(service_points_total), 3)
                                 else null
@@ -638,9 +637,9 @@ begin
                        where psi.match_ret is null
                          and psi.tournament_surface = vw.tournament_surface
                          and psi.player_code = vw.loser_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) los_ace_pct_3y_current,
+                      ) los_ace_pml_3y_surface,
                       (select case
                                 when vw.match_ret is null and sum(service_points_total) > 0 then 1000 * trunc(sum(double_faults) / sum(service_points_total), 3)
                                 else null
@@ -649,9 +648,9 @@ begin
                        where psi.match_ret is null
                          and psi.tournament_surface = vw.tournament_surface
                          and psi.player_code = vw.loser_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) los_df_pct_3y_current,
+                      ) los_df_pml_3y_surface,
                       (select case
                                 when vw.match_ret is null and sum(first_serves_total) > 0 then 1000 * trunc(sum(first_serves_in) / sum(first_serves_total), 3)
                                 else null
@@ -660,20 +659,20 @@ begin
                        where psi.match_ret is null
                          and psi.tournament_surface = vw.tournament_surface
                          and psi.player_code = vw.loser_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) los_1st_pct_3y_current,
+                      ) los_1st_pml_3y_surface,
                       (select case
                                 when vw.match_ret is null and sum(first_serves_in) > 0 then 1000 * trunc(sum(first_serve_points_won) / sum(first_serves_in), 3)
                                 else null
-                              end win_1st_won_pct_3y
+                              end win_1st_won_pml_3y
                        from vw_player_stats psi
                        where psi.match_ret is null
                          and psi.tournament_surface = vw.tournament_surface
                          and psi.player_code = vw.loser_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) los_1st_won_pct_3y_current,
+                      ) los_1st_won_pml_3y_surface,
                       (select case
                                 when vw.match_ret is null and sum(second_serve_points_total) > 0 then 1000 * trunc(sum(second_serve_points_won) / sum(second_serve_points_total), 3)
                                 else null
@@ -682,9 +681,9 @@ begin
                        where psi.match_ret is null
                          and psi.tournament_surface = vw.tournament_surface
                          and psi.player_code = vw.loser_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) los_2nd_won_pct_3y_current,
+                      ) los_2nd_won_pml_3y_surface,
                       (select case
                                 when vw.match_ret is null and sum(break_points_serve_total) > 0 then 1000 * trunc(sum(break_points_saved) / sum(break_points_serve_total), 3)
                                 else null
@@ -693,9 +692,9 @@ begin
                        where psi.match_ret is null
                          and psi.tournament_surface = vw.tournament_surface
                          and psi.player_code = vw.loser_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) los_bp_saved_pct_3y_current,
+                      ) los_bp_saved_pml_3y_surface,
                       (select case
                                 when vw.match_ret is null and sum(service_points_total) > 0 then 1000 * trunc(sum(service_points_won) / sum(service_points_total), 3)
                                 else null
@@ -704,9 +703,9 @@ begin
                        where psi.match_ret is null
                          and psi.tournament_surface = vw.tournament_surface
                          and psi.player_code = vw.loser_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) los_srv_won_pct_3y_current,
+                      ) los_srv_won_pml_3y_surface,
                       (select case
                                 when vw.match_ret is null and sum(first_serve_return_total) > 0 then 1000 * trunc(sum(first_serve_return_won) / sum(first_serve_return_total), 3)
                                 else null
@@ -715,9 +714,9 @@ begin
                        where psi.match_ret is null
                          and psi.tournament_surface = vw.tournament_surface
                          and psi.player_code = vw.loser_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) los_1st_return_won_pct_3y_cur,
+                      ) los_1st_return_won_pml_3y_sur,
                       (select case
                                 when vw.match_ret is null and sum(second_serve_return_total) > 0 then 1000 * trunc(sum(second_serve_return_won) / sum(second_serve_return_total), 3)
                                 else null
@@ -726,9 +725,9 @@ begin
                        where psi.match_ret is null
                          and psi.tournament_surface = vw.tournament_surface
                          and psi.player_code = vw.loser_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) los_2nd_return_won_pct_3y_cur,
+                      ) los_2nd_return_won_pml_3y_sur,
                       (select case
                                 when vw.match_ret is null and nvl(sum(break_points_return_total), 0) > 0 then 1000 * trunc(nvl(sum(break_points_converted), 0) / nvl(sum(break_points_return_total), 0), 3)
                                 else null
@@ -737,9 +736,9 @@ begin
                        where psi.match_ret is null
                          and psi.tournament_surface = vw.tournament_surface
                          and psi.player_code = vw.loser_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) los_bp_won_pct_3y_current,
+                      ) los_bp_won_pml_3y_surface,
                       (select case
                                 when vw.match_ret is null and nvl(sum(return_points_total), 0) > 0 then 1000 * trunc(nvl(sum(return_points_won), 0) / nvl(sum(return_points_total), 0), 3)
                                 else null
@@ -748,9 +747,9 @@ begin
                        where psi.match_ret is null
                          and psi.tournament_surface = vw.tournament_surface
                          and psi.player_code = vw.loser_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) los_return_won_pct_3y_current,
+                      ) los_return_won_pml_3y_surface,
                       (select case
                                 when vw.match_ret is null and nvl(sum(total_points_total), 0) > 0 then 1000 * trunc(nvl(sum(total_points_won), 0) / nvl(sum(total_points_total), 0), 3)
                                 else null
@@ -759,82 +758,151 @@ begin
                        where psi.match_ret is null
                          and psi.tournament_surface = vw.tournament_surface
                          and psi.player_code = vw.loser_code
-                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - 365 * 3 -- 3 years
+                         and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
-                      ) los_total_won_pct_3y_current
+                      ) los_total_won_pml_3y_surface,
+                      (select sum(pp.points) qty
+                       from atp_tournaments t, player_points pp
+                       where t.id = pp.tournament_id
+                         and pp.player_code = vw.winner_code
+                         and t.start_dtm >= vw.tournament_start_dtm - cv_3_years
+                         and t.start_dtm <  vw.tournament_ord_start_dtm
+                      ) winner_3y_points,
+                      (select sum(pp.points) qty
+                       from atp_tournaments t, player_points pp
+                       where t.id = pp.tournament_id
+                         and pp.player_code = vw.winner_code
+                         and t.start_dtm >= vw.tournament_start_dtm - cv_52_weeks
+                         and t.start_dtm <  vw.tournament_ord_start_dtm
+                      ) winner_1y_points,
+                      (select sum(pp.points) qty
+                       from atp_tournaments t, player_points pp
+                       where t.id = pp.tournament_id
+                         and pp.player_code = vw.loser_code
+                         and t.start_dtm >= vw.tournament_start_dtm - cv_3_years
+                         and t.start_dtm <  vw.tournament_ord_start_dtm
+                      ) loser_3y_points,
+                      (select sum(pp.points) qty
+                       from atp_tournaments t, player_points pp
+                       where t.id = pp.tournament_id
+                         and pp.player_code = vw.loser_code
+                         and t.start_dtm >= vw.tournament_start_dtm - cv_52_weeks
+                         and t.start_dtm <  vw.tournament_ord_start_dtm
+                      ) loser_1y_points,
+                      (select sum(pp.points) qty
+                       from atp_tournaments t, player_points pp
+                       where t.surface = vw.tournament_surface
+                         and t.id = pp.tournament_id
+                         and pp.player_code = vw.winner_code
+                         and t.start_dtm >= vw.tournament_start_dtm - cv_3_years
+                         and t.start_dtm <  vw.tournament_ord_start_dtm
+                      ) winner_3y_points_surface,
+                      (select sum(pp.points) qty
+                       from atp_tournaments t, player_points pp
+                       where t.surface = vw.tournament_surface
+                         and t.id = pp.tournament_id
+                         and pp.player_code = vw.winner_code
+                         and t.start_dtm >= vw.tournament_start_dtm - cv_52_weeks
+                         and t.start_dtm <  vw.tournament_ord_start_dtm
+                      ) winner_1y_points_surface,
+                      (select sum(pp.points) qty
+                       from atp_tournaments t, player_points pp
+                       where t.surface = vw.tournament_surface
+                         and t.id = pp.tournament_id
+                         and pp.player_code = vw.loser_code
+                         and t.start_dtm >= vw.tournament_start_dtm - cv_3_years
+                         and t.start_dtm <  vw.tournament_ord_start_dtm
+                      ) loser_3y_points_surface,
+                      (select sum(pp.points) qty
+                       from atp_tournaments t, player_points pp
+                       where t.surface = vw.tournament_surface
+                         and t.id = pp.tournament_id
+                         and pp.player_code = vw.loser_code
+                         and t.start_dtm >= vw.tournament_start_dtm - cv_52_weeks
+                         and t.start_dtm <  vw.tournament_ord_start_dtm
+                      ) loser_1y_points_surface
               from vw_matches vw
-              where vw.tournament_id = p_tournament_id) i) s
+              where vw.id in (select c.column_value from table(p_match_ids) c)) i) s
   on (s.id = d.id)
+  when not matched then
+    insert (d.id, d.delta_hash, d.batch_id, d.win_h2h_qty_3y, d.los_h2h_qty_3y, d.win_win_qty_3y, d.win_los_qty_3y, d.los_win_qty_3y, d.los_los_qty_3y, d.win_avg_tiebreaks_pml_3y, d.los_avg_tiebreaks_pml_3y, d.win_h2h_qty_3y_surface, d.los_h2h_qty_3y_surface, d.win_win_qty_3y_surface, d.win_los_qty_3y_surface, d.los_win_qty_3y_surface, d.los_los_qty_3y_surface, d.win_avg_tiebreaks_pml_3y_sur, d.los_avg_tiebreaks_pml_3y_sur, d.win_ace_pml_3y, d.win_df_pml_3y, d.win_1st_pml_3y, d.win_1st_won_pml_3y, d.win_2nd_won_pml_3y, d.win_bp_saved_pml_3y, d.win_srv_won_pml_3y, d.win_1st_return_won_pml_3y, d.win_2nd_return_won_pml_3y, d.win_bp_won_pml_3y, d.win_return_won_pml_3y, d.win_total_won_pml_3y, d.win_ace_pml_3y_surface, d.win_df_pml_3y_surface, d.win_1st_pml_3y_surface, d.win_1st_won_pml_3y_surface, d.win_2nd_won_pml_3y_surface, d.win_bp_saved_pml_3y_surface, d.win_srv_won_pml_3y_surface, d.win_1st_return_won_pml_3y_sur, d.win_2nd_return_won_pml_3y_sur, d.win_bp_won_pml_3y_surface, d.win_return_won_pml_3y_surface, d.win_total_won_pml_3y_surface, d.los_ace_pml_3y, d.los_df_pml_3y, d.los_1st_pml_3y, d.los_1st_won_pml_3y, d.los_2nd_won_pml_3y, d.los_bp_saved_pml_3y, d.los_srv_won_pml_3y, d.los_1st_return_won_pml_3y, d.los_2nd_return_won_pml_3y, d.los_bp_won_pml_3y, d.los_return_won_pml_3y, d.los_total_won_pml_3y, d.los_ace_pml_3y_surface, d.los_df_pml_3y_surface, d.los_1st_pml_3y_surface, d.los_1st_won_pml_3y_surface, d.los_2nd_won_pml_3y_surface, d.los_bp_saved_pml_3y_surface, d.los_srv_won_pml_3y_surface, d.los_1st_return_won_pml_3y_sur, d.los_2nd_return_won_pml_3y_sur, d.los_bp_won_pml_3y_surface, d.los_return_won_pml_3y_surface, d.los_total_won_pml_3y_surface, d.winner_3y_points, d.winner_1y_points, d.loser_3y_points, d.loser_1y_points, d.winner_3y_points_surface, d.winner_1y_points_surface, d.loser_3y_points_surface, d.loser_1y_points_surface)
+    values (s.id, s.delta_hash, s.batch_id, s.win_h2h_qty_3y, s.los_h2h_qty_3y, s.win_win_qty_3y, s.win_los_qty_3y, s.los_win_qty_3y, s.los_los_qty_3y, s.win_avg_tiebreaks_pml_3y, s.los_avg_tiebreaks_pml_3y, s.win_h2h_qty_3y_surface, s.los_h2h_qty_3y_surface, s.win_win_qty_3y_surface, s.win_los_qty_3y_surface, s.los_win_qty_3y_surface, s.los_los_qty_3y_surface, s.win_avg_tiebreaks_pml_3y_sur, s.los_avg_tiebreaks_pml_3y_sur, s.win_ace_pml_3y, s.win_df_pml_3y, s.win_1st_pml_3y, s.win_1st_won_pml_3y, s.win_2nd_won_pml_3y, s.win_bp_saved_pml_3y, s.win_srv_won_pml_3y, s.win_1st_return_won_pml_3y, s.win_2nd_return_won_pml_3y, s.win_bp_won_pml_3y, s.win_return_won_pml_3y, s.win_total_won_pml_3y, s.win_ace_pml_3y_surface, s.win_df_pml_3y_surface, s.win_1st_pml_3y_surface, s.win_1st_won_pml_3y_surface, s.win_2nd_won_pml_3y_surface, s.win_bp_saved_pml_3y_surface, s.win_srv_won_pml_3y_surface, s.win_1st_return_won_pml_3y_sur, s.win_2nd_return_won_pml_3y_sur, s.win_bp_won_pml_3y_surface, s.win_return_won_pml_3y_surface, s.win_total_won_pml_3y_surface, s.los_ace_pml_3y, s.los_df_pml_3y, s.los_1st_pml_3y, s.los_1st_won_pml_3y, s.los_2nd_won_pml_3y, s.los_bp_saved_pml_3y, s.los_srv_won_pml_3y, s.los_1st_return_won_pml_3y, s.los_2nd_return_won_pml_3y, s.los_bp_won_pml_3y, s.los_return_won_pml_3y, s.los_total_won_pml_3y, s.los_ace_pml_3y_surface, s.los_df_pml_3y_surface, s.los_1st_pml_3y_surface, s.los_1st_won_pml_3y_surface, s.los_2nd_won_pml_3y_surface, s.los_bp_saved_pml_3y_surface, s.los_srv_won_pml_3y_surface, s.los_1st_return_won_pml_3y_sur, s.los_2nd_return_won_pml_3y_sur, s.los_bp_won_pml_3y_surface, s.los_return_won_pml_3y_surface, s.los_total_won_pml_3y_surface, s.winner_3y_points, s.winner_1y_points, s.loser_3y_points, s.loser_1y_points, s.winner_3y_points_surface, s.winner_1y_points_surface, s.loser_3y_points_surface, s.loser_1y_points_surface)
   when matched then
     update set
       d.delta_hash                    = s.delta_hash,
-      d.batch_id                      = pkg_log.gn_batch_id,
-      d.loser_age                     = s.loser_age,
-      d.winner_age                    = s.winner_age,
+      d.batch_id                      = s.batch_id,
       d.win_h2h_qty_3y                = s.win_h2h_qty_3y,
       d.los_h2h_qty_3y                = s.los_h2h_qty_3y,
       d.win_win_qty_3y                = s.win_win_qty_3y,
       d.win_los_qty_3y                = s.win_los_qty_3y,
       d.los_win_qty_3y                = s.los_win_qty_3y,
       d.los_los_qty_3y                = s.los_los_qty_3y,
-      d.win_avg_tiebreaks_3y          = s.win_avg_tiebreaks_3y,
-      d.los_avg_tiebreaks_3y          = s.los_avg_tiebreaks_3y,
-      d.win_h2h_qty_3y_current        = s.win_h2h_qty_3y_current,
-      d.los_h2h_qty_3y_current        = s.los_h2h_qty_3y_current,
-      d.win_win_qty_3y_current        = s.win_win_qty_3y_current,
-      d.win_los_qty_3y_current        = s.win_los_qty_3y_current,
-      d.los_win_qty_3y_current        = s.los_win_qty_3y_current,
-      d.los_los_qty_3y_current        = s.los_los_qty_3y_current,
-      d.win_avg_tiebreaks_3y_current  = s.win_avg_tiebreaks_3y_current,
-      d.los_avg_tiebreaks_3y_current  = s.los_avg_tiebreaks_3y_current,
-      d.win_ace_pct_3y                = s.win_ace_pct_3y,
-      d.win_df_pct_3y                 = s.win_df_pct_3y,
-      d.win_1st_pct_3y                = s.win_1st_pct_3y,
-      d.win_1st_won_pct_3y            = s.win_1st_won_pct_3y,
-      d.win_2nd_won_pct_3y            = s.win_2nd_won_pct_3y,
-      d.win_bp_saved_pct_3y           = s.win_bp_saved_pct_3y,
-      d.win_srv_won_pct_3y            = s.win_srv_won_pct_3y,
-      d.win_1st_return_won_pct_3y     = s.win_1st_return_won_pct_3y,
-      d.win_2nd_return_won_pct_3y     = s.win_2nd_return_won_pct_3y,
-      d.win_bp_won_pct_3y             = s.win_bp_won_pct_3y,
-      d.win_return_won_pct_3y         = s.win_return_won_pct_3y,
-      d.win_total_won_pct_3y          = s.win_total_won_pct_3y,
-      d.win_ace_pct_3y_current        = s.win_ace_pct_3y_current,
-      d.win_df_pct_3y_current         = s.win_df_pct_3y_current,
-      d.win_1st_pct_3y_current        = s.win_1st_pct_3y_current,
-      d.win_1st_won_pct_3y_current    = s.win_1st_won_pct_3y_current,
-      d.win_2nd_won_pct_3y_current    = s.win_2nd_won_pct_3y_current,
-      d.win_bp_saved_pct_3y_current   = s.win_bp_saved_pct_3y_current,
-      d.win_srv_won_pct_3y_current    = s.win_srv_won_pct_3y_current,
-      d.win_1st_return_won_pct_3y_cur = s.win_1st_return_won_pct_3y_cur,
-      d.win_2nd_return_won_pct_3y_cur = s.win_2nd_return_won_pct_3y_cur,
-      d.win_bp_won_pct_3y_current     = s.win_bp_won_pct_3y_current,
-      d.win_return_won_pct_3y_current = s.win_return_won_pct_3y_current,
-      d.win_total_won_pct_3y_current  = s.win_total_won_pct_3y_current,
-      d.los_ace_pct_3y                = s.los_ace_pct_3y,
-      d.los_df_pct_3y                 = s.los_df_pct_3y,
-      d.los_1st_pct_3y                = s.los_1st_pct_3y,
-      d.los_1st_won_pct_3y            = s.los_1st_won_pct_3y,
-      d.los_2nd_won_pct_3y            = s.los_2nd_won_pct_3y,
-      d.los_bp_saved_pct_3y           = s.los_bp_saved_pct_3y,
-      d.los_srv_won_pct_3y            = s.los_srv_won_pct_3y,
-      d.los_1st_return_won_pct_3y     = s.los_1st_return_won_pct_3y,
-      d.los_2nd_return_won_pct_3y     = s.los_2nd_return_won_pct_3y,
-      d.los_bp_won_pct_3y             = s.los_bp_won_pct_3y,
-      d.los_return_won_pct_3y         = s.los_return_won_pct_3y,
-      d.los_total_won_pct_3y          = s.los_total_won_pct_3y,
-      d.los_ace_pct_3y_current        = s.los_ace_pct_3y_current,
-      d.los_df_pct_3y_current         = s.los_df_pct_3y_current,
-      d.los_1st_pct_3y_current        = s.los_1st_pct_3y_current,
-      d.los_1st_won_pct_3y_current    = s.los_1st_won_pct_3y_current,
-      d.los_2nd_won_pct_3y_current    = s.los_2nd_won_pct_3y_current,
-      d.los_bp_saved_pct_3y_current   = s.los_bp_saved_pct_3y_current,
-      d.los_srv_won_pct_3y_current    = s.los_srv_won_pct_3y_current,
-      d.los_1st_return_won_pct_3y_cur = s.los_1st_return_won_pct_3y_cur,
-      d.los_2nd_return_won_pct_3y_cur = s.los_2nd_return_won_pct_3y_cur,
-      d.los_bp_won_pct_3y_current     = s.los_bp_won_pct_3y_current,
-      d.los_return_won_pct_3y_current = s.los_return_won_pct_3y_current,
-      d.los_total_won_pct_3y_current  = s.los_total_won_pct_3y_current
+      d.win_avg_tiebreaks_pml_3y      = s.win_avg_tiebreaks_pml_3y,
+      d.los_avg_tiebreaks_pml_3y      = s.los_avg_tiebreaks_pml_3y,
+      d.win_h2h_qty_3y_surface        = s.win_h2h_qty_3y_surface,
+      d.los_h2h_qty_3y_surface        = s.los_h2h_qty_3y_surface,
+      d.win_win_qty_3y_surface        = s.win_win_qty_3y_surface,
+      d.win_los_qty_3y_surface        = s.win_los_qty_3y_surface,
+      d.los_win_qty_3y_surface        = s.los_win_qty_3y_surface,
+      d.los_los_qty_3y_surface        = s.los_los_qty_3y_surface,
+      d.win_avg_tiebreaks_pml_3y_sur  = s.win_avg_tiebreaks_pml_3y_sur,
+      d.los_avg_tiebreaks_pml_3y_sur  = s.los_avg_tiebreaks_pml_3y_sur,
+      d.win_ace_pml_3y                = s.win_ace_pml_3y,
+      d.win_df_pml_3y                 = s.win_df_pml_3y,
+      d.win_1st_pml_3y                = s.win_1st_pml_3y,
+      d.win_1st_won_pml_3y            = s.win_1st_won_pml_3y,
+      d.win_2nd_won_pml_3y            = s.win_2nd_won_pml_3y,
+      d.win_bp_saved_pml_3y           = s.win_bp_saved_pml_3y,
+      d.win_srv_won_pml_3y            = s.win_srv_won_pml_3y,
+      d.win_1st_return_won_pml_3y     = s.win_1st_return_won_pml_3y,
+      d.win_2nd_return_won_pml_3y     = s.win_2nd_return_won_pml_3y,
+      d.win_bp_won_pml_3y             = s.win_bp_won_pml_3y,
+      d.win_return_won_pml_3y         = s.win_return_won_pml_3y,
+      d.win_total_won_pml_3y          = s.win_total_won_pml_3y,
+      d.win_ace_pml_3y_surface        = s.win_ace_pml_3y_surface,
+      d.win_df_pml_3y_surface         = s.win_df_pml_3y_surface,
+      d.win_1st_pml_3y_surface        = s.win_1st_pml_3y_surface,
+      d.win_1st_won_pml_3y_surface    = s.win_1st_won_pml_3y_surface,
+      d.win_2nd_won_pml_3y_surface    = s.win_2nd_won_pml_3y_surface,
+      d.win_bp_saved_pml_3y_surface   = s.win_bp_saved_pml_3y_surface,
+      d.win_srv_won_pml_3y_surface    = s.win_srv_won_pml_3y_surface,
+      d.win_1st_return_won_pml_3y_sur = s.win_1st_return_won_pml_3y_sur,
+      d.win_2nd_return_won_pml_3y_sur = s.win_2nd_return_won_pml_3y_sur,
+      d.win_bp_won_pml_3y_surface     = s.win_bp_won_pml_3y_surface,
+      d.win_return_won_pml_3y_surface = s.win_return_won_pml_3y_surface,
+      d.win_total_won_pml_3y_surface  = s.win_total_won_pml_3y_surface,
+      d.los_ace_pml_3y                = s.los_ace_pml_3y,
+      d.los_df_pml_3y                 = s.los_df_pml_3y,
+      d.los_1st_pml_3y                = s.los_1st_pml_3y,
+      d.los_1st_won_pml_3y            = s.los_1st_won_pml_3y,
+      d.los_2nd_won_pml_3y            = s.los_2nd_won_pml_3y,
+      d.los_bp_saved_pml_3y           = s.los_bp_saved_pml_3y,
+      d.los_srv_won_pml_3y            = s.los_srv_won_pml_3y,
+      d.los_1st_return_won_pml_3y     = s.los_1st_return_won_pml_3y,
+      d.los_2nd_return_won_pml_3y     = s.los_2nd_return_won_pml_3y,
+      d.los_bp_won_pml_3y             = s.los_bp_won_pml_3y,
+      d.los_return_won_pml_3y         = s.los_return_won_pml_3y,
+      d.los_total_won_pml_3y          = s.los_total_won_pml_3y,
+      d.los_ace_pml_3y_surface        = s.los_ace_pml_3y_surface,
+      d.los_df_pml_3y_surface         = s.los_df_pml_3y_surface,
+      d.los_1st_pml_3y_surface        = s.los_1st_pml_3y_surface,
+      d.los_1st_won_pml_3y_surface    = s.los_1st_won_pml_3y_surface,
+      d.los_2nd_won_pml_3y_surface    = s.los_2nd_won_pml_3y_surface,
+      d.los_bp_saved_pml_3y_surface   = s.los_bp_saved_pml_3y_surface,
+      d.los_srv_won_pml_3y_surface    = s.los_srv_won_pml_3y_surface,
+      d.los_1st_return_won_pml_3y_sur = s.los_1st_return_won_pml_3y_sur,
+      d.los_2nd_return_won_pml_3y_sur = s.los_2nd_return_won_pml_3y_sur,
+      d.los_bp_won_pml_3y_surface     = s.los_bp_won_pml_3y_surface,
+      d.los_return_won_pml_3y_surface = s.los_return_won_pml_3y_surface,
+      d.los_total_won_pml_3y_surface  = s.los_total_won_pml_3y_surface,
+      d.winner_3y_points              = s.winner_3y_points,
+      d.winner_1y_points              = s.winner_1y_points,
+      d.loser_3y_points               = s.loser_3y_points,
+      d.loser_1y_points               = s.loser_1y_points,
+      d.winner_3y_points_surface      = s.winner_3y_points_surface,
+      d.winner_1y_points_surface      = s.winner_1y_points_surface,
+      d.loser_3y_points_surface       = s.loser_3y_points_surface,
+      d.loser_1y_points_surface       = s.loser_1y_points_surface
     where d.delta_hash != s.delta_hash;
   --
   vn_qty := sql%rowcount;
@@ -848,5 +916,5 @@ exception
     pkg_log.sp_log_message(pv_text => 'errors stack', pv_clob => dbms_utility.format_error_stack || pkg_utils.CRLF || dbms_utility.format_error_backtrace, pv_type => 'E');
     pkg_log.sp_finish_batch_with_errors;
     raise;
-end sp_enrich_matches;
+end sp_enrich_atp_matches;
 /
