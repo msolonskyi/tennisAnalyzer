@@ -158,7 +158,7 @@ class MatchesYearlyExtractor(BaseYearlyExtractor):
        los_average_first_serves_kmh,
        los_fastest_second_serve_kmh,
        los_average_second_serve_kmh
-from vw_matches v
+from vw_atp_matches v
 where tournament_year = :year
   and series_id != 'dc'
 order by tournament_start_dtm, tournament_code, stadie_ord, id'''
