@@ -1,8 +1,11 @@
-from data_extractor_dc import TournamentsFullExtractor, MatchesYearlyExtractor
+from data_extractor_dc import PlayersFullExtractor, TournamentsFullExtractor, MatchesYearlyExtractor
 from datetime import datetime
 
 
 def main():
+    players_extractor = PlayersFullExtractor()
+    players_extractor.extract()
+
     tournaments_extractor = TournamentsFullExtractor()
     tournaments_extractor.extract()
 
