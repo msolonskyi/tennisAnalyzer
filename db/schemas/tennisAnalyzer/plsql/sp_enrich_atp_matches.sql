@@ -85,10 +85,7 @@ begin
         from ( select vw.id,
                       pkg_log.gn_batch_id as batch_id,
                       -- 3 years
-                      (select case
-                                when vw.match_ret is null then count(*)
-                                else null
-                              end as qty
+                      (select count(*) as qty
                        from vw_matches vi
                        where vi.winner_code = vw.winner_code
                          and vi.loser_code = vw.loser_code
@@ -96,10 +93,7 @@ begin
                          and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and vi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) as win_h2h_qty_3y,
-                      (select case
-                                when vw.match_ret is null then count(*)
-                                else null
-                              end as qty
+                      (select count(*) as qty
                        from vw_matches vi
                        where vi.winner_code = vw.loser_code
                          and vi.loser_code = vw.winner_code
@@ -107,70 +101,49 @@ begin
                          and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and vi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) as los_h2h_qty_3y,
-                      (select case
-                                when vw.match_ret is null then count(*)
-                                else null
-                              end as qty
+                      (select count(*) as qty
                        from vw_matches vi
                        where vi.winner_code = vw.winner_code
                          and vi.match_ret is null
                          and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and vi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) as win_win_qty_3y,
-                      (select case
-                                when vw.match_ret is null then count(*)
-                                else null
-                              end as qty
+                      (select count(*) as qty
                        from vw_matches vi
                        where vi.loser_code = vw.winner_code
                          and vi.match_ret is null
                          and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and vi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) as win_los_qty_3y,
-                      (select case
-                                when vw.match_ret is null then count(*)
-                                else null
-                              end as qty
+                      (select count(*) as qty
                        from vw_matches vi
                        where vi.winner_code = vw.loser_code
                          and vi.match_ret is null
                          and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and vi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) as los_win_qty_3y,
-                      (select case
-                                when vw.match_ret is null then count(*)
-                                else null
-                              end as qty
+                      (select count(*) as qty
                        from vw_matches vi
                        where vi.loser_code = vw.loser_code
                          and vi.match_ret is null
                          and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and vi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) as los_los_qty_3y,
-                      (select case
-                                when vw.match_ret is null then 1000 * trunc(avg((psi.player_tiebreaks_won + psi.player_tiebreaks_los) / (psi.player_sets_won + psi.player_sets_los)), 3)
-                                else null
-                              end as qty
+                      (select 1000 * trunc(avg((psi.player_tiebreaks_won + psi.player_tiebreaks_los) / (psi.player_sets_won + psi.player_sets_los)), 3) as qty
                        from vw_player_stats psi
                        where psi.match_ret is null
                          and psi.player_code = vw.winner_code
                          and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) as win_avg_tiebreaks_pml_3y,
-                      (select case
-                                when vw.match_ret is null then 1000 * trunc(avg((psi.player_tiebreaks_won + psi.player_tiebreaks_los) / (psi.player_sets_won + psi.player_sets_los)), 3)
-                                else null
-                              end as qty
+                      (select 1000 * trunc(avg((psi.player_tiebreaks_won + psi.player_tiebreaks_los) / (psi.player_sets_won + psi.player_sets_los)), 3) as qty
                        from vw_player_stats psi
                        where psi.match_ret is null
                          and psi.player_code = vw.loser_code
                          and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) as los_avg_tiebreaks_pml_3y,
-                      (select case
-                                when vw.match_ret is null then count(*)
-                                else null
-                              end as qty
+                      (select count(*) as qty
                        from vw_matches vi
                        where vi.tournament_surface = vw.tournament_surface
                          and vi.winner_code = vw.winner_code
@@ -179,10 +152,7 @@ begin
                          and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and vi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) as win_h2h_qty_3y_surface,
-                      (select case
-                                when vw.match_ret is null then count(*)
-                                else null
-                              end as qty
+                      (select count(*) as qty
                        from vw_matches vi
                        where vi.tournament_surface = vw.tournament_surface
                          and vi.winner_code = vw.loser_code
@@ -191,10 +161,7 @@ begin
                          and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and vi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) as los_h2h_qty_3y_surface,
-                      (select case
-                                when vw.match_ret is null then count(*)
-                                else null
-                              end as qty
+                      (select count(*) as qty
                        from vw_matches vi
                        where vi.tournament_surface = vw.tournament_surface
                          and vi.winner_code = vw.winner_code
@@ -202,10 +169,7 @@ begin
                          and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and vi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) as win_win_qty_3y_surface,
-                      (select case
-                                when vw.match_ret is null then count(*)
-                                else null
-                              end as qty
+                      (select count(*) as qty
                        from vw_matches vi
                        where vi.tournament_surface = vw.tournament_surface
                          and vi.loser_code = vw.winner_code
@@ -213,10 +177,7 @@ begin
                          and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and vi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) as win_los_qty_3y_surface,
-                      (select case
-                                when vw.match_ret is null then count(*)
-                                else null
-                              end as qty
+                      (select count(*) as qty
                        from vw_matches vi
                        where vi.tournament_surface = vw.tournament_surface
                          and vi.winner_code = vw.loser_code
@@ -224,10 +185,7 @@ begin
                          and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and vi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) as los_win_qty_3y_surface,
-                      (select case
-                                when vw.match_ret is null then count(*)
-                                else null
-                              end as qty
+                      (select count(*) as qty
                        from vw_matches vi
                        where vi.tournament_surface = vw.tournament_surface
                          and vi.loser_code = vw.loser_code
@@ -235,10 +193,7 @@ begin
                          and vi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and vi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) as los_los_qty_3y_surface,
-                      (select case
-                                when vw.match_ret is null then 1000 * trunc(avg((psi.player_tiebreaks_won + psi.player_tiebreaks_los) / (psi.player_sets_won + psi.player_sets_los)), 3)
-                                else null
-                              end as qty
+                      (select 1000 * trunc(avg((psi.player_tiebreaks_won + psi.player_tiebreaks_los) / (psi.player_sets_won + psi.player_sets_los)), 3) as qty
                        from vw_player_stats psi
                        where psi.tournament_surface = vw.tournament_surface
                          and psi.match_ret is null
@@ -246,10 +201,7 @@ begin
                          and psi.tournament_ord_start_dtm >= vw.tournament_start_dtm - cv_3_years
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) as win_avg_tiebreaks_pml_3y_sur,
-                      (select case
-                                when vw.match_ret is null then 1000 * trunc(avg((psi.player_tiebreaks_won + psi.player_tiebreaks_los) / (psi.player_sets_won + psi.player_sets_los)), 3)
-                                else null
-                              end as qty
+                      (select 1000 * trunc(avg((psi.player_tiebreaks_won + psi.player_tiebreaks_los) / (psi.player_sets_won + psi.player_sets_los)), 3) as qty
                        from vw_player_stats psi
                        where psi.tournament_surface = vw.tournament_surface
                          and psi.match_ret is null
@@ -258,7 +210,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) as los_avg_tiebreaks_pml_3y_sur,
                       (select case
-                                when vw.match_ret is null and nvl(sum(service_points_total), 0) > 0 then 1000 * trunc(sum(aces) / sum(service_points_total), 3)
+                                when nvl(sum(service_points_total), 0) > 0 then 1000 * trunc(sum(aces) / sum(service_points_total), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -268,7 +220,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) win_ace_pml_3y,
                       (select case
-                                when vw.match_ret is null and nvl(sum(service_points_total), 0) > 0 then 1000 * trunc(sum(double_faults) / sum(service_points_total), 3)
+                                when nvl(sum(service_points_total), 0) > 0 then 1000 * trunc(sum(double_faults) / sum(service_points_total), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -278,7 +230,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) win_df_pml_3y,
                       (select case
-                                when vw.match_ret is null and nvl(sum(first_serves_total), 0) > 0 then 1000 * trunc(sum(first_serves_in) / sum(first_serves_total), 3)
+                                when nvl(sum(first_serves_total), 0) > 0 then 1000 * trunc(sum(first_serves_in) / sum(first_serves_total), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -288,7 +240,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) win_1st_pml_3y,
                       (select case
-                                when vw.match_ret is null and nvl(sum(first_serves_in), 0) > 0 then 1000 * trunc(sum(first_serve_points_won) / sum(first_serves_in), 3)
+                                when nvl(sum(first_serves_in), 0) > 0 then 1000 * trunc(sum(first_serve_points_won) / sum(first_serves_in), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -298,7 +250,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) win_1st_won_pml_3y,
                       (select case
-                                when vw.match_ret is null and nvl(sum(second_serve_points_total), 0) > 0 then 1000 * trunc(sum(second_serve_points_won) / sum(second_serve_points_total), 3)
+                                when nvl(sum(second_serve_points_total), 0) > 0 then 1000 * trunc(sum(second_serve_points_won) / sum(second_serve_points_total), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -308,7 +260,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) win_2nd_won_pml_3y,
                       (select case
-                                when vw.match_ret is null and nvl(sum(break_points_serve_total), 0) > 0 then 1000 * trunc(sum(break_points_saved) / sum(break_points_serve_total), 3)
+                                when nvl(sum(break_points_serve_total), 0) > 0 then 1000 * trunc(sum(break_points_saved) / sum(break_points_serve_total), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -318,7 +270,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) win_bp_saved_pml_3y,
                       (select case
-                                when vw.match_ret is null and nvl(sum(service_points_total), 0) > 0 then 1000 * trunc(sum(service_points_won) / sum(service_points_total), 3)
+                                when nvl(sum(service_points_total), 0) > 0 then 1000 * trunc(sum(service_points_won) / sum(service_points_total), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -328,7 +280,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) win_srv_won_pml_3y,
                       (select case
-                                when vw.match_ret is null and nvl(sum(first_serve_return_total), 0) > 0 then 1000 * trunc(sum(first_serve_return_won) / sum(first_serve_return_total), 3)
+                                when nvl(sum(first_serve_return_total), 0) > 0 then 1000 * trunc(sum(first_serve_return_won) / sum(first_serve_return_total), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -338,7 +290,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) win_1st_return_won_pml_3y,
                       (select case
-                                when vw.match_ret is null and nvl(sum(second_serve_return_total), 0) > 0 then 1000 * trunc(sum(second_serve_return_won) / sum(second_serve_return_total), 3)
+                                when nvl(sum(second_serve_return_total), 0) > 0 then 1000 * trunc(sum(second_serve_return_won) / sum(second_serve_return_total), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -348,7 +300,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) win_2nd_return_won_pml_3y,
                       (select case
-                                when vw.match_ret is null and nvl(sum(break_points_return_total), 0) > 0 then 1000 * trunc(nvl(sum(break_points_converted), 0) / nvl(sum(break_points_return_total), 0), 3)
+                                when nvl(sum(break_points_return_total), 0) > 0 then 1000 * trunc(nvl(sum(break_points_converted), 0) / nvl(sum(break_points_return_total), 0), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -358,7 +310,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) win_bp_won_pml_3y,
                       (select case
-                                when vw.match_ret is null and nvl(sum(return_points_total), 0) > 0 then 1000 * trunc(nvl(sum(return_points_won), 0) / nvl(sum(return_points_total), 0), 3)
+                                when nvl(sum(return_points_total), 0) > 0 then 1000 * trunc(nvl(sum(return_points_won), 0) / nvl(sum(return_points_total), 0), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -368,7 +320,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) win_return_won_pml_3y,
                       (select case
-                                when vw.match_ret is null and nvl(sum(total_points_total), 0) > 0 then 1000 * trunc(nvl(sum(total_points_won), 0) / nvl(sum(total_points_total), 0), 3)
+                                when nvl(sum(total_points_total), 0) > 0 then 1000 * trunc(nvl(sum(total_points_won), 0) / nvl(sum(total_points_total), 0), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -378,7 +330,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) win_total_won_pml_3y,
                       (select case
-                                when vw.match_ret is null and nvl(sum(service_points_total), 0) > 0 then 1000 * trunc(sum(aces) / sum(service_points_total), 3)
+                                when nvl(sum(service_points_total), 0) > 0 then 1000 * trunc(sum(aces) / sum(service_points_total), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -389,7 +341,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) win_ace_pml_3y_surface,
                       (select case
-                                when vw.match_ret is null and nvl(sum(service_points_total), 0) > 0 then 1000 * trunc(sum(double_faults) / sum(service_points_total), 3)
+                                when nvl(sum(service_points_total), 0) > 0 then 1000 * trunc(sum(double_faults) / sum(service_points_total), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -400,7 +352,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) win_df_pml_3y_surface,
                       (select case
-                                when vw.match_ret is null and nvl(sum(first_serves_total), 0) > 0 then 1000 * trunc(sum(first_serves_in) / sum(first_serves_total), 3)
+                                when nvl(sum(first_serves_total), 0) > 0 then 1000 * trunc(sum(first_serves_in) / sum(first_serves_total), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -411,7 +363,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) win_1st_pml_3y_surface,
                       (select case
-                                when vw.match_ret is null and nvl(sum(first_serves_in), 0) > 0 then 1000 * trunc(sum(first_serve_points_won) / sum(first_serves_in), 3)
+                                when nvl(sum(first_serves_in), 0) > 0 then 1000 * trunc(sum(first_serve_points_won) / sum(first_serves_in), 3)
                                 else null
                               end win_1st_won_pml_3y
                        from vw_player_stats psi
@@ -422,7 +374,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) win_1st_won_pml_3y_surface,
                       (select case
-                                when vw.match_ret is null and nvl(sum(second_serve_points_total), 0) > 0 then 1000 * trunc(sum(second_serve_points_won) / sum(second_serve_points_total), 3)
+                                when nvl(sum(second_serve_points_total), 0) > 0 then 1000 * trunc(sum(second_serve_points_won) / sum(second_serve_points_total), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -433,7 +385,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) win_2nd_won_pml_3y_surface,
                       (select case
-                                when vw.match_ret is null and nvl(sum(break_points_serve_total), 0) > 0 then 1000 * trunc(sum(break_points_saved) / sum(break_points_serve_total), 3)
+                                when nvl(sum(break_points_serve_total), 0) > 0 then 1000 * trunc(sum(break_points_saved) / sum(break_points_serve_total), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -444,7 +396,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) win_bp_saved_pml_3y_surface,
                       (select case
-                                when vw.match_ret is null and nvl(sum(service_points_total), 0) > 0 then 1000 * trunc(sum(service_points_won) / sum(service_points_total), 3)
+                                when nvl(sum(service_points_total), 0) > 0 then 1000 * trunc(sum(service_points_won) / sum(service_points_total), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -455,7 +407,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) win_srv_won_pml_3y_surface,
                       (select case
-                                when vw.match_ret is null and nvl(sum(first_serve_return_total), 0) > 0 then 1000 * trunc(sum(first_serve_return_won) / sum(first_serve_return_total), 3)
+                                when nvl(sum(first_serve_return_total), 0) > 0 then 1000 * trunc(sum(first_serve_return_won) / sum(first_serve_return_total), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -466,7 +418,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) win_1st_return_won_pml_3y_sur,
                       (select case
-                                when vw.match_ret is null and nvl(sum(second_serve_return_total), 0) > 0 then 1000 * trunc(sum(second_serve_return_won) / sum(second_serve_return_total), 3)
+                                when nvl(sum(second_serve_return_total), 0) > 0 then 1000 * trunc(sum(second_serve_return_won) / sum(second_serve_return_total), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -477,7 +429,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) win_2nd_return_won_pml_3y_sur,
                       (select case
-                                when vw.match_ret is null and nvl(sum(break_points_return_total), 0) > 0 then 1000 * trunc(nvl(sum(break_points_converted), 0) / nvl(sum(break_points_return_total), 0), 3)
+                                when nvl(sum(break_points_return_total), 0) > 0 then 1000 * trunc(nvl(sum(break_points_converted), 0) / nvl(sum(break_points_return_total), 0), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -488,7 +440,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) win_bp_won_pml_3y_surface,
                       (select case
-                                when vw.match_ret is null and nvl(sum(return_points_total), 0) > 0 then 1000 * trunc(nvl(sum(return_points_won), 0) / nvl(sum(return_points_total), 0), 3)
+                                when nvl(sum(return_points_total), 0) > 0 then 1000 * trunc(nvl(sum(return_points_won), 0) / nvl(sum(return_points_total), 0), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -499,7 +451,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) win_return_won_pml_3y_surface,
                       (select case
-                                when vw.match_ret is null and nvl(sum(total_points_total), 0) > 0 then 1000 * trunc(nvl(sum(total_points_won), 0) / nvl(sum(total_points_total), 0), 3)
+                                when nvl(sum(total_points_total), 0) > 0 then 1000 * trunc(nvl(sum(total_points_won), 0) / nvl(sum(total_points_total), 0), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -510,7 +462,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) win_total_won_pml_3y_surface,
                       (select case
-                                when vw.match_ret is null and nvl(sum(service_points_total), 0) > 0 then 1000 * trunc(sum(aces) / sum(service_points_total), 3)
+                                when nvl(sum(service_points_total), 0) > 0 then 1000 * trunc(sum(aces) / sum(service_points_total), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -520,7 +472,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) los_ace_pml_3y,
                       (select case
-                                when vw.match_ret is null and sum(service_points_total) > 0 then 1000 * trunc(sum(double_faults) / sum(service_points_total), 3)
+                                when sum(service_points_total) > 0 then 1000 * trunc(sum(double_faults) / sum(service_points_total), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -530,7 +482,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) los_df_pml_3y,
                       (select case
-                                when vw.match_ret is null and sum(first_serves_total) > 0 then 1000 * trunc(sum(first_serves_in) / sum(first_serves_total), 3)
+                                when sum(first_serves_total) > 0 then 1000 * trunc(sum(first_serves_in) / sum(first_serves_total), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -540,7 +492,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) los_1st_pml_3y,
                       (select case
-                                when vw.match_ret is null and sum(first_serves_in) > 0 then 1000 * trunc(sum(first_serve_points_won) / sum(first_serves_in), 3)
+                                when sum(first_serves_in) > 0 then 1000 * trunc(sum(first_serve_points_won) / sum(first_serves_in), 3)
                                 else null
                               end qry
                        from vw_player_stats psi
@@ -550,7 +502,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) los_1st_won_pml_3y,
                       (select case
-                                when vw.match_ret is null and sum(second_serve_points_total) > 0 then 1000 * trunc(sum(second_serve_points_won) / sum(second_serve_points_total), 3)
+                                when sum(second_serve_points_total) > 0 then 1000 * trunc(sum(second_serve_points_won) / sum(second_serve_points_total), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -560,7 +512,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) los_2nd_won_pml_3y,
                       (select case
-                                when vw.match_ret is null and sum(break_points_serve_total) > 0 then 1000 * trunc(sum(break_points_saved) / sum(break_points_serve_total), 3)
+                                when sum(break_points_serve_total) > 0 then 1000 * trunc(sum(break_points_saved) / sum(break_points_serve_total), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -570,7 +522,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) los_bp_saved_pml_3y,
                       (select case
-                                when vw.match_ret is null and sum(service_points_total) > 0 then 1000 * trunc(sum(service_points_won) / sum(service_points_total), 3)
+                                when sum(service_points_total) > 0 then 1000 * trunc(sum(service_points_won) / sum(service_points_total), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -580,7 +532,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) los_srv_won_pml_3y,
                       (select case
-                                when vw.match_ret is null and sum(first_serve_return_total) > 0 then 1000 * trunc(sum(first_serve_return_won) / sum(first_serve_return_total), 3)
+                                when sum(first_serve_return_total) > 0 then 1000 * trunc(sum(first_serve_return_won) / sum(first_serve_return_total), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -590,7 +542,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) los_1st_return_won_pml_3y,
                       (select case
-                                when vw.match_ret is null and sum(second_serve_return_total) > 0 then 1000 * trunc(sum(second_serve_return_won) / sum(second_serve_return_total), 3)
+                                when sum(second_serve_return_total) > 0 then 1000 * trunc(sum(second_serve_return_won) / sum(second_serve_return_total), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -600,7 +552,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) los_2nd_return_won_pml_3y,
                       (select case
-                                when vw.match_ret is null and nvl(sum(break_points_return_total), 0) > 0 then 1000 * trunc(nvl(sum(break_points_converted), 0) / nvl(sum(break_points_return_total), 0), 3)
+                                when nvl(sum(break_points_return_total), 0) > 0 then 1000 * trunc(nvl(sum(break_points_converted), 0) / nvl(sum(break_points_return_total), 0), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -610,7 +562,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) los_bp_won_pml_3y,
                       (select case
-                                when vw.match_ret is null and nvl(sum(return_points_total), 0) > 0 then 1000 * trunc(nvl(sum(return_points_won), 0) / nvl(sum(return_points_total), 0), 3)
+                                when nvl(sum(return_points_total), 0) > 0 then 1000 * trunc(nvl(sum(return_points_won), 0) / nvl(sum(return_points_total), 0), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -620,7 +572,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) los_return_won_pml_3y,
                       (select case
-                                when vw.match_ret is null and nvl(sum(total_points_total), 0) > 0 then 1000 * trunc(nvl(sum(total_points_won), 0) / nvl(sum(total_points_total), 0), 3)
+                                when nvl(sum(total_points_total), 0) > 0 then 1000 * trunc(nvl(sum(total_points_won), 0) / nvl(sum(total_points_total), 0), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -630,7 +582,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) los_total_won_pml_3y,
                       (select case
-                                when vw.match_ret is null and nvl(sum(service_points_total), 0) > 0 then 1000 * trunc(sum(aces) / sum(service_points_total), 3)
+                                when nvl(sum(service_points_total), 0) > 0 then 1000 * trunc(sum(aces) / sum(service_points_total), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -641,7 +593,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) los_ace_pml_3y_surface,
                       (select case
-                                when vw.match_ret is null and sum(service_points_total) > 0 then 1000 * trunc(sum(double_faults) / sum(service_points_total), 3)
+                                when sum(service_points_total) > 0 then 1000 * trunc(sum(double_faults) / sum(service_points_total), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -652,7 +604,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) los_df_pml_3y_surface,
                       (select case
-                                when vw.match_ret is null and sum(first_serves_total) > 0 then 1000 * trunc(sum(first_serves_in) / sum(first_serves_total), 3)
+                                when sum(first_serves_total) > 0 then 1000 * trunc(sum(first_serves_in) / sum(first_serves_total), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -663,7 +615,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) los_1st_pml_3y_surface,
                       (select case
-                                when vw.match_ret is null and sum(first_serves_in) > 0 then 1000 * trunc(sum(first_serve_points_won) / sum(first_serves_in), 3)
+                                when sum(first_serves_in) > 0 then 1000 * trunc(sum(first_serve_points_won) / sum(first_serves_in), 3)
                                 else null
                               end win_1st_won_pml_3y
                        from vw_player_stats psi
@@ -674,7 +626,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) los_1st_won_pml_3y_surface,
                       (select case
-                                when vw.match_ret is null and sum(second_serve_points_total) > 0 then 1000 * trunc(sum(second_serve_points_won) / sum(second_serve_points_total), 3)
+                                when sum(second_serve_points_total) > 0 then 1000 * trunc(sum(second_serve_points_won) / sum(second_serve_points_total), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -685,7 +637,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) los_2nd_won_pml_3y_surface,
                       (select case
-                                when vw.match_ret is null and sum(break_points_serve_total) > 0 then 1000 * trunc(sum(break_points_saved) / sum(break_points_serve_total), 3)
+                                when sum(break_points_serve_total) > 0 then 1000 * trunc(sum(break_points_saved) / sum(break_points_serve_total), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -696,7 +648,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) los_bp_saved_pml_3y_surface,
                       (select case
-                                when vw.match_ret is null and sum(service_points_total) > 0 then 1000 * trunc(sum(service_points_won) / sum(service_points_total), 3)
+                                when sum(service_points_total) > 0 then 1000 * trunc(sum(service_points_won) / sum(service_points_total), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -707,7 +659,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) los_srv_won_pml_3y_surface,
                       (select case
-                                when vw.match_ret is null and sum(first_serve_return_total) > 0 then 1000 * trunc(sum(first_serve_return_won) / sum(first_serve_return_total), 3)
+                                when sum(first_serve_return_total) > 0 then 1000 * trunc(sum(first_serve_return_won) / sum(first_serve_return_total), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -718,7 +670,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) los_1st_return_won_pml_3y_sur,
                       (select case
-                                when vw.match_ret is null and sum(second_serve_return_total) > 0 then 1000 * trunc(sum(second_serve_return_won) / sum(second_serve_return_total), 3)
+                                when sum(second_serve_return_total) > 0 then 1000 * trunc(sum(second_serve_return_won) / sum(second_serve_return_total), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -729,7 +681,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) los_2nd_return_won_pml_3y_sur,
                       (select case
-                                when vw.match_ret is null and nvl(sum(break_points_return_total), 0) > 0 then 1000 * trunc(nvl(sum(break_points_converted), 0) / nvl(sum(break_points_return_total), 0), 3)
+                                when nvl(sum(break_points_return_total), 0) > 0 then 1000 * trunc(nvl(sum(break_points_converted), 0) / nvl(sum(break_points_return_total), 0), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -740,7 +692,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) los_bp_won_pml_3y_surface,
                       (select case
-                                when vw.match_ret is null and nvl(sum(return_points_total), 0) > 0 then 1000 * trunc(nvl(sum(return_points_won), 0) / nvl(sum(return_points_total), 0), 3)
+                                when nvl(sum(return_points_total), 0) > 0 then 1000 * trunc(nvl(sum(return_points_won), 0) / nvl(sum(return_points_total), 0), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -751,7 +703,7 @@ begin
                          and psi.tournament_ord_start_dtm <  vw.tournament_ord_start_dtm
                       ) los_return_won_pml_3y_surface,
                       (select case
-                                when vw.match_ret is null and nvl(sum(total_points_total), 0) > 0 then 1000 * trunc(nvl(sum(total_points_won), 0) / nvl(sum(total_points_total), 0), 3)
+                                when nvl(sum(total_points_total), 0) > 0 then 1000 * trunc(nvl(sum(total_points_won), 0) / nvl(sum(total_points_total), 0), 3)
                                 else null
                               end qty
                        from vw_player_stats psi
@@ -766,28 +718,28 @@ begin
                        where t.id = pp.tournament_id
                          and pp.player_code = vw.winner_code
                          and t.start_dtm >= vw.tournament_start_dtm - cv_3_years
-                         and t.start_dtm <  vw.tournament_ord_start_dtm
+                         and t.start_dtm <  vw.tournament_start_dtm
                       ) winner_3y_points,
                       (select sum(pp.points) qty
                        from atp_tournaments t, player_points pp
                        where t.id = pp.tournament_id
                          and pp.player_code = vw.winner_code
                          and t.start_dtm >= vw.tournament_start_dtm - cv_52_weeks
-                         and t.start_dtm <  vw.tournament_ord_start_dtm
+                         and t.start_dtm <  vw.tournament_start_dtm
                       ) winner_1y_points,
                       (select sum(pp.points) qty
                        from atp_tournaments t, player_points pp
                        where t.id = pp.tournament_id
                          and pp.player_code = vw.loser_code
                          and t.start_dtm >= vw.tournament_start_dtm - cv_3_years
-                         and t.start_dtm <  vw.tournament_ord_start_dtm
+                         and t.start_dtm <  vw.tournament_start_dtm
                       ) loser_3y_points,
                       (select sum(pp.points) qty
                        from atp_tournaments t, player_points pp
                        where t.id = pp.tournament_id
                          and pp.player_code = vw.loser_code
                          and t.start_dtm >= vw.tournament_start_dtm - cv_52_weeks
-                         and t.start_dtm <  vw.tournament_ord_start_dtm
+                         and t.start_dtm <  vw.tournament_start_dtm
                       ) loser_1y_points,
                       (select sum(pp.points) qty
                        from atp_tournaments t, player_points pp
@@ -795,7 +747,7 @@ begin
                          and t.id = pp.tournament_id
                          and pp.player_code = vw.winner_code
                          and t.start_dtm >= vw.tournament_start_dtm - cv_3_years
-                         and t.start_dtm <  vw.tournament_ord_start_dtm
+                         and t.start_dtm <  vw.tournament_start_dtm
                       ) winner_3y_points_surface,
                       (select sum(pp.points) qty
                        from atp_tournaments t, player_points pp
@@ -803,7 +755,7 @@ begin
                          and t.id = pp.tournament_id
                          and pp.player_code = vw.winner_code
                          and t.start_dtm >= vw.tournament_start_dtm - cv_52_weeks
-                         and t.start_dtm <  vw.tournament_ord_start_dtm
+                         and t.start_dtm <  vw.tournament_start_dtm
                       ) winner_1y_points_surface,
                       (select sum(pp.points) qty
                        from atp_tournaments t, player_points pp
@@ -811,7 +763,7 @@ begin
                          and t.id = pp.tournament_id
                          and pp.player_code = vw.loser_code
                          and t.start_dtm >= vw.tournament_start_dtm - cv_3_years
-                         and t.start_dtm <  vw.tournament_ord_start_dtm
+                         and t.start_dtm <  vw.tournament_start_dtm
                       ) loser_3y_points_surface,
                       (select sum(pp.points) qty
                        from atp_tournaments t, player_points pp
@@ -819,7 +771,7 @@ begin
                          and t.id = pp.tournament_id
                          and pp.player_code = vw.loser_code
                          and t.start_dtm >= vw.tournament_start_dtm - cv_52_weeks
-                         and t.start_dtm <  vw.tournament_ord_start_dtm
+                         and t.start_dtm <  vw.tournament_start_dtm
                       ) loser_1y_points_surface
               from vw_matches vw
               where vw.id in (select c.column_value from table(p_match_ids) c)) i) s
