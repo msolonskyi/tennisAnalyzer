@@ -161,7 +161,7 @@ where m.tournament_id = t.id
   and m.stadie_id = st.id
   and p.id = m.winner_id
   and p.atp_code is not null
-union all`
+union all
 select m.id                            as match_score_id,
        t.id                            as tournament_id,
        t.name                          as tournament_name,
