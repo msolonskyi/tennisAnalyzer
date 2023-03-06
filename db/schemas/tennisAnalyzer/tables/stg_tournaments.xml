@@ -23,4 +23,3 @@
     <column name="country_code"      type="varchar2(3)"/>
   </columns>
 </table>
-
