@@ -1,0 +1,6 @@
+﻿lxml
+requests
+logzero
+cx_Oracle
+selenium
+csv
