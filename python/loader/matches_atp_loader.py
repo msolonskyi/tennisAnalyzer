@@ -64,6 +64,8 @@ class MatchesATPLoader(MatchesBaseLoader):
                     continue
                 if 'Champions Tour' in stadie_name_array[i]:
                     continue
+                if 'International Jr Event' in stadie_name_array[i]:
+                    continue
                 stadie_id = self.remap_stadie_code(stadie_name_array[i])
                 stadie_count_array = tree.xpath("//table[contains(@class, 'day-table')]/tbody[" + str(i + 1) + "]/tr/td[contains(@class, 'day-table-name')][1]/a/text()")
                 for j in range(0, len(stadie_count_array)):
@@ -75,6 +77,9 @@ class MatchesATPLoader(MatchesBaseLoader):
                         winner_url = ATP_URL_PREFIX + self.remap_player_atp_url(winner_url_array[0])
                         winner_url_split = winner_url.split('/')
                         winner_code = winner_url_split[6]
+                        if len(winner_code) > 4:
+                            logzero.logger.warning(f'len of winner_code {winner_code} = {len(winner_code)} is more then 4')
+                            continue
                     except Exception as e:
                         winner_name = winner_name_array[0].replace('\n', '').replace('\r', '').replace('\t', '').strip()
                         if winner_name in ('Bye', 'Bye1', 'Bye2', 'Bye3'):
