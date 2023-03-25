@@ -46,7 +46,7 @@ class BaseFullExtractor(BaseExtractor):
             cur = self.con.cursor()
             cur.execute(self.sql)
             column_names = [row[0].lower() for row in cur.description]
-            csv_file = open(self.CSVFILE_NAME, 'w', encoding='utf-8')
+            csv_file = open(self.CSVFILE_NAME, 'w', encoding = 'utf-8', newline = '')
             writer = csv.writer(csv_file)
             writer.writerow(column_names)
             for row in cur:
@@ -67,7 +67,7 @@ class BaseYearlyExtractor(BaseExtractor):
             cur = self.con.cursor()
             cur.execute(self.sql, {'year': self.year})
             column_names = [row[0].lower() for row in cur.description]
-            csv_file = open(self.CSVFILE_NAME, 'w', encoding='utf-8')
+            csv_file = open(self.CSVFILE_NAME, 'w', encoding = 'utf-8', newline = '')
             writer = csv.writer(csv_file)
             writer.writerow(column_names)
             for row in cur:
