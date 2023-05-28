@@ -1,0 +1,33 @@
+#!/bin/bash
+
+P=`dirname $0`
+if [ "$P" == "." ] ; then
+    P=`pwd`
+fi
+
+GO_LOG=${P}/go.log
+GO_RUN=${P}/go.run
+GO_STOP=${P}/go.stop
+GO_LAST=${P}/go.last
+GO_SH=${P}/run.sh
+
+if [ -f ${GO_STOP} ] ; then
+    date '+%n!%d/%m/%y %H:%M:%S pid='$$' The task is blocked. Check file '${GO_STOP}'' |tee -a ${GO_LOG}
+    exit 0
+fi
+
+if [ -f ${GO_RUN} ] ; then
+    date '+%n!%d/%m/%y %H:%M:%S pid='$$' The task may be in process now. Check file '${GO_RUN}'' |tee -a ${GO_LOG}
+    exit 0
+fi
+
+date '+%d/%m/%y %H:%M:%S pid='$$''>${GO_RUN}
+date '+%d/%m/%y %H:%M:%S pid='$$''>${GO_LAST}
+
+date '++%d/%m/%y %H:%M:%S pid='$$' [sql] start' |tee -a ${GO_LOG}
+echo ====================================================  |tee -a ${GO_LOG}
+${GO_SH} |tee -a ${GO_LOG}
+echo ====================================================  |tee -a ${GO_LOG}
+date '++%d/%m/%y %H:%M:%S pid='$$' [sql] stop' |tee -a ${GO_LOG}
+
+rm ${GO_RUN}

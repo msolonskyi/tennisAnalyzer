@@ -1,0 +1,3 @@
+# 
+10 4 * * * /home/opc/projects/tennis/0.0.load_atp_all/GO
+10 10 * * 0 /home/opc/projects/tennis/0.6.atp.commit.and.push/GO

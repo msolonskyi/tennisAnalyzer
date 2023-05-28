@@ -1,0 +1,12 @@
+#!/bin/bash
+
+P=`dirname $0`
+if [ "$P" == "." ] ; then
+    P=`pwd`
+fi
+
+GO_LOG=${P}/go.log
+GO_STOP=${P}/go.stop
+
+date '+%d/%m/%y %H:%M:%S'>${GO_STOP}
+date '+%n!%d/%m/%y %H:%M:%S Created '${GO_STOP}'' |tee -a ${GO_LOG}
