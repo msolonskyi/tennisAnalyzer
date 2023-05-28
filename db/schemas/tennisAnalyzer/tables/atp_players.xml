@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
   <table name="atp_players" type="normal">
   <columns>
-    <column name="code"        type="varchar2(4)"  nullable="n"/>
-    <column name="delta_hash"  type="number"        nullable="n"/>
-    <column name="batch_id"    type="number(12)"    nullable="n"/>
+    <column name="code"        type="varchar2(4)" nullable="n"/>
+    <column name="delta_hash"  type="number"      nullable="n"/>
+    <column name="batch_id"    type="number(12)"  nullable="n"/>
     <column name="url"         type="varchar2(128)"/>
     <column name="first_name"  type="varchar2(128)"/>
     <column name="last_name"   type="varchar2(128)"/>
