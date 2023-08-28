@@ -68,4 +68,9 @@ PLAYERS_ATP_URL_MAP = {
     '/en/players/derek-pham/sr:competitor:675135/overview': '/en/players/derek-pham/p0kj/overview',
     '/en/players/adam-walton/sr:competitor:227358/overview': '/en/players/adam-walton/w09e/overview',
     '/en/players/jeremy-jin/sr:competitor:754563/overview': '/en/players/jeremy-jin/j0d4/overview',
+    '/en/players/patrick-kypson/sr:competitor:234046/overview': '/en/players/patrick-kypson/k0a3/overview',
+    '/en/players/felipe-meligeni-alves/sr:competitor:121668/overview': '/en/players/felipe-meligeni-alves/mw75/overview',
+    '/en/players/johannus-monday/sr:competitor:565070/overview': '/en/players/johannus-monday/m0on/overview',
+    '/en/players/toby-samuel/sr:competitor:603106/overview': '/en/players/toby-samuel/s0tm/overview',
+    '/en/players/harry-wendelken/sr:competitor:381022/overview': '/en/players/harry-wendelken/w0ah/overview',
     '': ''}
