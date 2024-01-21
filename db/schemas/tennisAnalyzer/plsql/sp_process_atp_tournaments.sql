@@ -45,8 +45,8 @@ begin
                        when t.series_category_id in ('chFinal', 'gsCup') then t.series_category_id
                        else nvl(g.series, t.series_category_id)
                      end as series_category_id,
-                     to_date(g.start_dtm, 'yyyymmdd') as start_dtm,
-                     to_date(g.finish_dtm, 'yyyymmdd') as finish_dtm,
+                     to_date(g.start_dtm, 'dd.mm.yyyy') as start_dtm,
+                     to_date(g.finish_dtm, 'dd.mm.yyyy') as finish_dtm,
                      g.sgl_draw_qty,
                      g.dbl_draw_qty,
                      g.prize_money,

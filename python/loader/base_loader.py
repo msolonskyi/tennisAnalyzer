@@ -1,4 +1,4 @@
-from constants import CONNECTION_STRING, INDOOR_OUTDOOR_MAP, SURFACE_MAP, COUNTRY_NAME_MAP, COUNTRY_CODE_MAP, STADIE_CODES_MAP, PLAYERS_ATP_URL_MAP
+from constants import CONNECTION_STRING, INDOOR_OUTDOOR_MAP, SURFACE_MAP, COUNTRY_NAME_MAP, COUNTRY_CODE_MAP, STADIE_CODES_MAP, PLAYERS_ATP_URL_MAP, CITY_COUNTRY_MAP, WEBDRIVER_CHROME_EXECUTABLE_PATH, WEBDRIVER_PHANTOMJS_EXECUTABLE_PATH
 from ctypes import Array
 import cx_Oracle
 import requests
@@ -6,6 +6,7 @@ import logzero
 import csv
 import os
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 
 
 class BaseLoader(object):
@@ -53,6 +54,13 @@ class BaseLoader(object):
             return country_name
 
     @staticmethod
+    def remap_country_name_by_location(location: str, country_name: str) -> str:
+        if location in CITY_COUNTRY_MAP:
+            return CITY_COUNTRY_MAP.get(location)
+        else:
+            return country_name
+
+    @staticmethod
     def remap_country_code(country_code: str) -> str:
         if country_code in COUNTRY_CODE_MAP:
             return COUNTRY_CODE_MAP.get(country_code)
@@ -85,24 +93,54 @@ class BaseLoader(object):
         'November' : '11',
         'December' : '12'
         }
-        date_arr = date.split(' ')        
+        date_arr = date.split(' ')
         try:
             date_arr[1] = m[date_arr[1]]
             out = ' '.join(date_arr)
             return out
         except:
             raise ValueError('Not a month')
-    
-    def _request_url_by_webdriver(self):
-        if self.url is not None and self.url != '':
-            logzero.logger.info(f'processing {self.url} by webdriver')
-            browser = webdriver.PhantomJS(executable_path=r"C:\\usr\\projects\\webdrivers\\phantomjs-2.1.1-windows\\bin\\phantomjs.exe")
-            browser.get(self.url)
+
+    # returns date_start and date_end in format dd.mm.yyyy
+    @staticmethod
+    def parse_tournament_dates(dates: str) -> (str, str):
+        if dates is None or dates == '':
+            return ''
+        dates_arr = dates.replace(',', '').split('-')
+        dates_arr = [i.strip() for i in dates_arr]
+
+        start_date_arr = dates_arr[0].split(' ')
+        start_date_arr = [i.strip() for i in start_date_arr]
+        finish_date_arr = dates_arr[1].split(' ')
+        finish_date_arr = [i.strip() for i in finish_date_arr]
+
+        finish_date = BaseLoader.nornalyze_date_str(dates_arr[1]).replace(' ', '.')
+        n = len(start_date_arr)
+        if n == 1:
+            start_date = BaseLoader.nornalyze_date_str(' '.join([start_date_arr[0], finish_date_arr[1], finish_date_arr[2]])).replace(' ', '.')
+        elif n == 2:
+            start_date = BaseLoader.nornalyze_date_str(' '.join([start_date_arr[0], start_date_arr[1], finish_date_arr[2]])).replace(' ', '.')
+        elif n == 3:
+            start_date = BaseLoader.nornalyze_date_str(dates_arr[1]).replace(' ', '.')
+        else:
+            start_date = None
+            logzero.logger.info(f'can not parse dates: {dates}')
+
+        return (start_date, finish_date)
+
+    def _request_url_by_webdriver(self, url: str) -> str:
+        if url is None and url == '':
+            logzero.logger.info(f'input url is empty, replacing by self.url {self.url}')
+            url = self.url
+        if url is not None and url != '':
+            logzero.logger.info(f'processing {url} by webdriver')
+            browser = webdriver.PhantomJS(executable_path=WEBDRIVER_PHANTOMJS_EXECUTABLE_PATH)
+            browser.get(url)
             content = browser.page_source
             browser.close()
-            self.responce_str = content
+            return content
         else:
-            self.responce_str = None
+            return None
 
     def _request_url(self):
         if self.url is not None and self.url != '':
@@ -112,16 +150,21 @@ class BaseLoader(object):
         else:
             self.responce_str = None
 
-    def _request_url_by_chrome(self):
-        if self.url is not None and self.url != '':
-            logzero.logger.info(f'processing {self.url} by chrome webdriver')
-            browser = webdriver.Chrome(executable_path=r"C:\\usr\\projects\\webdrivers\\ChromeDriver\\106.0.5249.61\\chromedriver.exe")
-            browser.get(self.url)
+    def _request_url_by_chrome(self, url: str) -> str:
+        if url is None and url == '':
+            logzero.logger.info(f'input url is empty, replacing by self.url {self.url}')
+            url = self.url
+        if url is not None and url != '':
+            logzero.logger.info(f'processing {url} by webdriver')
+            options = Options()
+            options.add_argument("--headless")
+            browser = webdriver.Chrome(executable_path=WEBDRIVER_CHROME_EXECUTABLE_PATH, options=options)
+            browser.get(url)
             content = browser.page_source
             browser.close()
-            self.responce_str = content
+            return content
         else:
-            self.responce_str = None
+            return None
 
     def _truncate_table(self):
         try:

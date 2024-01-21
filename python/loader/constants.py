@@ -4,13 +4,15 @@ BORDER_QTY = 5  # minimun matches per year per player for reload player
 ATP_URL_PREFIX = 'http://www.atpworldtour.com'
 DC_URL_PREFIX = 'https://www.daviscup.com'
 ITF_URL_PREFIX = 'https://www.itftennis.com'
-ATP_TOURNAMENT_SERIES = ('gs', '1000', 'atp', 'ch')
-ITF_TOURNAMENT_SERIES = ('fu')
-DC_TOURNAMENT_SERIES = ('dc',)
+ATP_TOURNAMENT_SERIES = ['gs', '1000', 'atp', 'ch']
+ITF_TOURNAMENT_SERIES = ['fu',]
+DC_TOURNAMENT_SERIES = ['dc',]
 DURATION_IN_DAYS = 22
 ATP_CSV_PATH = ''
 DC_CSV_PATH = ''
 SLEEP_DURATION = 10
+WEBDRIVER_PHANTOMJS_EXECUTABLE_PATH = ''
+WEBDRIVER_CHROME_EXECUTABLE_PATH = ''
 
 MONTHS_MAP = {
     'Jan' : '01',
@@ -73,4 +75,18 @@ PLAYERS_ATP_URL_MAP = {
     '/en/players/johannus-monday/sr:competitor:565070/overview': '/en/players/johannus-monday/m0on/overview',
     '/en/players/toby-samuel/sr:competitor:603106/overview': '/en/players/toby-samuel/s0tm/overview',
     '/en/players/harry-wendelken/sr:competitor:381022/overview': '/en/players/harry-wendelken/w0ah/overview',
+    '': ''}
+
+CITY_COUNTRY_MAP = {
+    'Buenos Aires': 'Argentina',
+    'Burnie': 'Australia',
+    'Canberra': 'Australia',
+    'Cincinnati': 'United States',
+    'Glasgow': 'Great Britain',
+    'Hamburg': 'Germany',
+    'Indian Wells': 'United States',
+    'Lugano': 'Switzerland',
+    'Naples': 'Italy',
+    'Nottingham': 'Great Britain',
+    'Tenerife': 'Spain',
     '': ''}
