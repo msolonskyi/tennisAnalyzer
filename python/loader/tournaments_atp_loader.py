@@ -103,6 +103,8 @@ class TournamentsATPLoader(BaseLoader):
                         tournament_series_category = 'laverCup'
                     elif tournament_banner_array[i] == '/assets/atpwt/images/tournament/badges/categorystamps_nextgen.svg':
                         tournament_series_category = 'nextGen'
+                    elif tournament_banner_array[i] == '/assets/atpwt/images/tournament/badges/categorystamps_1000.png':
+                        tournament_series_category = '1000'
                     else:
                         tournament_series_category = 'atp250'
 

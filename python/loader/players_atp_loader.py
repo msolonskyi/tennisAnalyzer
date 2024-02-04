@@ -53,31 +53,33 @@ where m.loser_code = l.code
     def _parse_player(self, url: str):
         try:
             self.url = url
-            self._request_url()
-            tree = html.fromstring(self.responce_str)
+            tree = html.fromstring(self._request_url_by_chrome(self.url))
 
             url_split = url.split('/')
 
             player_code = url_split[6]
             player_slug = url_split[5]
 
-            first_name_array = tree.xpath("//div[contains(@class, 'first-name')]/text()")
-            if len(first_name_array) > 0:
-                first_name = first_name_array[0].strip()
+            name_array = tree.xpath("//div[@class='player_name']/span/text()")
+            if len(name_array) > 0:
+                names = name_array[0].strip().split(' ')
+                if len(names) >= 2:
+                    first_name = names[0]
+                    last_name = ' '.join(names[1:])
+                else:
+                    first_name = ''
+                    last_name = ''
             else:
                 first_name = ''
-
-            last_name_array = tree.xpath("//div[contains(@class, 'last-name')]/text()")
-            if len(last_name_array) > 0:
-                last_name = last_name_array[0].strip()
-            else:
                 last_name = ''
+            #logzero.logger.info(f'name: {first_name}, {last_name}')
 
-            flag_code_array = tree.xpath("//div[contains(@class, 'player-flag-code')]/text()")
-            if len(flag_code_array) > 0:
-                flag_code = flag_code_array[0].strip()
+            flag_code_url_array = tree.xpath("//span[@class='flag']/img/@src")
+            if len(flag_code_url_array) > 0:
+                flag_code = flag_code_url_array[0].strip().upper()[-7:-4]
             else:
                 flag_code = ''
+            #logzero.logger.info(f'flag: {flag_code}')
 
             flag_code = self.remap_country_code(flag_code)
 
@@ -85,27 +87,35 @@ where m.loser_code = l.code
             birthplace = ''
 
             # yyyy.mm.dd format
-            birthdate_array = tree.xpath("//span[contains(@class, 'table-birthday')]/text()")
-            if len(birthdate_array) > 1:
-                birthdate = birthdate_array[1].replace('\n', '').replace('\r', '').replace('\t', '').replace('(', '').replace(')', '').strip()
+            birthdate_array = tree.xpath("//div[@class='pd_content']/ul[@class='pd_left']/li[1]/span[2]/text()")
+            if len(birthdate_array) > 0:
+                birthdate = birthdate_array[0].replace('\n', '').replace('\r', '').replace('\t', '').replace('(', '').replace(')', '').strip()[3:]
             else:
                 birthdate = ''
+            #logzero.logger.info(f'birthdate: {birthdate}')
 
-            turned_pro = ''
+            turned_pro_array = tree.xpath("//div[@class='pd_content']/ul[@class='pd_left']/li[4]/span[2]/text()")
+            if len(turned_pro_array) > 0:
+                turned_pro = turned_pro_array[0].replace('\n', '').replace('\r', '').replace('\t', '').replace('(', '').replace(')', '')
+            else:
+                turned_pro = ''
+            #logzero.logger.info(f'turned_pro: {turned_pro}')
 
-            weight_kg_array = tree.xpath("//span[contains(@class, 'table-weight-kg-wrapper')]/text()")
+            weight_kg_array = tree.xpath("//div[@class='pd_content']/ul[@class='pd_left']/li[2]/span[2]/text()")
             if len(weight_kg_array) > 0:
-                weight_kg = weight_kg_array[0].replace('(', '').replace(')', '').replace('kg', '').strip()
+                weight_kg = weight_kg_array[0].replace('\n', '').replace('\r', '').replace('\t', '').replace('(', '').replace(')', '').replace('kg', '').strip()[8:]
             else:
                 weight_kg = ''
+            #logzero.logger.info(f'weight_kg: {weight_kg}')
 
-            height_cm_array = tree.xpath("//span[contains(@class, 'table-height-cm-wrapper')]/text()")
+            height_cm_array = tree.xpath("//div[@class='pd_content']/ul[@class='pd_left']/li[3]/span[2]/text()")
             if len(height_cm_array) > 0:
-                height_cm = height_cm_array[0].replace('(', '').replace(')', '').replace('cm', '').strip()
+                height_cm = height_cm_array[0].replace('\n', '').replace('\r', '').replace('\t', '').replace('(', '').replace(')', '').replace('cm', '').strip()[-3:]
             else:
                 height_cm = ''
+            #logzero.logger.info(f'height_cm: {height_cm}')
 
-            handedness_backhand_array = tree.xpath("//tr[2]/td[2]/div[contains(@class, 'wrap')]/div[contains(@class, 'table-value')]/text()")
+            handedness_backhand_array = tree.xpath("//ul[@class='pd_right']/li/span[2]/text()")
             if len(handedness_backhand_array) > 0:
                 handedness_backhand = handedness_backhand_array[0].replace('\n', '').replace('\r', '').replace('\t', '').strip()
                 handedness_backhand_array = handedness_backhand.split(',')
@@ -118,6 +128,7 @@ where m.loser_code = l.code
             else:
                 handedness = ''
                 backhand = ''
+            #logzero.logger.info(f'handedness/backhand: {handedness}/{backhand}')
 
             self.data.append([player_code, player_slug, first_name, last_name, url, flag_code, residence, birthplace, birthdate, turned_pro, weight_kg, height_cm, handedness, backhand])
 
