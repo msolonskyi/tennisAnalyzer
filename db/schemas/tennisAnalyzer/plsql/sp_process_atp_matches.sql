@@ -54,6 +54,7 @@ begin
                i.winner_tiebreaks_won,
                i.loser_tiebreaks_won,
                i.match_ret,
+               nvl(i.match_duration, m.match_duration) as match_duration,
                sf_atp_matches_delta_hash(
                  pv_id                         => i.id,
                  pv_tournament_id              => i.tournament_id,
@@ -75,7 +76,7 @@ begin
                  pn_winner_tiebreaks_won       => i.winner_tiebreaks_won,
                  pn_loser_tiebreaks_won        => i.loser_tiebreaks_won,
                  pv_stats_url                  => nvl(i.stats_url, m.stats_url),
-                 pn_match_duration             => m.match_duration,
+                 pn_match_duration             => nvl(i.match_duration, m.match_duration),
                  pn_win_aces                   => m.win_aces,
                  pn_win_double_faults          => m.win_double_faults,
                  pn_win_first_serves_in        => m.win_first_serves_in,
@@ -162,6 +163,7 @@ begin
                      sm.winner_tiebreaks_won,
                      sm.loser_tiebreaks_won,
                      sm.match_ret,
+                     sm.match_duration,
                      row_number() over (partition by sm.id order by sm.match_order) rn
               from stg_matches sm) i,
              atp_matches m
@@ -190,6 +192,7 @@ begin
       d.loser_games_won      = s.loser_games_won,
       d.winner_tiebreaks_won = s.winner_tiebreaks_won,
       d.loser_tiebreaks_won  = s.loser_tiebreaks_won,
+      d.match_duration       = s.match_duration,
       d.stats_url            = nvl(s.stats_url, d.stats_url)
     where d.delta_hash != s.delta_hash;
   vn_qty := sql%rowcount;

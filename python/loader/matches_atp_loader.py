@@ -16,7 +16,7 @@ class MatchesATPLoader(MatchesBaseLoader):
         self.LOGFILE_NAME = os.path.splitext(os.path.basename(__file__))[0] + '.log'
         self.CSVFILE_NAME = ''
         self.TABLE_NAME = 'stg_matches'
-        self.INSERT_STR = 'insert into stg_matches (id, tournament_id, stadie_id, match_order, winner_code, winner_url, loser_code, loser_url, winner_seed, loser_seed, score, stats_url, match_ret, winner_sets_won, loser_sets_won, winner_games_won, loser_games_won, winner_tiebreaks_won, loser_tiebreaks_won) values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19)'
+        self.INSERT_STR = 'insert into stg_matches (id, tournament_id, stadie_id, match_order, winner_code, winner_url, loser_code, loser_url, winner_seed, loser_seed, score, stats_url, match_ret, winner_sets_won, loser_sets_won, winner_games_won, loser_games_won, winner_tiebreaks_won, loser_tiebreaks_won, match_duration) values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20)'
         self.PROCESS_PROC_NAMES = ['sp_process_atp_matches', 'sp_apply_points_rules', 'sp_calculate_player_points']
         super()._init()
 
@@ -239,7 +239,21 @@ class MatchesATPLoader(MatchesBaseLoader):
                         match_stats_url = ''
                 # Match order
                 match_order = ''
+                # Match duration
+                #logzero.logger.info('Match duration')
+                match_duration_array = match_node.xpath("./div[@class='match-header']/span[2]/text()")
+                if len(match_duration_array) > 0:
+                    try:
+                        match_time_split = match_duration_array[0].strip().split(':')
+                        match_duration = 60 * int(match_time_split[0]) + int(match_time_split[1])
+                        #logzero.logger.warning(f'match_time_split: {match_time_split}')
+                    except Exception as e:
+                        logzero.logger.warning(f'match time: {str(e)}')
+                        match_duration = None
+                else:
+                    logzero.logger.warning(f'len(match_duration_array) == 0: {match_id}')
+                    match_duration = None
                 # Store data
-                self.data.append([match_id, tournament_id, stadie_id, match_order, winner_code, winner_url, loser_code, loser_url, winner_seed, loser_seed, match_score, match_stats_url] + score_array)
+                self.data.append([match_id, tournament_id, stadie_id, match_order, winner_code, winner_url, loser_code, loser_url, winner_seed, loser_seed, match_score, match_stats_url] + score_array + [match_duration,])
         except Exception as e:
             logzero.logger.error(f'url: {url}; Error: {str(e)}')
