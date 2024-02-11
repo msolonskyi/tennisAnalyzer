@@ -416,8 +416,10 @@ insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2023-404-x517-x529-R32', null, null, 'Y');
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2023-404-x532-x518-R32', null, null, 'Y');
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2024-424-me82-d994-QF', '62 31 RET', null, null);
 commit;
-prompt 205 records loaded
+prompt 206 records loaded
 
 set feedback on
 set define on
