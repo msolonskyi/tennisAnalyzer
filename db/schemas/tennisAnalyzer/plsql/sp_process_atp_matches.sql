@@ -171,8 +171,8 @@ begin
           and i.rn = 1) s
   on (s.id = d.id)
   when not matched then
-    insert (d.id, d.delta_hash, d.batch_id,          d.tournament_id, d.stadie_id, d.match_order, d.match_ret, d.winner_code, d.loser_code, d.winner_seed, d.loser_seed, d.score, d.winner_sets_won, d.loser_sets_won, d.winner_games_won, d.loser_games_won, d.winner_tiebreaks_won, d.loser_tiebreaks_won, d.stats_url)
-    values (s.id, s.delta_hash, pkg_log.gn_batch_id, s.tournament_id, s.stadie_id, s.match_order, s.match_ret, s.winner_code, s.loser_code, s.winner_seed, s.loser_seed, s.score, s.winner_sets_won, s.loser_sets_won, s.winner_games_won, s.loser_games_won, s.winner_tiebreaks_won, s.loser_tiebreaks_won, s.stats_url)
+    insert (d.id, d.delta_hash, d.batch_id,          d.tournament_id, d.stadie_id, d.match_order, d.match_ret, d.winner_code, d.loser_code, d.winner_seed, d.loser_seed, d.score, d.winner_sets_won, d.loser_sets_won, d.winner_games_won, d.loser_games_won, d.winner_tiebreaks_won, d.loser_tiebreaks_won, d.stats_url, d.match_duration)
+    values (s.id, s.delta_hash, pkg_log.gn_batch_id, s.tournament_id, s.stadie_id, s.match_order, s.match_ret, s.winner_code, s.loser_code, s.winner_seed, s.loser_seed, s.score, s.winner_sets_won, s.loser_sets_won, s.winner_games_won, s.loser_games_won, s.winner_tiebreaks_won, s.loser_tiebreaks_won, s.stats_url, s.match_duration)
   when matched then
     update set
       d.delta_hash           = s.delta_hash,

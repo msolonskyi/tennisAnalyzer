@@ -15,7 +15,6 @@ begin
   --
   merge into atp_matches d
   using(select m.stats_url,
-               nvl(s.match_duration,                m.match_duration)                as match_duration,
                nvl(s.win_aces,                      m.win_aces)                      as win_aces,
                nvl(s.win_double_faults,             m.win_double_faults)             as win_double_faults,
                nvl(s.win_first_serves_in,           m.win_first_serves_in)           as win_first_serves_in,
@@ -90,7 +89,7 @@ begin
                  pn_winner_tiebreaks_won       => m.winner_tiebreaks_won,
                  pn_loser_tiebreaks_won        => m.loser_tiebreaks_won,
                  pv_stats_url                  => m.stats_url,
-                 pn_match_duration             => nvl(s.match_duration,                m.match_duration),
+                 pn_match_duration             => m.match_duration,
                  pn_win_aces                   => nvl(s.win_aces,                      m.win_aces),
                  pn_win_double_faults          => nvl(s.win_double_faults,             m.win_double_faults),
                  pn_win_first_serves_in        => nvl(s.win_first_serves_in,           m.win_first_serves_in),
@@ -165,7 +164,6 @@ begin
     update set
       d.delta_hash                    = s.delta_hash,
       d.batch_id                      = pkg_log.gn_batch_id,
-      d.match_duration                = s.match_duration,
       d.win_aces                      = s.win_aces,
       d.win_double_faults             = s.win_double_faults,
       d.win_first_serves_in           = s.win_first_serves_in,
