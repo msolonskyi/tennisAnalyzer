@@ -212,7 +212,23 @@ select m.id,
        e.winner_3y_points_surface,
        e.winner_1y_points_surface,
        e.loser_3y_points_surface,
-       e.loser_1y_points_surface
+       e.loser_1y_points_surface,
+       case
+         when match_ret is null then 1000 * round(winner_games_won / (winner_games_won + loser_games_won), 3)
+         else null
+       end as winner_probability_pml,
+       case
+         when match_ret is null then 1000 * round(loser_games_won / (winner_games_won + loser_games_won), 3)
+         else null
+       end as loser_probability_pml,
+       case
+         when w.citizenship = t.country_code then 1
+         else 0
+       end as winner_citizenship_num,
+       case
+         when l.citizenship = t.country_code then 1
+         else 0
+       end as loser_citizenship_num
 from dc_matches m, dc_tournaments t, dc_players d_w, dc_players d_l, stadies st, series_category sc, series se, atp_players w, atp_players l, atp_matches_enriched e
 where m.winner_id = d_w.id
   and m.loser_id = d_l.id
