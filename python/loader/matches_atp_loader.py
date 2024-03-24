@@ -69,10 +69,9 @@ class MatchesATPLoader(MatchesBaseLoader):
             tournament_id = tournament_year + '-' + tournament_code
 
             pos_begin = self.responce_str.find('<div class="content content--group">')
-            pos_end = self.responce_str.find('<div class="atp_layout-sidebar">')
-            s = self.responce_str[pos_begin:pos_end - 50]
+            pos_end = self.responce_str.find('<input type="hidden" id="primaryView"')
 
-            tree = html.fromstring(self.responce_str[pos_begin : pos_end - 50])
+            tree = html.fromstring(self.responce_str[pos_begin : pos_end - 30])
 
             match_nodes = tree.findall("./div/div/div/div/div/div/div[@class='match']")
 

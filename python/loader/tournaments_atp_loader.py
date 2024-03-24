@@ -58,16 +58,16 @@ class TournamentsATPLoader(BaseLoader):
                     continue
                 responce_str = self._request_url_by_chrome(ATP_URL_PREFIX + tournament_overview_url)
                 tournament_overview_tree = html.fromstring(responce_str)
-                draw_array = tournament_overview_tree.xpath("//div[@class='td_content']/ul[@class='td_left']/li[1]/span[2]/text()")
+                draw_array = tournament_overview_tree.xpath("//div[@class='td_content']/ul[@class='td_left']/li[2]/span[2]/text()")
 
                 draw_split = draw_array[0].split('/')
                 tournament_sgl_draw_qty = draw_split[0].strip()
                 tournament_dbl_draw_qty = draw_split[1].strip()
 
-                surface_array = tournament_overview_tree.xpath("//div[@class='td_content']/ul[@class='td_left']/li[2]/span[2]/text()")
+                surface_array = tournament_overview_tree.xpath("//div[@class='td_content']/ul[@class='td_left']/li[3]/span[2]/text()")
                 tournament_surface = surface_array[0].strip()
 
-                prize_array = tournament_overview_tree.xpath("//div[@class='td_content']/ul[@class='td_left']/li[3]/span[2]/text()")
+                prize_array = tournament_overview_tree.xpath("//div[@class='td_content']/ul[@class='td_left']/li[4]/span[2]/text()")
 
                 location_array = tournament_overview_tree.xpath("//div[@class='td_content']/ul[@class='td_right']/li[1]/span[2]/text()")
                 tournament_location_array = location_array[0].split(',')
