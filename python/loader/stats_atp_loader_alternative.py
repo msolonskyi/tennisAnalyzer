@@ -25,7 +25,7 @@ class StatsATPLoader(BaseLoader):
             cur = self.con.cursor()
             if self.year is None:
                 # last couple weeks
-                sql = '''select winner_code, loser_code, replace(stats_url, 'stats-centre', 'match-stats') stats_url, stats_url original_stats_url
+                sql = '''select winner_code, loser_code, stats_url
 from vw_matches
 where stats_url is not null
   and series_id != 'dc'
@@ -35,7 +35,7 @@ where stats_url is not null
                 logzero.logger.info(f'Parse stats for last {DURATION_IN_DAYS} days...')
             else:
                 # historical data
-                sql = '''select winner_code, loser_code, replace(stats_url, 'stats-centre', 'match-stats') stats_url, stats_url original_stats_url
+                sql = '''select winner_code, loser_code, stats_url
 from vw_matches
 where stats_url is not null
   and series_id != 'dc'
@@ -55,7 +55,9 @@ where stats_url is not null
 
     @staticmethod
     def _split(val: str) -> list:
-        return val.replace('(', '').replace(')', '').split('/')
+        if '(' in val:
+            val = val.split('(')[0]
+        return val.strip().split('/')
 
     def _strip_array(self, arr: list) -> list:
         return [self._strip(x) for x in arr]
@@ -68,37 +70,37 @@ where stats_url is not null
 
     def _parse_stats(self, url_tpl: tuple):
         try:
-            # 0: winner's code; 1: loser's code; 2: stats_url, 3: original_stats_url
-            url = url_tpl[2]  # + '&ajax=true'
-            original_stats_url = url_tpl[3]
-
-            self.url = url
-            tree = html.fromstring(self._request_url_by_chrome(self.url))
+            # 0: winner's code; 1: loser's code; 2: stats_url
+            url = url_tpl[2]
+            tree = html.fromstring(self._request_url_by_chrome(url, 40).replace('labelBold', 'label').replace('desktopView top-stat', 'desktopView '))
 
             try:
-                left_code = (tree.xpath("//div[@class='stats-item'][1]/div[@class='player-info']/div[@class='name']/a/@href"))[0].split('/')[4]
+                left_code = (tree.xpath("//div[@class='team team1']/div[@class='player']/div[@class='image']/a/@href"))[0].split('/')[6].lower()
             except Exception as e:
                 logzero.logger.warning(f'left_code: {str(e)}')
                 left_code = ''
 
             try:
-                right_code = (tree.xpath("//div[@class='stats-item'][2]/div[@class='player-info']/div[@class='name']/a/@href"))[0].split('/')[4]
+                right_code = (tree.xpath("//div[@class='team team2']/div[@class='player player-r']/div[@class='image']/a/@href"))[0].split('/')[6].lower()
             except Exception as e:
                 logzero.logger.warning(f'right_code: {str(e)}')
                 right_code = ''
 
+            left_player_stats = tree.xpath("//div[@class='desktopView ']/div/div[@class='label player1 non-speed']/span/text()")
+            right_player_stats = tree.xpath("//div[@class='desktopView ']/div/div[@class='label player2 non-speed']/span/text()")
+
             # Match stats
             try:
                 if (url_tpl[0] == left_code) or (url_tpl[1] == right_code):  # OK
-                    winner_stats_parsed = tree.xpath("//div[@class='stats-group-items']/ul/li/div[@class='player-stats-item']/div[@class='value']/text()")
-                    winner_stats_span_parsed = tree.xpath("//div[@class='stats-group-items']/ul/li/div[@class='player-stats-item']/div[@class='value']/span/text()")
-                    loser_stats_parsed = tree.xpath("//div[@class='stats-group-items']/ul/li/div[@class='opponent-stats-item']/div[@class='value']/text()")
-                    loser_stats_span_parsed = tree.xpath("//div[@class='stats-group-items']/ul/li/div[@class='opponent-stats-item']/div[@class='value']/span/text()")
+                    winner_stats_parsed = [x for x in left_player_stats if '/' not in x]
+                    winner_stats_span_parsed = [x for x in left_player_stats if '/' in x]
+                    loser_stats_parsed = [x for x in right_player_stats if '/' not in x]
+                    loser_stats_span_parsed = [x for x in right_player_stats if '/' in x]
                 elif (url_tpl[1] == left_code) or (url_tpl[0] == right_code):  # vice versa
-                    winner_stats_parsed = tree.xpath("//div[@class='stats-group-items']/ul/li/div[@class='opponent-stats-item']/div[@class='value']/text()")
-                    winner_stats_span_parsed = tree.xpath("//div[@class='stats-group-items']/ul/li/div[@class='opponent-stats-item']/div[@class='value']/span/text()")
-                    loser_stats_parsed = tree.xpath("//div[@class='stats-group-items']/ul/li/div[@class='player-stats-item']/div[@class='value']/text()")
-                    loser_stats_span_parsed = tree.xpath("//div[@class='stats-group-items']/ul/li/div[@class='player-stats-item']/div[@class='value']/span/text()")
+                    winner_stats_parsed = [x for x in right_player_stats if '/' not in x]
+                    winner_stats_span_parsed = [x for x in right_player_stats if '/' in x]
+                    loser_stats_parsed = [x for x in left_player_stats if '/' not in x]
+                    loser_stats_span_parsed = [x for x in left_player_stats if '/' in x]
                 else:
                     logzero.logger.warning(f'Can not recognize winner and loser: url_tpl[0]: {url_tpl[0]}; left_code: {left_code}; url_tpl[1]: {url_tpl[1]}; right_code: {right_code}')
                     raise Exception('Can not recognize winner and loser')
@@ -109,8 +111,8 @@ where stats_url is not null
                 loser_stats_span_cleaned = self._strip_array(loser_stats_span_parsed)
 
                 # Winner stats
-                winner_aces = int(winner_stats_cleaned[1])
-                winner_double_faults = int(winner_stats_cleaned[2])
+                winner_aces = int(winner_stats_cleaned[0])
+                winner_double_faults = int(winner_stats_cleaned[1])
 
                 winner_first_serves_in = int(self._split(winner_stats_span_cleaned[0])[0])
                 winner_first_serves_total = int(self._split(winner_stats_span_cleaned[0])[1])
@@ -136,8 +138,8 @@ where stats_url is not null
                 winner_break_points_converted = int(self._split(winner_stats_span_cleaned[6])[0])
                 winner_break_points_return_total = int(self._split(winner_stats_span_cleaned[6])[1])
 
-                winner_service_games_played = int(winner_stats_cleaned[7])
-                winner_return_games_played = int(winner_stats_cleaned[12])
+                winner_service_games_played = int(winner_stats_cleaned[2])
+                winner_return_games_played = int(winner_stats_cleaned[3])
 
                 winner_return_points_won = int(self._split(winner_stats_span_cleaned[8])[0])
                 winner_return_points_total = int(self._split(winner_stats_span_cleaned[8])[1])
@@ -146,8 +148,8 @@ where stats_url is not null
                 winner_total_points_total = int(self._split(winner_stats_span_cleaned[9])[1])
 
                 # Loser stats
-                loser_aces = int(loser_stats_cleaned[1])
-                loser_double_faults = int(loser_stats_cleaned[2])
+                loser_aces = int(loser_stats_cleaned[0])
+                loser_double_faults = int(loser_stats_cleaned[1])
 
                 loser_first_serves_in = int(self._split(loser_stats_span_cleaned[0])[0])
                 loser_first_serves_total = int(self._split(loser_stats_span_cleaned[0])[1])
@@ -173,15 +175,14 @@ where stats_url is not null
                 loser_break_points_converted = int(self._split(loser_stats_span_cleaned[6])[0])
                 loser_break_points_return_total = int(self._split(loser_stats_span_cleaned[6])[1])
 
-                loser_service_games_played = int(loser_stats_cleaned[7])
-                loser_return_games_played = int(loser_stats_cleaned[12])
+                loser_service_games_played = int(loser_stats_cleaned[2])
+                loser_return_games_played = int(loser_stats_cleaned[3])
 
                 loser_return_points_won = int(self._split(loser_stats_span_cleaned[8])[0])
                 loser_return_points_total = int(self._split(loser_stats_span_cleaned[8])[1])
 
                 loser_total_points_won = int(self._split(loser_stats_span_cleaned[9])[0])
                 loser_total_points_total = int(self._split(loser_stats_span_cleaned[9])[1])
-
             except Exception as e:
                 winner_aces = None
                 winner_double_faults = None
@@ -233,7 +234,7 @@ where stats_url is not null
                 loser_total_points_total = None
                 logzero.logger.error(f'Error: {str(e)}')
 
-            self.data.append([original_stats_url, winner_aces, winner_double_faults, winner_first_serves_in, winner_first_serves_total, winner_first_serve_points_won, winner_first_serve_points_total, winner_second_serve_points_won, winner_second_serve_points_total, winner_break_points_saved, winner_break_points_serve_total, winner_service_points_won, winner_service_points_total, winner_first_serve_return_won, winner_first_serve_return_total, winner_second_serve_return_won, winner_second_serve_return_total, winner_break_points_converted, winner_break_points_return_total, winner_service_games_played, winner_return_games_played, winner_return_points_won, winner_return_points_total, winner_total_points_won, winner_total_points_total, loser_aces, loser_double_faults, loser_first_serves_in, loser_first_serves_total, loser_first_serve_points_won, loser_first_serve_points_total, loser_second_serve_points_won, loser_second_serve_points_total, loser_break_points_saved, loser_break_points_serve_total, loser_service_points_won, loser_service_points_total, loser_first_serve_return_won, loser_first_serve_return_total, loser_second_serve_return_won, loser_second_serve_return_total, loser_break_points_converted, loser_break_points_return_total, loser_service_games_played, loser_return_games_played, loser_return_points_won, loser_return_points_total, loser_total_points_won, loser_total_points_total])
+            self.data.append([url, winner_aces, winner_double_faults, winner_first_serves_in, winner_first_serves_total, winner_first_serve_points_won, winner_first_serve_points_total, winner_second_serve_points_won, winner_second_serve_points_total, winner_break_points_saved, winner_break_points_serve_total, winner_service_points_won, winner_service_points_total, winner_first_serve_return_won, winner_first_serve_return_total, winner_second_serve_return_won, winner_second_serve_return_total, winner_break_points_converted, winner_break_points_return_total, winner_service_games_played, winner_return_games_played, winner_return_points_won, winner_return_points_total, winner_total_points_won, winner_total_points_total, loser_aces, loser_double_faults, loser_first_serves_in, loser_first_serves_total, loser_first_serve_points_won, loser_first_serve_points_total, loser_second_serve_points_won, loser_second_serve_points_total, loser_break_points_saved, loser_break_points_serve_total, loser_service_points_won, loser_service_points_total, loser_first_serve_return_won, loser_first_serve_return_total, loser_second_serve_return_won, loser_second_serve_return_total, loser_break_points_converted, loser_break_points_return_total, loser_service_games_played, loser_return_games_played, loser_return_points_won, loser_return_points_total, loser_total_points_won, loser_total_points_total])
 
         except Exception as e:
             logzero.logger.error(f'Error: {str(e)}')

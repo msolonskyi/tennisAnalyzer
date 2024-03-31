@@ -5,6 +5,7 @@ import requests
 import logzero
 import csv
 import os
+import time
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
@@ -150,16 +151,17 @@ class BaseLoader(object):
         else:
             self.responce_str = None
 
-    def _request_url_by_chrome(self, url: str) -> str:
+    def _request_url_by_chrome(self, url: str, timeout: int = 0) -> str:
         if url is None and url == '':
             logzero.logger.info(f'input url is empty, replacing by self.url {self.url}')
             url = self.url
         if url is not None and url != '':
-            logzero.logger.info(f'processing {url} by webdriver')
+            logzero.logger.info(f'processing {url} by Chrome')
             options = Options()
             options.add_argument("--headless")
             browser = webdriver.Chrome(executable_path=WEBDRIVER_CHROME_EXECUTABLE_PATH, options=options)
             browser.get(url)
+            time.sleep(timeout)
             content = browser.page_source
             browser.close()
             return content
