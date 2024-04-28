@@ -232,6 +232,8 @@ class MatchesATPLoader(MatchesBaseLoader):
                     logzero.logger.warning(f'adjustment of match_id: {match_id}; match_stats_url: {match_stats_url}')
                 else:
                     match_stats_url_array = match_node.xpath("./div[@class='match-footer']/div[@class='match-cta']/a[text()='Match Stats']/@href")
+                    if len(match_stats_url_array) == 0:
+                        match_stats_url_array = match_node.xpath("./div[@class='match-footer']/div[@class='match-cta']/a[text()='Stats']/@href")
                     if len(match_stats_url_array) > 0:
                         match_stats_url = ATP_URL_PREFIX + match_stats_url_array[0].replace('\n', '').replace('\r', '').replace('\t', '').strip()
                     else:
