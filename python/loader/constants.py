@@ -37,7 +37,9 @@ COUNTRY_CODE_MAP = {
 
 COUNTRY_NAME_MAP = {
     'Slovak Republic': 'Slovakia',
-    'Bosnia-Herzegovina': 'Bosnia and Herzegovina'}
+    'Bosnia-Herzegovina': 'Bosnia and Herzegovina',
+    'Turkiye': 'Turkey',
+    'Czechia': 'Czech Republic'}
 
 INDOOR_OUTDOOR_MAP = {
     'I': 'Indoor',
