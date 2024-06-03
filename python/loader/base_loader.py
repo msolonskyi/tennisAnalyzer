@@ -25,11 +25,11 @@ class BaseLoader(object):
         self._init()
 
     def _init(self):
-        self.con = cx_Oracle.connect(CONNECTION_STRING, encoding="UTF-8")
         logzero.logfile(self.LOGFILE_NAME, loglevel=logzero.logging.INFO)
         logzero.logger.info('')
         logzero.logger.info('==========')
         logzero.logger.info('start')
+        self._connect_to_db()
 
     @staticmethod
     def get_script_name():
@@ -168,8 +168,13 @@ class BaseLoader(object):
         else:
             return None
 
+    def _connect_to_db(self):
+        self.con = cx_Oracle.connect(CONNECTION_STRING, encoding="UTF-8")
+        logzero.logger.info('(re)connected to DB.')
+
     def _truncate_table(self):
         try:
+            self._connect_to_db()
             cur = self.con.cursor()
             if self.TABLE_NAME is not None and self.TABLE_NAME != '':
                 cur.execute(f'truncate table {self.TABLE_NAME}')
@@ -186,6 +191,7 @@ class BaseLoader(object):
 
     def _process_data(self):
         try:
+            self._connect_to_db()
             cur = self.con.cursor()
             for proc in self.PROCESS_PROC_NAMES:
                 logzero.logger.info(f'calling {proc}')
@@ -195,6 +201,7 @@ class BaseLoader(object):
 
     def _load_to_stg(self):
         try:
+            self._connect_to_db()
             cur = self.con.cursor()
             if self.INSERT_STR is not None and self.INSERT_STR != '':
                 cur.executemany(self.INSERT_STR, self.data)
