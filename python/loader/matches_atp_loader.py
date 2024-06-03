@@ -24,7 +24,7 @@ class MatchesATPLoader(MatchesBaseLoader):
         try:
             cur = self.con.cursor()
             if self.year is None:
-                sql = "select url from atp_tournaments where start_dtm between sysdate - :duration and sysdate"
+                sql = "select url from atp_tournaments where start_dtm between sysdate - :duration and sysdate + 5"
                 self._tournaments_list = cur.execute(sql, {'duration': DURATION_IN_DAYS}).fetchall()
                 logzero.logger.info(f'loading matches for last {DURATION_IN_DAYS} days')
             else:

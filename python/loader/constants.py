@@ -1,7 +1,7 @@
 CONNECTION_STRING = '/@'
 CHUNK_SIZE = 100
 BORDER_QTY = 5  # minimun matches per year per player for reload player
-ATP_URL_PREFIX = 'http://www.atpworldtour.com'
+ATP_URL_PREFIX = 'https://www.atptour.com'
 DC_URL_PREFIX = 'https://www.daviscup.com'
 ITF_URL_PREFIX = 'https://www.itftennis.com'
 ATP_TOURNAMENT_SERIES = ['gs', '1000', 'atp', 'ch']
@@ -77,6 +77,12 @@ PLAYERS_ATP_URL_MAP = {
     '/en/players/johannus-monday/sr:competitor:565070/overview': '/en/players/johannus-monday/m0on/overview',
     '/en/players/toby-samuel/sr:competitor:603106/overview': '/en/players/toby-samuel/s0tm/overview',
     '/en/players/harry-wendelken/sr:competitor:381022/overview': '/en/players/harry-wendelken/w0ah/overview',
+    '/en/players/clement-chidekh/sr:competitor:283759/overview': '/en/players/clement-chidekh/c0bh/overview',
+    '/en/players/theo-papamalamis/sr:competitor:801380/overview': '/en/players/theo-papamalamis/p0k5/overview',
+    '/en/players/coleman-wong/sr:competitor:449767/overview': '/en/players/coleman-wong/w0bh/overview',
+    '/en/players/henrique-rocha/sr:competitor:682913/overview': '/en/players/henrique-rocha/r0go/overview',
+    '/en/players/sascha-gueymard wayenburg/g0gw/overview': '/en/players/sascha-gueymard-wayenburg/g0gw/overview',
+    '/en/players/mae-malige/sr:competitor:917723/overview': '/en/players/mae-malige/m0to/overview',
     '': ''}
 
 CITY_COUNTRY_MAP = {
