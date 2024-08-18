@@ -40,10 +40,10 @@ from vw_matches
 where stats_url is not null
   and series_id != 'dc'
   and (win_aces is null or los_aces is null)
-  and rownum < 51
+  and rownum < :row_limit + 1
   and tournament_year = :year
 '''
-                self._stats_tpl_list = cur.execute(sql, {'year': self.year}).fetchall()
+                self._stats_tpl_list = cur.execute(sql, {'year': self.year, 'row_limit': 50}).fetchall()
                 logzero.logger.info(f'Parse stats for {self.year} ...')
         finally:
             cur.close()
