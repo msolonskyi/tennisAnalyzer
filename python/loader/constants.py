@@ -77,12 +77,15 @@ PLAYERS_ATP_URL_MAP = {
     '/en/players/johannus-monday/sr:competitor:565070/overview': '/en/players/johannus-monday/m0on/overview',
     '/en/players/toby-samuel/sr:competitor:603106/overview': '/en/players/toby-samuel/s0tm/overview',
     '/en/players/harry-wendelken/sr:competitor:381022/overview': '/en/players/harry-wendelken/w0ah/overview',
+    '/en/players/george-loffhagen/sr:competitor:353550/overview': '/en/players/george-loffhagen/l0cf/overview',
     '/en/players/clement-chidekh/sr:competitor:283759/overview': '/en/players/clement-chidekh/c0bh/overview',
     '/en/players/theo-papamalamis/sr:competitor:801380/overview': '/en/players/theo-papamalamis/p0k5/overview',
     '/en/players/coleman-wong/sr:competitor:449767/overview': '/en/players/coleman-wong/w0bh/overview',
     '/en/players/henrique-rocha/sr:competitor:682913/overview': '/en/players/henrique-rocha/r0go/overview',
     '/en/players/sascha-gueymard wayenburg/g0gw/overview': '/en/players/sascha-gueymard-wayenburg/g0gw/overview',
     '/en/players/mae-malige/sr:competitor:917723/overview': '/en/players/mae-malige/m0to/overview',
+    '/en/players/joao-fonseca/sr:competitor:863319/overview': '/en/players/joao-fonseca/f0fv/overview',
+    '/en/players/henry-searle/sr:competitor:871807/overview': '/en/players/henry-searle/s0tx/overview',
     '': ''}
 
 CITY_COUNTRY_MAP = {
