@@ -3,19 +3,163 @@ set define off
 
 prompt Loading MATCH_SCORES_ADJUSTMENTS...
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2024-2903-kg27-r0dc-R32', '62 52 RET', null, null);
+values ('2024-499-h355-q927-RR', '36 63 10[4]', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2024-580-a0e2-s0re-R32', '61 61 10 RET', null, null);
+values ('2024-495-bk92-re44-SF', '67(4) 76(5) 65 RET', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2024-580-mm58-a0gc-R128', '57 62 64 10 RET', null, null);
+values ('2024-520-rh16-d643-QF', '(W/O)', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2024-580-dh58-r975-R128', '67(6) 63 20 RET', null, null);
+values ('2007-433-m762-k760-SF', null, 'http://www.atpworldtour.com/en/scores/2007/433/MS003/match-stats?isLive=False', null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2024-580-b0bi-w09g-R128', '36 62 63 30 RET', null, null);
+values ('2009-670-k922-i230-Q2', '(W/O)', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2024-580-s0ia-bu13-Q3', '57 75 20 RET', null, null);
+values ('2009-5051-a981-v379-Q2', '(W/O)', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2024-580-gb53-lc12-Q1', '46 64 32 RET', null, null);
+values ('2010-545-n652-j230-Q1', '(W/O)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2010-2273-bj97-me31-Q2', '(W/O)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2011-568-pd07-k861-Q1', '75 10 (RET)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2011-1741-kd51-ba53-Q1', '(W/O)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2010-59-e701-sj25-Q3', '67(5) 63 32 (RET)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2011-603-sp02-sa81', null, null, 'Y');
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2011-603-sp02-a629', null, null, 'Y');
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2011-588-sb34-k624-Q1', '(W/O)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2012-6574-cf56-ta29-Q2', '(W/O)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2012-6256-a887-k861-Q2', '62 10 (RET)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2013-5069-j380-mf71-Q2', '(W/O)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2013-226-l702-ca71-Q1', '(W/O)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2013-226-ka22-n663-Q1', '(W/O)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2013-6406-v254-g681-SF', null, 'https://www.atptour.com/en/scores/2013/6406/MS002/match-stats?isLive=False', null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2014-6406-sm37-ba98-SF', null, 'https://www.atptour.com/en/scores/2014/6406/MS002/match-stats?isLive=False', null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2018-7490-ea27-bv27-R32', '63 01 (RET)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2018-7490-ra62-sn70-Q1', '36 64 21 (RET)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('1999-476-d253-r224-R32', '06 64 61', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('1999-680-k297-b682-R16', '62 76(6)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('1999-350-r251-r367-R32', '63 62', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2000-686-c397-k317-R32', '76(5) 63', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2000-83-m640-a272-R32', '75 64', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2000-773-r336-s677-R32', '62 63', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('1999-7309-t136-c378-R32', '64 10 (RET)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2001-336-b446-s545-R32', '62 64', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('1999-580-t136-h223-R64', '61 36 46 64 60', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('1999-440-r255-c328-QF', '63 64', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('1999-83-h380-m543-R32', '62 46 76(4)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('1999-509-p395-w254-R16', '76(3) 46 62', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('1999-403-d316-s636-R128', '76(5) 61', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2000-798-e141-p350-R16', '76 (RET)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2000-429-g379-s636-QF', '61 57 76(5)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2001-588-d291-m824-F', '76(5) 36 62', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2001-560-c433-a202-R128', '61 63 67(7) 62', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2001-857-m708-a410-QF', '36 61 61', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2001-524-a311-v205-QF', '76(1) 63', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2002-574-g569-b645-R32', '76(6) 36 62', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2002-1541-r421-m578-R32', '76(9) 63', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2002-560-s572-p338-R128', '67(1) 46 63 53 (RET)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2005-3388-d438-m614-R32', '67(3) 63 76(5)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2006-314-k435-n254-R16', '36 76(5) 61', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2006-543-r388-z073-F', '63 46 61', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2007-3633-g676-v258-R32', '62 67(10) 63', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2007-580-p624-e629-Q1', '63 67(3) 64', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2007-496-sa93-a385-R32', '40 (RET)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2007-573-a596-c445-Q2', '61 46 64', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2007-1683-g858-k371-QF', '76(4) 67(3) 64', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2007-807-m605-h502-R16', '46 61 64', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2008-3766-m815-l733-Q1', '64 36 64', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2008-433-m595-d385-Q2', '63 62', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2008-2208-u061-m747-Q1', '46 76(7) 63', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2008-849-n540-d844-Q1', '52 (RET)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2008-433-d385-mb84-Q1', '76(4) 06 63', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2008-3626-g511-n309-F', '64 63', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2008-3812-s944-b752-QF', '64 75', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2023-404-x509-x543-R32', null, null, 'Y');
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2023-404-x510-x533-R32', null, null, 'Y');
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2023-404-x511-x531-R32', null, null, 'Y');
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2023-404-x514-x522-R32', null, null, 'Y');
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2023-404-x516-t0i3-R32', null, null, 'Y');
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2023-404-x517-x529-R32', null, null, 'Y');
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2023-404-x532-x518-R32', null, null, 'Y');
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2024-424-me82-d994-QF', '62 31 RET', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2024-3406-lf26-o376-R32', '63 21 RET', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2024-520-m0hu-bf23-Q3', '64 20 (RET)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2024-520-ea24-rc91-R64', '36 67(8) 61 50 (RET)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2024-540-ke29-kc56-R128', '63 67(4) 76(11) 20 (RET)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2024-540-f0f1-hb71-R64', '76(2) 64 26 66 (RET)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2024-540-pf39-kd46-R64', '26 75 52 (RET)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2024-540-dh58-pf39-R32', '(W/O)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2024-540-mm58-d875-R16', '53 (RET)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2024-520-mm58-ki95-R64', '61 50 (RET)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2024-540-d643-dh58-QF', '(W/O)', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2008-3766-l336-c585-R32', '46 62 64', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
@@ -58,6 +202,8 @@ insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2003-M-DC-2003-G2-EA-M-DEN-TUN-01-j173-n415-RR', '06 64 63 16 62', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2005-M-DC-2005-G2-AM-M-COL-BRA-01-m708-q017-RR', '63 64 63', null, null);
+commit;
+prompt 100 records committed...
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2007-M-DC-2007-G3-EPA-B-B-M-TUN-MAD-01-j173-r826-RR', '76(6) 46 75', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
@@ -202,8 +348,6 @@ insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2018-7490-ka46-sk97-Q2', '62 20 (RET)', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2001-400-j158-t261-R32', '75 46 76(4)', null, null);
-commit;
-prompt 100 records committed...
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2001-554-p324-r251-R32', '62 75', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
@@ -260,6 +404,8 @@ insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2007-499-m680-s544-SF', null, 'http://www.atpworldtour.com/en/scores/2007/499/MS003/match-stats?isLive=False', null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2007-506-ma21-h390-QF', null, 'http://www.atpworldtour.com/en/scores/2007/506/MS007/match-stats?isLive=False', null);
+commit;
+prompt 200 records committed...
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2007-506-h502-d469-QF', null, 'http://www.atpworldtour.com/en/scores/2007/506/MS006/match-stats?isLive=False', null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
@@ -285,145 +431,23 @@ values ('2007-433-m762-h442-QF', null, 'http://www.atpworldtour.com/en/scores/20
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2007-433-s741-v306-QF', null, 'http://www.atpworldtour.com/en/scores/2007/433/MS005/match-stats?isLive=False', null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2007-433-m762-k760-SF', null, 'http://www.atpworldtour.com/en/scores/2007/433/MS003/match-stats?isLive=False', null);
+values ('2024-2903-kg27-r0dc-R32', '62 52 RET', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2009-670-k922-i230-Q2', '(W/O)', null, null);
+values ('2024-580-a0e2-s0re-R32', '61 61 10 RET', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2009-5051-a981-v379-Q2', '(W/O)', null, null);
+values ('2024-580-mm58-a0gc-R128', '57 62 64 10 RET', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2010-545-n652-j230-Q1', '(W/O)', null, null);
+values ('2024-580-dh58-r975-R128', '67(6) 63 20 RET', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2010-2273-bj97-me31-Q2', '(W/O)', null, null);
+values ('2024-580-b0bi-w09g-R128', '36 62 63 30 RET', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2011-568-pd07-k861-Q1', '75 10 (RET)', null, null);
+values ('2024-580-s0ia-bu13-Q3', '57 75 20 RET', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2011-1741-kd51-ba53-Q1', '(W/O)', null, null);
+values ('2024-580-gb53-lc12-Q1', '46 64 32 RET', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2010-59-e701-sj25-Q3', '67(5) 63 32 (RET)', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2011-603-sp02-sa81', null, null, 'Y');
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2011-603-sp02-a629', null, null, 'Y');
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2011-588-sb34-k624-Q1', '(W/O)', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2012-6574-cf56-ta29-Q2', '(W/O)', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2012-6256-a887-k861-Q2', '62 10 (RET)', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2013-5069-j380-mf71-Q2', '(W/O)', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2013-226-l702-ca71-Q1', '(W/O)', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2013-226-ka22-n663-Q1', '(W/O)', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2013-6406-v254-g681-SF', null, 'https://www.atptour.com/en/scores/2013/6406/MS002/match-stats?isLive=False', null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2014-6406-sm37-ba98-SF', null, 'https://www.atptour.com/en/scores/2014/6406/MS002/match-stats?isLive=False', null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2018-7490-ea27-bv27-R32', '63 01 (RET)', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2018-7490-ra62-sn70-Q1', '36 64 21 (RET)', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('1999-476-d253-r224-R32', '06 64 61', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('1999-680-k297-b682-R16', '62 76(6)', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('1999-350-r251-r367-R32', '63 62', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2000-686-c397-k317-R32', '76(5) 63', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2000-83-m640-a272-R32', '75 64', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2000-773-r336-s677-R32', '62 63', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('1999-7309-t136-c378-R32', '64 10 (RET)', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2001-336-b446-s545-R32', '62 64', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('1999-580-t136-h223-R64', '61 36 46 64 60', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('1999-440-r255-c328-QF', '63 64', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('1999-83-h380-m543-R32', '62 46 76(4)', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('1999-509-p395-w254-R16', '76(3) 46 62', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('1999-403-d316-s636-R128', '76(5) 61', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2000-798-e141-p350-R16', '76 (RET)', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2000-429-g379-s636-QF', '61 57 76(5)', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2001-588-d291-m824-F', '76(5) 36 62', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2001-560-c433-a202-R128', '61 63 67(7) 62', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2001-857-m708-a410-QF', '36 61 61', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2001-524-a311-v205-QF', '76(1) 63', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2002-574-g569-b645-R32', '76(6) 36 62', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2002-1541-r421-m578-R32', '76(9) 63', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2002-560-s572-p338-R128', '67(1) 46 63 53 (RET)', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2005-3388-d438-m614-R32', '67(3) 63 76(5)', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2006-314-k435-n254-R16', '36 76(5) 61', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2006-543-r388-z073-F', '63 46 61', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2007-3633-g676-v258-R32', '62 67(10) 63', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2007-580-p624-e629-Q1', '63 67(3) 64', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2007-496-sa93-a385-R32', '40 (RET)', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2007-573-a596-c445-Q2', '61 46 64', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2007-1683-g858-k371-QF', '76(4) 67(3) 64', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2007-807-m605-h502-R16', '46 61 64', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2008-3766-m815-l733-Q1', '64 36 64', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2008-433-m595-d385-Q2', '63 62', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2008-2208-u061-m747-Q1', '46 76(7) 63', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2008-849-n540-d844-Q1', '52 (RET)', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2008-433-d385-mb84-Q1', '76(4) 06 63', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2008-3626-g511-n309-F', '64 63', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2008-3812-s944-b752-QF', '64 75', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2023-404-x509-x543-R32', null, null, 'Y');
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2023-404-x510-x533-R32', null, null, 'Y');
+values ('2024-520-m0if-z419-Q2', '61 (RET)', null, null);
 commit;
-prompt 200 records committed...
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2023-404-x511-x531-R32', null, null, 'Y');
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2023-404-x514-x522-R32', null, null, 'Y');
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2023-404-x516-t0i3-R32', null, null, 'Y');
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2023-404-x517-x529-R32', null, null, 'Y');
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2023-404-x532-x518-R32', null, null, 'Y');
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2024-424-me82-d994-QF', '62 31 RET', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2024-499-h355-q927-RR', '36 63 10[4]', null, null);
-insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
-values ('2024-495-bk92-re44-SF', '67(4) 76(5) 65 RET', null, null);
-commit;
-prompt 208 records loaded
+prompt 220 records loaded
 
 set feedback on
 set define on
