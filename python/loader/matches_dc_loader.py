@@ -101,6 +101,11 @@ select id from dc_players'''
                         logzero.logger.warning(f'winning_side: {winning_side}; match: {match}')
                         continue
                     match_id = f'{tournament_id}-{winner_id}-{loser_id}-{stadie_id}'
+
+                    if match_id in self._dic_match_scores_adj:
+                        match_score = self._dic_match_scores_adj[match_id]
+                        logzero.logger.warning(f'adjustment of match_id: {match_id}; match_score: {match_score}')
+
                     score_array = self._parse_score(match_score, match_id, tournament_code)
                     # statistics
                     match_stats_url = f'https://www.daviscup.com/cup/livescores/daviscup/{tournament_code}_{match_order}.json'
