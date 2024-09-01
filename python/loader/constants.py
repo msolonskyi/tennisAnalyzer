@@ -92,6 +92,7 @@ PLAYERS_ATP_URL_MAP = {
     '/en/players/alvaro-guillen meza/sr:competitor:389114/overview': '/en/players/alvaro-guillen-meza/g0dh/overview',
     '/en/players/vilius-gaubas/sr:competitor:604238/overview': '/en/players/vilius-gaubas/g0fw/overview',
     '/en/players/nishesh-basavareddy/sr:competitor:872497/overview': '/en/players/nishesh-basavareddy/b0nn/overview',
+    '/en/players/matthew-forbes/sr:competitor:1052213/overview': '/en/players/matthew-forbes/f0i8/overview',
     '': ''}
 
 CITY_COUNTRY_MAP = {
