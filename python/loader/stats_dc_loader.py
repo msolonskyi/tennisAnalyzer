@@ -40,11 +40,10 @@ from dc_matches m, dc_tournaments t
 where m.tournament_id = t.id
   and m.stats_url is not null
   and (m.win_aces is null or m.los_aces is null)
-  and rownum < 1001
+  and rownum < :row_limit + 1
   and t.year = :year
---  and m.id in ('2023-M-DC-2023-QLS-M-GBR-COL-01-800312611-800390599-RR')
   '''
-                self._stats_tpl_list = cur.execute(sql, {'year': self.year}).fetchall()
+                self._stats_tpl_list = cur.execute(sql, {'year': self.year, 'row_limit': 500}).fetchall()
                 logzero.logger.info(f'Parse stats for {self.year} ...')
         finally:
             cur.close()
@@ -62,7 +61,7 @@ where m.tournament_id = t.id
             match_id = url_tpl[0]
             self.url = url_tpl[1]
             try:
-                self._request_url_by_webdriver()
+                self._request_url_by_chrome(self.url)
                 json_str = self.responce_str.replace('<html><head></head><body><pre style="word-wrap: break-word; white-space: pre-wrap;">', '').replace('</pre></body></html>', '')
                 stats = json.loads(json_str)
                 match_statistics = stats.get('MatchStatistics')
