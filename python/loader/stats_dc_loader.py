@@ -2,7 +2,6 @@ from constants import DURATION_IN_DAYS
 from base_loader import BaseLoader
 import os
 import json
-import logzero
 import time
 
 
@@ -15,6 +14,7 @@ class StatsDCLoader(BaseLoader):
     def _init(self):
         self.LOGFILE_NAME = os.path.splitext(os.path.basename(__file__))[0] + '.log'
         self.CSVFILE_NAME = ''
+        self.MODULE_NAME = 'load atp stats'
         self.TABLE_NAME = 'stg_matches'
         self.INSERT_STR = 'insert into stg_matches (id, match_duration, win_aces, win_double_faults, win_first_serves_in, win_first_serves_total, win_first_serve_points_won, win_first_serve_points_total, win_second_serve_points_won, win_second_serve_points_total, win_break_points_saved, win_break_points_serve_total, win_service_points_won, win_service_points_total, win_first_serve_return_won, win_first_serve_return_total, win_second_serve_return_won, win_second_serve_return_total, win_break_points_converted, win_break_points_return_total, win_service_games_played, win_return_games_played, win_return_points_won, win_return_points_total, win_total_points_won, win_total_points_total, win_winners, win_forced_errors, win_unforced_errors, win_net_points_won, win_net_points_total, win_fastest_first_serves_kmh, win_average_first_serves_kmh, win_fastest_second_serve_kmh, win_average_second_serve_kmh, los_aces, los_double_faults, los_first_serves_in, los_first_serves_total, los_first_serve_points_won, los_first_serve_points_total, los_second_serve_points_won, los_second_serve_points_total, los_break_points_saved, los_break_points_serve_total, los_service_points_won, los_service_points_total, los_first_serve_return_won, los_first_serve_return_total, los_second_serve_return_won, los_second_serve_return_total, los_break_points_converted, los_break_points_return_total, los_service_games_played, los_return_games_played, los_return_points_won, los_return_points_total, los_total_points_won, los_total_points_total, los_winners, los_forced_errors, los_unforced_errors, los_net_points_won, los_net_points_total, los_fastest_first_serves_kmh, los_average_first_serves_kmh, los_fastest_second_serve_kmh, los_average_second_serve_kmh) values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, :21, :22, :23, :12, :25, :26, :27, :28, :29, :30, :31, :32, :33, :34, :35, :36, :37, :38, :39, :40, :41, :42, :43, :44, :45, :46, :47, :48, :49, :50, :51, :52, :53, :54, :55, :56, :57, :58, :59, :60, :61, :62, :63, :64, :65, :66, :67, :68)'
         self.PROCESS_PROC_NAMES = ['sp_process_dc_matches']
@@ -32,7 +32,7 @@ where m.tournament_id = t.id
   and (win_aces is null or los_aces is null)
   and t.start_dtm > sysdate - :duration'''
                 self._stats_tpl_list = cur.execute(sql, {'duration': DURATION_IN_DAYS}).fetchall()
-                logzero.logger.info(f'Parse stats for last {DURATION_IN_DAYS} days...')
+                self.logger.info(f'Parse stats for last {DURATION_IN_DAYS} days...')
             else:
                 # historical data
                 sql = '''select m.id, m.stats_url
@@ -44,16 +44,16 @@ where m.tournament_id = t.id
   and t.year = :year
   '''
                 self._stats_tpl_list = cur.execute(sql, {'year': self.year, 'row_limit': 500}).fetchall()
-                logzero.logger.info(f'Parse stats for {self.year} ...')
+                self.logger.info(f'Parse stats for {self.year} ...')
         finally:
             cur.close()
-        logzero.logger.info(f'Loading {len(self._stats_tpl_list)} row(s).')
+        self.logger.info(f'Loading {len(self._stats_tpl_list)} row(s).')
 
     def _parse(self):
         self._fill_stats_tpl_list()
         for stats_tpl in self._stats_tpl_list:
             self._parse_stats(stats_tpl)
-            time.sleep(11)
+            #time.sleep(11)
 
     def _parse_stats(self, url_tpl: tuple):
         try:
@@ -61,17 +61,24 @@ where m.tournament_id = t.id
             match_id = url_tpl[0]
             self.url = url_tpl[1]
             try:
-                self._request_url_by_chrome(self.url)
-                json_str = self.responce_str.replace('<html><head></head><body><pre style="word-wrap: break-word; white-space: pre-wrap;">', '').replace('</pre></body></html>', '')
+                json_str = self._request_url_by_chrome(self.url).replace('</pre></body></html>', '')
+                if '404 - File or directory not found.' in json_str:
+                    self.logger.warning(f'404 - File or directory not found.')
+                    return
+
+                json_start_pos = json_str.find('{')
+                json_str = json_str[json_start_pos:]
+                #self.logger.info(f'json_str: {json_str}')
                 stats = json.loads(json_str)
                 match_statistics = stats.get('MatchStatistics')
+                match_duration = 0
                 try:
                     match_duration = match_statistics.get('DurationInHours') * 60 + match_statistics.get('DurationInMins')
                 except Exception as e:
                     match_duration = None
-                if match_duration < 0:
+                if match_duration is not None and match_duration < 0:
                     match_duration = None
-                if match_duration > 9999:
+                if match_duration is not None and match_duration > 9999:
                     match_duration = None
                 winning_side = stats.get('WinningSide')
                 if winning_side == 1:
@@ -585,7 +592,7 @@ where m.tournament_id = t.id
                     except Exception as e:
                         los_average_second_serve_kmh = None
                 if winning_side == 0:
-                    logzero.logger.warning(f'winning_side == 0')
+                    self.logger.warning(f'winning_side == 0')
                     match_duration = None
                     win_aces = None
                     win_double_faults = None
@@ -656,7 +663,7 @@ where m.tournament_id = t.id
                     los_average_second_serve_kmh = None
 
             except Exception as e:
-                logzero.logger.error(f'Error on statistics level: {str(e)}')
+                self.logger.error(f'Error on statistics level: {str(e)}')
                 match_duration = None
                 win_aces = None
                 win_double_faults = None
@@ -742,4 +749,4 @@ where m.tournament_id = t.id
                               los_forced_errors, los_unforced_errors, los_net_points_won, los_net_points_total, los_fastest_first_serves_kmh,
                               los_average_first_serves_kmh, los_fastest_second_serve_kmh, los_average_second_serve_kmh])
         except Exception as e:
-            logzero.logger.error(f'Error: {str(e)}')
+            self.logger.error(f'Error: {str(e)}')

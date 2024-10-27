@@ -6,7 +6,6 @@ import os
 class PlayersFullExtractor(BaseFullExtractor):
     def __init__(self):
         super().__init__()
-        self.LOGFILE_NAME = os.path.splitext(self.get_script_name())[0] + '.log'
         self.key = 'players'
         self.CSVFILE_NAME = f'{DC_CSV_PATH}{self.key}.csv'
         self.sql = '''select id,
@@ -19,10 +18,15 @@ class PlayersFullExtractor(BaseFullExtractor):
 from dc_players
 order by id'''
 
+    def _init(self):
+        self.MODULE_NAME = 'dc players extractor'
+        self.LOGFILE_NAME = os.path.splitext(self.get_script_name())[0] + '.log'
+        super()._init()
+
+
 class TournamentsFullExtractor(BaseFullExtractor):
     def __init__(self):
         super().__init__()
-        self.LOGFILE_NAME = os.path.splitext(self.get_script_name())[0] + '.log'
         self.key = 'tournaments'
         self.CSVFILE_NAME = f'{DC_CSV_PATH}{self.key}.csv'
         self.sql = '''select t.id,
@@ -43,11 +47,15 @@ where series_id = 'dc'
   and c.id = t.series_category_id
 order by start_dtm, code'''
 
+    def _init(self):
+        self.MODULE_NAME = 'dc tournaments extractor'
+        self.LOGFILE_NAME = os.path.splitext(self.get_script_name())[0] + '.log'
+        super()._init()
+
 
 class MatchesYearlyExtractor(BaseYearlyExtractor):
     def __init__(self, year: int):
         super().__init__(year)
-        self.LOGFILE_NAME = os.path.splitext(self.get_script_name())[0] + '.log'
         self.key = 'matches'
         self.CSVFILE_NAME = f'{DC_CSV_PATH}{self.key}_{year}.csv'
         self.sql = '''select m.id,
@@ -154,3 +162,8 @@ where m.winner_id = w.id
   and t.year = :year
   and sc.series_id = 'dc'
 order by t.start_dtm, t.code, st.ord, m.id'''
+
+    def _init(self):
+        self.MODULE_NAME = 'dc matches extractor'
+        self.LOGFILE_NAME = os.path.splitext(self.get_script_name())[0] + '.log'
+        super()._init()

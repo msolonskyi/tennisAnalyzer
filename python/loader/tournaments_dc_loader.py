@@ -2,7 +2,6 @@ from constants import SLEEP_DURATION
 from base_loader import BaseLoader
 import datetime
 from time import sleep
-import logzero
 import json
 import os
 
@@ -12,11 +11,12 @@ class TournamentDCLoader(BaseLoader):
         super().__init__()
         self.url = 'https://media.itfdataservices.com/nationwinlossrecords/dc/en?NationCode=' + country_code
         self.year = int(year)
-        logzero.logger.warning(f'country_code: {country_code}')
+        self.logger.warning(f'country_code: {country_code}')
 
     def _init(self):
         self.LOGFILE_NAME = os.path.splitext(os.path.basename(__file__))[0] + '.log'
         self.CSVFILE_NAME = ''
+        self.MODULE_NAME = 'load dc tournaments'
         self.TABLE_NAME = 'stg_tournaments'
         self.INSERT_STR = 'insert into stg_tournaments(id, name, year, code, url, location, indoor_outdoor, surface, series, start_dtm, finish_dtm, country_code) values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12)'
         self.PROCESS_PROC_NAMES = ['sp_process_dc_tournaments']
@@ -61,10 +61,10 @@ class TournamentDCLoader(BaseLoader):
                     elif len(location_array) == 1:
                         tournament_location = location.strip()
                     else:
-                        logzero.logger.warning(f'location: is empty')
+                        self.logger.warning(f'location: is empty')
                         tournament_location = None
                 else:
-                    logzero.logger.warning(f'location: is empty')
+                    self.logger.warning(f'location: is empty')
                     tournament_location = None
 
                 host_nation_code = tie_details.get('HostNationCode')

@@ -2,8 +2,9 @@ create or replace procedure sp_process_dc_tournaments
 is
   cv_module_name constant varchar2(200) := 'process dc tournaments';
   vn_qty         number;
+  vn_batch_id    logger.batches.id%type;
 begin
-  pkg_log.sp_start_batch(pv_module => cv_module_name);
+  pkg_log.sp_start_batch(pv_module => cv_module_name, pv_server => pkg_log.sf_get_server_name, pn_batch_id => vn_batch_id);
   --
   merge into dc_tournaments d
   using(select s.id,
@@ -18,7 +19,7 @@ begin
                replace(lower(substr(s.code, 11, 3)), '-', '') as series_category_id,
                to_date(s.start_dtm, 'yyyymmdd') as start_dtm,
                to_date(s.finish_dtm, 'yyyymmdd') as finish_dtm,
-               nvl(s.country_code, t.country_code) as country_code,            
+               nvl(s.country_code, t.country_code) as country_code,
                sf_dc_tournaments_delta_hash(
                   pv_id                 => s.id,
                   pv_name               => s.name,
@@ -36,12 +37,12 @@ begin
         where s.id = t.id(+)) s
   on (s.id = d.id)
   when not matched then
-    insert (d.id, d.delta_hash, d.batch_id,          d.name, d.year, d.code, d.url, d.location, d.indoor_outdoor, d.surface, d.series_category_id, d.start_dtm, d.finish_dtm, d.country_code)
-    values (s.id, s.delta_hash, pkg_log.gn_batch_id, s.name, s.year, s.code, s.url, s.location, s.indoor_outdoor, s.surface, s.series_category_id, s.start_dtm, s.finish_dtm, s.country_code)
+    insert (d.id, d.delta_hash, d.batch_id,  d.name, d.year, d.code, d.url, d.location, d.indoor_outdoor, d.surface, d.series_category_id, d.start_dtm, d.finish_dtm, d.country_code)
+    values (s.id, s.delta_hash, vn_batch_id, s.name, s.year, s.code, s.url, s.location, s.indoor_outdoor, s.surface, s.series_category_id, s.start_dtm, s.finish_dtm, s.country_code)
   when matched then
     update set
       d.delta_hash         = s.delta_hash,
-      d.batch_id           = pkg_log.gn_batch_id,
+      d.batch_id           = vn_batch_id,
       d.name               = s.name,
       d.year               = s.year,
       d.code               = s.code,
@@ -57,13 +58,13 @@ begin
   vn_qty := sql%rowcount;
   --
   commit;
-  pkg_log.sp_log_message(pv_text => 'rows processed', pn_qty => vn_qty);
-  pkg_log.sp_finish_batch_successfully;
+  pkg_log.sp_log_message(pn_batch_id => vn_batch_id, pv_text => 'rows processed', pn_qty => vn_qty);
+  pkg_log.sp_finish_batch_successfully(pn_batch_id => vn_batch_id);
 exception
   when others then
     rollback;
-    pkg_log.sp_log_message(pv_text => 'errors stack', pv_clob => dbms_utility.format_error_stack || pkg_utils.CRLF || dbms_utility.format_error_backtrace, pv_type => 'E');
-    pkg_log.sp_finish_batch_with_errors;
+    pkg_log.sp_log_message(pv_text => 'errors stack', pv_clob_text => dbms_utility.format_error_stack || pkg_utils.CRLF || dbms_utility.format_error_backtrace, pv_type => 'E', pn_batch_id => vn_batch_id);
+    pkg_log.sp_finish_batch_with_errors(pn_batch_id => vn_batch_id);
     raise;
 end sp_process_dc_tournaments;
 /

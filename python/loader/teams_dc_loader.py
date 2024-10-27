@@ -8,6 +8,7 @@ class TeamsDCLoader(BaseLoader):
         self.url = 'https://media.itfdataservices.com/nations/dc/en'
         self.LOGFILE_NAME = os.path.splitext(os.path.basename(__file__))[0] + '.log'
         self.CSVFILE_NAME = ''
+        self.MODULE_NAME = 'load dc teams'
         self.TABLE_NAME = 'stg_teams'
         self.INSERT_STR = 'insert into stg_teams(team_code, country_code, name, url) values (:1, :2, :3, :4)'
         self.PROCESS_PROC_NAMES = ['sp_process_dc_teams']

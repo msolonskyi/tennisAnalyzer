@@ -525,6 +525,8 @@ values ('2024-560-td51-d875-QF', '63 67(5) 63 41 (RET)', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2024-3503-gg65-lc12-R32', '62 42 (RET)', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2024-M-DC-2024-WG1-M-SUI-PER-01-800332871-800532774-RR', '57 75 10[5]', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2024-499-h355-q927-RR', '36 63 10[4]', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2024-495-bk92-re44-SF', '67(4) 76(5) 65 RET', null, null);
@@ -535,7 +537,7 @@ values ('2024-96-mw02-sl28-R32', '(W/O)', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2024-337-m0ej-mc65-R16', '(W/O)', null, null);
 commit;
-prompt 264 records loaded
+prompt 265 records loaded
 
 set feedback on
 set define on

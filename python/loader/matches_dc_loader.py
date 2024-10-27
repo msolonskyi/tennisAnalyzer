@@ -4,7 +4,6 @@ from constants import DURATION_IN_DAYS
 from datetime import datetime
 import os
 import json
-import logzero
 
 
 class MatchesDCLoader(MatchesBaseLoader):
@@ -17,6 +16,7 @@ class MatchesDCLoader(MatchesBaseLoader):
     def _init(self):
         self.LOGFILE_NAME = os.path.splitext(os.path.basename(__file__))[0] + '.log'
         self.CSVFILE_NAME = ''
+        self.MODULE_NAME = 'load dc matches'
         self.TABLE_NAME = 'stg_matches'
         self.INSERT_STR = 'insert into stg_matches (id, tournament_id, stadie_id, match_order, match_ret, winner_id, loser_id, score, stats_url, winner_sets_won, loser_sets_won, winner_games_won, loser_games_won, winner_tiebreaks_won, loser_tiebreaks_won) values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15)'
         self.PROCESS_PROC_NAMES = ['sp_process_dc_matches']
@@ -28,12 +28,12 @@ class MatchesDCLoader(MatchesBaseLoader):
             if self.year is None:
                 sql = "select code from dc_tournaments where start_dtm > sysdate - :duration"
                 self._tournaments_list = cur.execute(sql, {'duration': DURATION_IN_DAYS}).fetchall()
-                logzero.logger.info(f'loading matches for last {DURATION_IN_DAYS} days')
+                self.logger.info(f'loading matches for last {DURATION_IN_DAYS} days')
             else:
                 # historical data
                 sql = "select code from dc_tournaments where year = :year"
                 self._tournaments_list = cur.execute(sql, {'year': self.year}).fetchall()
-                logzero.logger.info(f'loading matches for {self.year} year')
+                self.logger.info(f'loading matches for {self.year} year')
         finally:
             cur.close()
 
@@ -61,7 +61,7 @@ select id from dc_players'''
             _players_list = cur.execute(sql).fetchall()
             for tpl in _players_list:
                 self._players_list.append(tpl[0])
-            logzero.logger.info(f'{len(self._players_list)} player(s) has been selected for processing')
+            self.logger.info(f'{len(self._players_list)} player(s) has been selected for processing')
         finally:
             cur.close()
 
@@ -98,13 +98,13 @@ select id from dc_players'''
                         loser_last_name = match.get('S1P1FN')
                         match_score = match.get('ScoreReversed').replace('-', '').replace('[', '').replace(']', '')
                     else:
-                        logzero.logger.warning(f'winning_side: {winning_side}; match: {match}')
+                        self.logger.warning(f'winning_side: {winning_side}; match: {match}')
                         continue
                     match_id = f'{tournament_id}-{winner_id}-{loser_id}-{stadie_id}'
 
                     if match_id in self._dic_match_scores_adj:
                         match_score = self._dic_match_scores_adj[match_id]
-                        logzero.logger.warning(f'adjustment of match_id: {match_id}; match_score: {match_score}')
+                        self.logger.warning(f'adjustment of match_id: {match_id}; match_score: {match_score}')
 
                     score_array = self._parse_score(match_score, match_id, tournament_code)
                     # statistics
@@ -115,4 +115,4 @@ select id from dc_players'''
                     self.data.append([match_id, tournament_id, stadie_id, match_order, score_array[0], winner_id, loser_id,
                                       match_score, match_stats_url] + score_array[1:])
         except Exception as e:
-            logzero.logger.error(f'Error: {str(e)}')
+            self.logger.error(f'Error: {str(e)}')
