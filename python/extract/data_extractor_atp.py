@@ -6,7 +6,6 @@ import os
 class PlayersFullExtractor(BaseFullExtractor):
     def __init__(self):
         super().__init__()
-        self.LOGFILE_NAME = os.path.splitext(self.get_script_name())[0] + '.log'
         self.key = 'players'
         self.CSVFILE_NAME = f'{ATP_CSV_PATH}{self.key}.csv'
         self.sql = '''select a.code,
@@ -29,11 +28,15 @@ from atp_players a, dc_players d
 where a.code = d.atp_code(+)
 order by code'''
 
+    def _init(self):
+        self.MODULE_NAME = 'atp players extractor'
+        self.LOGFILE_NAME = os.path.splitext(self.get_script_name())[0] + '.log'
+        super()._init()
+
 
 class TournamentsFullExtractor(BaseFullExtractor):
     def __init__(self):
         super().__init__()
-        self.LOGFILE_NAME = os.path.splitext(self.get_script_name())[0] + '.log'
         self.key = 'tournaments'
         self.CSVFILE_NAME = f'{ATP_CSV_PATH}{self.key}.csv'
         self.sql = '''select t.id,
@@ -61,11 +64,15 @@ where series_id != 'dc'
   and c.id = t.series_category_id
 order by t.start_dtm, t.code'''
 
+    def _init(self):
+        self.MODULE_NAME = 'atp tournaments extractor'
+        self.LOGFILE_NAME = os.path.splitext(self.get_script_name())[0] + '.log'
+        super()._init()
+
 
 class MatchesYearlyExtractor(BaseYearlyExtractor):
     def __init__(self, year: int):
         super().__init__(year)
-        self.LOGFILE_NAME = os.path.splitext(self.get_script_name())[0] + '.log'
         self.key = 'matches'
         self.CSVFILE_NAME = f'{ATP_CSV_PATH}{self.key}_{year}.csv'
         self.sql = '''select id,
@@ -162,3 +169,8 @@ from vw_atp_matches v
 where tournament_year = :year
   and series_id != 'dc'
 order by tournament_start_dtm, tournament_code, stadie_ord, id'''
+
+    def _init(self):
+        self.MODULE_NAME = 'atp matches extractor'
+        self.LOGFILE_NAME = os.path.splitext(self.get_script_name())[0] + '.log'
+        super()._init()

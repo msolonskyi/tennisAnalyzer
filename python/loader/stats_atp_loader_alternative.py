@@ -2,7 +2,6 @@ from constants import DURATION_IN_DAYS
 from base_loader import BaseLoader
 from lxml import html
 import os
-import logzero
 import time
 
 
@@ -16,8 +15,10 @@ class StatsATPLoader(BaseLoader):
         self.LOGFILE_NAME = os.path.splitext(os.path.basename(__file__))[0] + '.log'
         self.CSVFILE_NAME = ''
         self.TABLE_NAME = 'stg_matches'
+        self.MODULE_NAME = 'load atp stats alternative'
         self.INSERT_STR = 'insert into stg_matches(stats_url, win_aces, win_double_faults, win_first_serves_in, win_first_serves_total, win_first_serve_points_won, win_first_serve_points_total, win_second_serve_points_won, win_second_serve_points_total, win_break_points_saved, win_break_points_serve_total, win_service_points_won, win_service_points_total, win_first_serve_return_won, win_first_serve_return_total, win_second_serve_return_won, win_second_serve_return_total, win_break_points_converted, win_break_points_return_total, win_service_games_played, win_return_games_played, win_return_points_won, win_return_points_total, win_total_points_won, win_total_points_total, los_aces, los_double_faults, los_first_serves_in, los_first_serves_total, los_first_serve_points_won, los_first_serve_points_total, los_second_serve_points_won, los_second_serve_points_total, los_break_points_saved, los_break_points_serve_total, los_service_points_won, los_service_points_total, los_first_serve_return_won, los_first_serve_return_total, los_second_serve_return_won, los_second_serve_return_total, los_break_points_converted, los_break_points_return_total, los_service_games_played, los_return_games_played, los_return_points_won, los_return_points_total, los_total_points_won, los_total_points_total) values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, :21, :22, :23, :24, :25, :26, :27, :28, :29, :30, :31, :32, :33, :34, :35, :36, :37, :38, :39, :40, :41, :42, :43, :44, :45, :46, :47, :48, :49)'
-        self.PROCESS_PROC_NAMES = ['sp_process_atp_stats', 'sp_enrich_atp_matches_recent']
+        #self.PROCESS_PROC_NAMES = ['sp_process_atp_stats', 'sp_enrich_atp_matches_recent']
+        self.PROCESS_PROC_NAMES = ['sp_process_atp_stats']
         super()._init()
 
     def _fill_stats_tpl_list(self):
@@ -32,7 +33,7 @@ where stats_url is not null
   and (win_aces is null or los_aces is null)
   and tournament_start_dtm > sysdate - :duration'''
                 self._stats_tpl_list = cur.execute(sql, {'duration': DURATION_IN_DAYS}).fetchall()
-                logzero.logger.info(f'Parse stats for last {DURATION_IN_DAYS} days...')
+                self.logger.info(f'Parse stats for last {DURATION_IN_DAYS} days...')
             else:
                 # historical data
                 sql = '''select winner_code, loser_code, stats_url
@@ -43,11 +44,12 @@ where stats_url is not null
   and rownum < :row_limit + 1
   and tournament_year = :year
 '''
-                self._stats_tpl_list = cur.execute(sql, {'year': self.year, 'row_limit': 50}).fetchall()
-                logzero.logger.info(f'Parse stats for {self.year} ...')
+##  and tournament_code not in (520, 540, 560, 580, 96)
+                self._stats_tpl_list = cur.execute(sql, {'year': self.year, 'row_limit': 250}).fetchall()
+                self.logger.info(f'Parse stats for {self.year} ...')
         finally:
             cur.close()
-        logzero.logger.info(f'Loading {len(self._stats_tpl_list)} row(s).')
+        self.logger.info(f'Loading {len(self._stats_tpl_list)} row(s).')
 
     @staticmethod
     def _strip(val: str):
@@ -77,13 +79,13 @@ where stats_url is not null
             try:
                 left_code = (tree.xpath("//div[@class='team team1']/div[@class='player']/div[@class='image']/a/@href"))[0].split('/')[6].lower()
             except Exception as e:
-                logzero.logger.warning(f'left_code: {str(e)}')
+                self.logger.warning(f'left_code: {str(e)}')
                 left_code = ''
 
             try:
                 right_code = (tree.xpath("//div[@class='team team2']/div[@class='player player-r']/div[@class='image']/a/@href"))[0].split('/')[6].lower()
             except Exception as e:
-                logzero.logger.warning(f'right_code: {str(e)}')
+                self.logger.warning(f'right_code: {str(e)}')
                 right_code = ''
 
             left_player_stats = tree.xpath("//div[@class='desktopView ']/div/div[@class='label player1 non-speed']/span/text()")
@@ -102,7 +104,7 @@ where stats_url is not null
                     loser_stats_parsed = [x for x in left_player_stats if '/' not in x]
                     loser_stats_span_parsed = [x for x in left_player_stats if '/' in x]
                 else:
-                    logzero.logger.warning(f'Can not recognize winner and loser: url_tpl[0]: {url_tpl[0]}; left_code: {left_code}; url_tpl[1]: {url_tpl[1]}; right_code: {right_code}')
+                    self.logger.warning(f'Can not recognize winner and loser: url_tpl[0]: {url_tpl[0]}; left_code: {left_code}; url_tpl[1]: {url_tpl[1]}; right_code: {right_code}')
                     raise Exception('Can not recognize winner and loser')
                 # clear
                 winner_stats_cleaned = self._strip_array(winner_stats_parsed)
@@ -232,9 +234,9 @@ where stats_url is not null
                 loser_return_points_total = None
                 loser_total_points_won = None
                 loser_total_points_total = None
-                logzero.logger.error(f'Error: {str(e)}')
+                self.logger.error(f'Error: {str(e)}')
 
             self.data.append([url, winner_aces, winner_double_faults, winner_first_serves_in, winner_first_serves_total, winner_first_serve_points_won, winner_first_serve_points_total, winner_second_serve_points_won, winner_second_serve_points_total, winner_break_points_saved, winner_break_points_serve_total, winner_service_points_won, winner_service_points_total, winner_first_serve_return_won, winner_first_serve_return_total, winner_second_serve_return_won, winner_second_serve_return_total, winner_break_points_converted, winner_break_points_return_total, winner_service_games_played, winner_return_games_played, winner_return_points_won, winner_return_points_total, winner_total_points_won, winner_total_points_total, loser_aces, loser_double_faults, loser_first_serves_in, loser_first_serves_total, loser_first_serve_points_won, loser_first_serve_points_total, loser_second_serve_points_won, loser_second_serve_points_total, loser_break_points_saved, loser_break_points_serve_total, loser_service_points_won, loser_service_points_total, loser_first_serve_return_won, loser_first_serve_return_total, loser_second_serve_return_won, loser_second_serve_return_total, loser_break_points_converted, loser_break_points_return_total, loser_service_games_played, loser_return_games_played, loser_return_points_won, loser_return_points_total, loser_total_points_won, loser_total_points_total])
 
         except Exception as e:
-            logzero.logger.error(f'Error: {str(e)}')
+            self.logger.error(f'Error: {str(e)}')

@@ -2,8 +2,9 @@ create or replace procedure sp_process_atp_matches
 is
   cv_module_name constant varchar2(200) := 'process atp matches';
   vn_qty         number;
+  vn_batch_id    logger.batches.id%type;
 begin
-  pkg_log.sp_start_batch(pv_module => cv_module_name);
+  pkg_log.sp_start_batch(pv_module => cv_module_name, pv_server => pkg_log.sf_get_server_name, pn_batch_id => vn_batch_id);
   --
   -- adding new players
   -- winners
@@ -12,26 +13,26 @@ begin
          sf_atp_players_delta_hash(
            pv_code => code,
            pv_url =>  url) as delta_hash,
-         pkg_log.gn_batch_id
+         vn_batch_id
   from (select distinct s.winner_url as url, s.winner_code as code
         from stg_matches s
         where s.winner_code not in (select p.code from atp_players p));
   --
   vn_qty := sql%rowcount;
-  pkg_log.sp_log_message(pv_text => 'add new players (winners)', pn_qty => vn_qty);
+  pkg_log.sp_log_message(pn_batch_id => vn_batch_id, pv_text => 'add new players (winners)', pn_qty => vn_qty);
   -- losers
   insert into atp_players(url, code, delta_hash, batch_id)
   select url, code,
          sf_atp_players_delta_hash(
            pv_code => code,
            pv_url =>  url) as delta_hash,
-         pkg_log.gn_batch_id
+         vn_batch_id
   from (select distinct s.loser_url as url, s.loser_code as code
         from stg_matches s
         where s.loser_code not in (select p.code from atp_players p));
   --
   vn_qty := sql%rowcount;
-  pkg_log.sp_log_message(pv_text => 'add new players (losers)', pn_qty => vn_qty);
+  pkg_log.sp_log_message(pn_batch_id => vn_batch_id, pv_text => 'add new players (losers)', pn_qty => vn_qty);
   --
   merge into atp_matches d
   using(select i.id,
@@ -171,12 +172,12 @@ begin
           and i.rn = 1) s
   on (s.id = d.id)
   when not matched then
-    insert (d.id, d.delta_hash, d.batch_id,          d.tournament_id, d.stadie_id, d.match_order, d.match_ret, d.winner_code, d.loser_code, d.winner_seed, d.loser_seed, d.score, d.winner_sets_won, d.loser_sets_won, d.winner_games_won, d.loser_games_won, d.winner_tiebreaks_won, d.loser_tiebreaks_won, d.stats_url, d.match_duration)
-    values (s.id, s.delta_hash, pkg_log.gn_batch_id, s.tournament_id, s.stadie_id, s.match_order, s.match_ret, s.winner_code, s.loser_code, s.winner_seed, s.loser_seed, s.score, s.winner_sets_won, s.loser_sets_won, s.winner_games_won, s.loser_games_won, s.winner_tiebreaks_won, s.loser_tiebreaks_won, s.stats_url, s.match_duration)
+    insert (d.id, d.delta_hash, d.batch_id,  d.tournament_id, d.stadie_id, d.match_order, d.match_ret, d.winner_code, d.loser_code, d.winner_seed, d.loser_seed, d.score, d.winner_sets_won, d.loser_sets_won, d.winner_games_won, d.loser_games_won, d.winner_tiebreaks_won, d.loser_tiebreaks_won, d.stats_url, d.match_duration)
+    values (s.id, s.delta_hash, vn_batch_id, s.tournament_id, s.stadie_id, s.match_order, s.match_ret, s.winner_code, s.loser_code, s.winner_seed, s.loser_seed, s.score, s.winner_sets_won, s.loser_sets_won, s.winner_games_won, s.loser_games_won, s.winner_tiebreaks_won, s.loser_tiebreaks_won, s.stats_url, s.match_duration)
   when matched then
     update set
       d.delta_hash           = s.delta_hash,
-      d.batch_id             = pkg_log.gn_batch_id,
+      d.batch_id             = vn_batch_id,
       d.tournament_id        = s.tournament_id,
       d.stadie_id            = s.stadie_id,
       d.match_order          = s.match_order,
@@ -198,13 +199,13 @@ begin
   vn_qty := sql%rowcount;
   --
   commit;
-  pkg_log.sp_log_message(pv_text => 'rows processed', pn_qty => vn_qty);
-  pkg_log.sp_finish_batch_successfully;
+  pkg_log.sp_log_message(pn_batch_id => vn_batch_id, pv_text => 'rows processed', pn_qty => vn_qty);
+  pkg_log.sp_finish_batch_successfully(pn_batch_id => vn_batch_id);
 exception
   when others then
     rollback;
-    pkg_log.sp_log_message(pv_text => 'errors stack', pv_clob => dbms_utility.format_error_stack || pkg_utils.CRLF || dbms_utility.format_error_backtrace, pv_type => 'E');
-    pkg_log.sp_finish_batch_with_errors;
+    pkg_log.sp_log_message(pv_text => 'errors stack', pv_clob_text => dbms_utility.format_error_stack || pkg_utils.CRLF || dbms_utility.format_error_backtrace, pv_type => 'E', pn_batch_id => vn_batch_id);
+    pkg_log.sp_finish_batch_with_errors(pn_batch_id => vn_batch_id);
     raise;
 end sp_process_atp_matches;
 /

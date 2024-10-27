@@ -39,7 +39,9 @@ COUNTRY_NAME_MAP = {
     'Slovak Republic': 'Slovakia',
     'Bosnia-Herzegovina': 'Bosnia and Herzegovina',
     'Turkiye': 'Turkey',
-    'Czechia': 'Czech Republic'}
+    'Czechia': 'Czech Republic',
+    'Republic of Congo': 'Democratic Republic of the Congo'
+}
 
 INDOOR_OUTDOOR_MAP = {
     'I': 'Indoor',

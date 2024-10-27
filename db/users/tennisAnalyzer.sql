@@ -25,3 +25,4 @@ grant restricted session to TENNISANALYZER;
 grant select any dictionary to TENNISANALYZER;
 grant select any table to TENNISANALYZER;
 grant unlimited tablespace to TENNISANALYZER;
+grant drop public synonym to TENNISANALYZER;

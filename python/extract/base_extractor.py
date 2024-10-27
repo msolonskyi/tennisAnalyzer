@@ -1,6 +1,6 @@
 from constants import CONNECTION_STRING
+from logger.logger import Logger
 import cx_Oracle
-import logzero
 import csv
 import os
 
@@ -11,14 +11,16 @@ class BaseExtractor(object):
         self.key = ''
         self.LOGFILE_NAME = os.path.splitext(self.get_script_name())[0] + '.log'
         self.CSVFILE_NAME = ''
+        self.MODULE_NAME = ''
         self._init()
 
     def _init(self):
+        self.logger = Logger(self.LOGFILE_NAME, self.MODULE_NAME)
+        self._connect_to_db()
+
+    def _connect_to_db(self):
         self.con = cx_Oracle.connect(CONNECTION_STRING, encoding="UTF-8")
-        logzero.logfile(self.LOGFILE_NAME, loglevel=logzero.logging.INFO)
-        logzero.logger.info('')
-        logzero.logger.info('==========')
-        logzero.logger.info('start')
+        self.logger.info('connected to DB.')
 
     @staticmethod
     def get_script_name():
@@ -30,12 +32,10 @@ class BaseExtractor(object):
     def extract(self):
         try:
             self._store()
-            logzero.logger.info('')
-            logzero.logger.info('completed successfully')
-            logzero.logger.info('==========')
-            logzero.logger.info('')
+            self.logger.finish_batch_successfully()
         except Exception as e:
-            logzero.logger.error(f'Error: {str(e)}')
+            self.logger.error(f'Error: {str(e)}')
+            self.logger.finish_batch_with_errors()
         finally:
             self.con.close()
 
@@ -51,7 +51,7 @@ class BaseFullExtractor(BaseExtractor):
             writer.writerow(column_names)
             for row in cur:
                 writer.writerow(row)
-            logzero.logger.info(f'{self.key}: {cur.rowcount} rows have been extracted')
+            self.logger.info(f'{self.key}: {cur.rowcount} rows have been extracted', cur.rowcount)
         finally:
             csv_file.close()
             cur.close()
@@ -72,7 +72,7 @@ class BaseYearlyExtractor(BaseExtractor):
             writer.writerow(column_names)
             for row in cur:
                 writer.writerow(row)
-            logzero.logger.info(f'{self.key}: year {self.year}, {cur.rowcount} rows have been extracted')
+            self.logger.info(f'{self.key}: year {self.year}, {cur.rowcount} rows have been extracted', cur.rowcount)
         finally:
             csv_file.close()
             cur.close()

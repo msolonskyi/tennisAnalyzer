@@ -1,8 +1,8 @@
 from constants import CONNECTION_STRING, INDOOR_OUTDOOR_MAP, SURFACE_MAP, COUNTRY_NAME_MAP, COUNTRY_CODE_MAP, STADIE_CODES_MAP, PLAYERS_ATP_URL_MAP, CITY_COUNTRY_MAP, WEBDRIVER_CHROME_EXECUTABLE_PATH, WEBDRIVER_PHANTOMJS_EXECUTABLE_PATH
 from ctypes import Array
+from logger.logger import Logger
 import cx_Oracle
 import requests
-import logzero
 import csv
 import os
 import time
@@ -22,13 +22,11 @@ class BaseLoader(object):
         self.LOGFILE_NAME = ''
         # self.CSVFILE_NAME = os.path.splitext(self.get_script_name())[0] + '.csv'
         self.CSVFILE_NAME = ''
+        self.MODULE_NAME = ''
         self._init()
 
     def _init(self):
-        logzero.logfile(self.LOGFILE_NAME, loglevel=logzero.logging.INFO)
-        logzero.logger.info('')
-        logzero.logger.info('==========')
-        logzero.logger.info('start')
+        self.logger = Logger(self.LOGFILE_NAME, self.MODULE_NAME)
         self._connect_to_db()
 
     @staticmethod
@@ -125,16 +123,16 @@ class BaseLoader(object):
             start_date = BaseLoader.nornalyze_date_str(dates_arr[1]).replace(' ', '.')
         else:
             start_date = None
-            logzero.logger.info(f'can not parse dates: {dates}')
+            self.logger.info(f'can not parse dates: {dates}')
 
         return (start_date, finish_date)
 
     def _request_url_by_webdriver(self, url: str) -> str:
         if url is None and url == '':
-            logzero.logger.info(f'input url is empty, replacing by self.url {self.url}')
+            self.logger.info(f'input url is empty, replacing by self.url {self.url}')
             url = self.url
         if url is not None and url != '':
-            logzero.logger.info(f'processing {url} by webdriver')
+            self.logger.info(f'processing {url} by webdriver')
             browser = webdriver.PhantomJS(executable_path=WEBDRIVER_PHANTOMJS_EXECUTABLE_PATH)
             browser.get(url)
             content = browser.page_source
@@ -145,7 +143,7 @@ class BaseLoader(object):
 
     def _request_url(self):
         if self.url is not None and self.url != '':
-            logzero.logger.info(f'processing {self.url}')
+            self.logger.info(f'processing {self.url}')
             response = requests.get(self.url)
             self.responce_str = response.text
         else:
@@ -153,10 +151,10 @@ class BaseLoader(object):
 
     def _request_url_by_chrome(self, url: str, timeout: int = 0) -> str:
         if url is None and url == '':
-            logzero.logger.info(f'input url is empty, replacing by self.url {self.url}')
+            self.logger.info(f'input url is empty, replacing by self.url {self.url}')
             url = self.url
         if url is not None and url != '':
-            logzero.logger.info(f'processing {url} by Chrome')
+            self.logger.info(f'processing {url} by Chrome')
             options = Options()
             options.add_argument("--headless")
             browser = webdriver.Chrome(executable_path=WEBDRIVER_CHROME_EXECUTABLE_PATH, options=options)
@@ -170,7 +168,7 @@ class BaseLoader(object):
 
     def _connect_to_db(self):
         self.con = cx_Oracle.connect(CONNECTION_STRING, encoding="UTF-8")
-        logzero.logger.info('(re)connected to DB.')
+        self.logger.info('(re)connected to DB.')
 
     def _truncate_table(self):
         try:
@@ -194,7 +192,7 @@ class BaseLoader(object):
             self._connect_to_db()
             cur = self.con.cursor()
             for proc in self.PROCESS_PROC_NAMES:
-                logzero.logger.info(f'calling {proc}')
+                self.logger.info(f'calling {proc}')
                 cur.callproc(proc)
         finally:
             cur.close()
@@ -206,7 +204,7 @@ class BaseLoader(object):
             if self.INSERT_STR is not None and self.INSERT_STR != '':
                 cur.executemany(self.INSERT_STR, self.data)
                 self.con.commit()
-                logzero.logger.info(f'{len(self.data)} row(s) inserted')
+                self.logger.info(f'{len(self.data)} row(s) inserted', len(self.data))
         finally:
             cur.close()
 
@@ -231,11 +229,9 @@ class BaseLoader(object):
             self._pre_process_data()
             self._process_data()
             self._post_process_data()
-            logzero.logger.info('')
-            logzero.logger.info('completed successfully')
-            logzero.logger.info('==========')
-            logzero.logger.info('')
+            self.logger.finish_batch_successfully()
         except Exception as e:
-            logzero.logger.error(f'Error: {str(e)}')
+            self.logger.error(f'Error: {str(e)}')
+            self.logger.finish_batch_with_errors()
         finally:
             self.con.close()

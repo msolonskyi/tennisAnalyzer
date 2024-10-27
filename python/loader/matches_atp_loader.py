@@ -3,7 +3,6 @@ from constants import ATP_URL_PREFIX, DURATION_IN_DAYS
 from datetime import datetime
 from lxml import html
 import os
-import logzero
 
 
 class MatchesATPLoader(MatchesBaseLoader):
@@ -15,6 +14,8 @@ class MatchesATPLoader(MatchesBaseLoader):
     def _init(self):
         self.LOGFILE_NAME = os.path.splitext(os.path.basename(__file__))[0] + '.log'
         self.CSVFILE_NAME = ''
+        #self.CSVFILE_NAME = 'matches.csv'
+        self.MODULE_NAME = 'load atp matches'
         self.TABLE_NAME = 'stg_matches'
         self.INSERT_STR = 'insert into stg_matches (id, tournament_id, stadie_id, match_order, winner_code, winner_url, loser_code, loser_url, winner_seed, loser_seed, score, stats_url, match_ret, winner_sets_won, loser_sets_won, winner_games_won, loser_games_won, winner_tiebreaks_won, loser_tiebreaks_won, match_duration) values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20)'
         self.PROCESS_PROC_NAMES = ['sp_process_atp_matches', 'sp_apply_points_rules', 'sp_calculate_player_points']
@@ -26,12 +27,12 @@ class MatchesATPLoader(MatchesBaseLoader):
             if self.year is None:
                 sql = "select url from atp_tournaments where start_dtm between sysdate - :duration and sysdate + 5"
                 self._tournaments_list = cur.execute(sql, {'duration': DURATION_IN_DAYS}).fetchall()
-                logzero.logger.info(f'loading matches for last {DURATION_IN_DAYS} days')
+                self.logger.info(f'loading matches for last {DURATION_IN_DAYS} days')
             else:
                 # historical data
                 sql = "select url from atp_tournaments where year = :year"
                 self._tournaments_list = cur.execute(sql, {'year': self.year}).fetchall()
-                logzero.logger.info(f'loading matches for {self.year} year')
+                self.logger.info(f'loading matches for {self.year} year')
         finally:
             cur.close()
 
@@ -47,7 +48,7 @@ class MatchesATPLoader(MatchesBaseLoader):
         # Taking data from score-item nodes
         match_score = ''
         if len(winner_score_array) != len(loser_score_array):
-            logzero.logger.warning(f'len of winner_score_array({len(winner_score_array)}) not equal to loser_score_array({len(loser_score_array)})')
+            self.logger.warning(f'len of winner_score_array({len(winner_score_array)}) not equal to loser_score_array({len(loser_score_array)})')
         for i in range(len(winner_score_array)):
             if tiebreak_array[i] == '':
                 match_score += f'{winner_score_array[i]}{loser_score_array[i]} '
@@ -88,14 +89,14 @@ class MatchesATPLoader(MatchesBaseLoader):
 
                 player_info_array = match_node.findall("./div[@class='match-content']/div[@class='match-stats']/div[@class='stats-item']/div[@class='player-info']")
                 if len(player_info_array) != 2:
-                    logzero.logger.warning(f'len of player_info_array = {len(player_info_array)} is not equal 2')
+                    self.logger.warning(f'len of player_info_array = {len(player_info_array)} is not equal 2')
                 player_1_info = player_info_array[0]
                 player_2_info = player_info_array[1]
                 # Player 1
-                #logzero.logger.info('Player 1')
+                #self.logger.info('Player 1')
                 player_1_url_array = player_1_info.xpath("./div[@class='name']/a/@href")
                 if len(player_1_url_array) == 0:
-                    logzero.logger.warning(f'can not recognize player_1_url.')
+                    self.logger.warning(f'can not recognize player_1_url.')
                     continue
 
                 player_1_url = player_1_info.xpath("./div[@class='name']/a/@href")[0].lower()
@@ -114,7 +115,7 @@ class MatchesATPLoader(MatchesBaseLoader):
                 except IndexError:
                     player_1_is_winner = False
                 # player 2
-                #logzero.logger.info('player 2')
+                #self.logger.info('player 2')
                 player_2_url = player_2_info.xpath("./div[@class='name']/a/@href")[0].lower()
                 player_2_name = player_2_info.xpath("./div[@class='name']/a/text()")[0].replace('\n', '').replace('\r', '').replace('\t', '').strip()
                 # Player 2 seed
@@ -130,7 +131,7 @@ class MatchesATPLoader(MatchesBaseLoader):
                 tiebreak_array = []
                 score_item_array = match_node.findall("./div[@class='match-content']/div[@class='match-stats']/div[@class='stats-item']/div[@class='scores']")
                 if len(score_item_array) != 2:
-                    logzero.logger.warning(f'len of score_item_array = {len(score_item_array)} is not equal 2')
+                    self.logger.warning(f'len of score_item_array = {len(score_item_array)} is not equal 2')
                 
                 for item in score_item_array[0].findall("./div[@class='score-item']"):
                     if len(item):
@@ -171,43 +172,43 @@ class MatchesATPLoader(MatchesBaseLoader):
                     loser_score_array = player_1_score_array
 
                 # Winner
-                #logzero.logger.info('Winner')
+                #self.logger.info('Winner')
                 try:
                     winner_url_split = winner_url.split('/')
                     winner_code = winner_url_split[6]
                     if len(winner_code) > 4:
-                        logzero.logger.warning(f'len of winner_code {winner_code} = {len(winner_code)} is more then 4')
+                        self.logger.warning(f'len of winner_code {winner_code} = {len(winner_code)} is more then 4')
                         continue
                 except Exception as e:
                     if winner_name in ('Bye', 'Bye1', 'Bye2', 'Bye3'):
-                        logzero.logger.warning(f'winner_name: {winner_name}; Warning: {str(e)}')
+                        self.logger.warning(f'winner_name: {winner_name}; Warning: {str(e)}')
                         continue
                     else:
-                        logzero.logger.error(f'winner_url: {winner_url}; Error: {str(e)}')
+                        self.logger.error(f'winner_url: {winner_url}; Error: {str(e)}')
                 # Loser
-                #logzero.logger.info('Loser')
+                #self.logger.info('Loser')
                 try:
                     loser_url_split = loser_url.split('/')
                     loser_code = loser_url_split[6]
                 except Exception as e:
                     if loser_name in ('Bye', 'Bye1', 'Bye2', 'Bye3'):
-                        logzero.logger.warning(f'loser_name: {loser_name}; Warning: {str(e)}')
+                        self.logger.warning(f'loser_name: {loser_name}; Warning: {str(e)}')
                         continue
                     elif loser_url == 'http://www.atpworldtour.com#':
-                        logzero.logger.warning(f'loser_url: {loser_url}; Warning: {str(e)}')
+                        self.logger.warning(f'loser_url: {loser_url}; Warning: {str(e)}')
                         continue
                     else:
-                        logzero.logger.error(f'loser_url: {loser_url}; Error: {str(e)}')
+                        self.logger.error(f'loser_url: {loser_url}; Error: {str(e)}')
                 # Match id
-                #logzero.logger.info('Match id')
+                #self.logger.info('Match id')
                 match_id = tournament_id + '-' + winner_code + '-' + loser_code + '-' + stadie_id
                 # Match score
-                #logzero.logger.info('Match score')
+                #self.logger.info('Match score')
                 if match_id in self._dic_match_scores_skip_adj:  # skip this match
                     continue
                 if match_id in self._dic_match_scores_adj:
                     match_score = self._dic_match_scores_adj[match_id]
-                    logzero.logger.warning(f'adjustment of match_id: {match_id}; match_score: {match_score}')
+                    self.logger.warning(f'adjustment of match_id: {match_id}; match_score: {match_score}')
                 else:
                     match_score_array = match_node.xpath("./div[@class='match-notes']/text()")
                     if len(match_score_array) > 0:
@@ -224,12 +225,12 @@ class MatchesATPLoader(MatchesBaseLoader):
                 for _ in range(0, 16):
                     match_score = match_score.replace('  ', ' ')
                 score_array = self._parse_score(match_score, match_id, tournament_code)
-                #logzero.logger.info(f'match_id: {match_id}; match_score: {match_score}')
+                #self.logger.info(f'match_id: {match_id}; match_score: {match_score}')
                 # Match stats URL
-                #logzero.logger.info('Match stats URL')
+                #self.logger.info('Match stats URL')
                 if match_id in self._dic_match_scores_stats_url_adj:
                     match_stats_url = self._dic_match_scores_stats_url_adj[match_id]
-                    logzero.logger.warning(f'adjustment of match_id: {match_id}; match_stats_url: {match_stats_url}')
+                    self.logger.warning(f'adjustment of match_id: {match_id}; match_stats_url: {match_stats_url}')
                 else:
                     match_stats_url_array = match_node.xpath("./div[@class='match-footer']/div[@class='match-cta']/a[text()='Match Stats']/@href")
                     if len(match_stats_url_array) == 0:
@@ -241,20 +242,20 @@ class MatchesATPLoader(MatchesBaseLoader):
                 # Match order
                 match_order = ''
                 # Match duration
-                #logzero.logger.info('Match duration')
+                #self.logger.info('Match duration')
                 match_duration_array = match_node.xpath("./div[@class='match-header']/span[2]/text()")
                 if len(match_duration_array) > 0:
                     try:
                         match_time_split = match_duration_array[0].strip().split(':')
                         match_duration = 60 * int(match_time_split[0]) + int(match_time_split[1])
-                        #logzero.logger.warning(f'match_time_split: {match_time_split}')
+                        #self.logger.warning(f'match_time_split: {match_time_split}')
                     except Exception as e:
-                        logzero.logger.warning(f'match time: {str(e)}')
+                        self.logger.warning(f'match time: {str(e)}')
                         match_duration = None
                 else:
-                    logzero.logger.warning(f'len(match_duration_array) == 0: {match_id}')
+                    self.logger.warning(f'len(match_duration_array) == 0: {match_id}')
                     match_duration = None
                 # Store data
                 self.data.append([match_id, tournament_id, stadie_id, match_order, winner_code, winner_url, loser_code, loser_url, winner_seed, loser_seed, match_score, match_stats_url] + score_array + [match_duration,])
         except Exception as e:
-            logzero.logger.error(f'url: {url}; Error: {str(e)}')
+            self.logger.error(f'url: {url}; Error: {str(e)}')

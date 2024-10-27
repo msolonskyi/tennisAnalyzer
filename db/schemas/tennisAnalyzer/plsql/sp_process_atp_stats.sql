@@ -2,8 +2,9 @@ create or replace procedure sp_process_atp_stats
 is
   cv_module_name constant varchar2(200) := 'process atp stats';
   vn_qty         number;
+  vn_batch_id    logger.batches.id%type;
 begin
-  pkg_log.sp_start_batch(pv_module => cv_module_name);
+  pkg_log.sp_start_batch(pv_module => cv_module_name, pv_server => pkg_log.sf_get_server_name, pn_batch_id => vn_batch_id);
   --
   -- check empty match stats
   select count(*)
@@ -11,7 +12,7 @@ begin
   from stg_matches
   where match_duration || win_aces || win_double_faults || win_first_serves_in || win_first_serves_total || win_first_serve_points_won || win_first_serve_points_total || win_second_serve_points_won || win_second_serve_points_total || win_break_points_saved || win_break_points_serve_total || win_service_points_won || win_service_points_total || win_first_serve_return_won || win_first_serve_return_total || win_second_serve_return_won || win_second_serve_return_total || win_break_points_converted || win_break_points_return_total || win_service_games_played || win_return_games_played || win_return_points_won || win_return_points_total || win_total_points_won || win_total_points_total || los_aces || los_double_faults || los_first_serves_in || los_first_serves_total || los_first_serve_points_won || los_first_serve_points_total || los_second_serve_points_won || los_second_serve_points_total || los_break_points_saved || los_break_points_serve_total || los_service_points_won || los_service_points_total || los_first_serve_return_won || los_first_serve_return_total || los_second_serve_return_won || los_second_serve_return_total || los_break_points_converted || los_break_points_return_total || los_service_games_played || los_return_games_played || los_return_points_won || los_return_points_total || los_total_points_won || los_total_points_total is null;
   --
-  pkg_log.sp_log_message(pv_text => 'empty atp stats', pn_qty => vn_qty);
+  pkg_log.sp_log_message(pn_batch_id => vn_batch_id, pv_text => 'empty atp stats', pn_qty => vn_qty);
   --
   merge into atp_matches d
   using(select m.stats_url,
@@ -163,7 +164,7 @@ begin
   when matched then
     update set
       d.delta_hash                    = s.delta_hash,
-      d.batch_id                      = pkg_log.gn_batch_id,
+      d.batch_id                      = vn_batch_id,
       d.win_aces                      = s.win_aces,
       d.win_double_faults             = s.win_double_faults,
       d.win_first_serves_in           = s.win_first_serves_in,
@@ -224,13 +225,13 @@ begin
   vn_qty := sql%rowcount;
   --
   commit;
-  pkg_log.sp_log_message(pv_text => 'rows processed', pn_qty => vn_qty);
-  pkg_log.sp_finish_batch_successfully;
+  pkg_log.sp_log_message(pn_batch_id => vn_batch_id, pv_text => 'rows processed', pn_qty => vn_qty);
+  pkg_log.sp_finish_batch_successfully(pn_batch_id => vn_batch_id);
 exception
   when others then
     rollback;
-    pkg_log.sp_log_message(pv_text => 'errors stack', pv_clob => dbms_utility.format_error_stack || pkg_utils.CRLF || dbms_utility.format_error_backtrace, pv_type => 'E');
-    pkg_log.sp_finish_batch_with_errors;
+    pkg_log.sp_log_message(pv_text => 'errors stack', pv_clob_text => dbms_utility.format_error_stack || pkg_utils.CRLF || dbms_utility.format_error_backtrace, pv_type => 'E', pn_batch_id => vn_batch_id);
+    pkg_log.sp_finish_batch_with_errors(pn_batch_id => vn_batch_id);
     raise;
 end sp_process_atp_stats;
 /

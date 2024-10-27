@@ -1,5 +1,4 @@
 from base_loader import BaseLoader
-import logzero
 
 
 class MatchesBaseLoader(BaseLoader):
@@ -48,6 +47,7 @@ class MatchesBaseLoader(BaseLoader):
             loser_games_won = None
             winner_tiebreaks_won = None
             loser_tiebreaks_won = None
+            tie_set = None
             match_ret = self.get_match_ret(match_score)
             if match_ret is None:
                 winner_sets_won = 0
@@ -56,32 +56,42 @@ class MatchesBaseLoader(BaseLoader):
                 loser_games_won = 0
                 winner_tiebreaks_won = 0
                 loser_tiebreaks_won = 0
+                tie_set = 0
                 # split score to sets
                 match_score_array = match_score.split(' ')
                 for set_score in match_score_array:
-                    if (len(set_score) == 2) or (len(set_score) in (5, 6)):
+                    if '[' in set_score:
+                        # tie set
+                        winner_sets_won += 1
+                        winner_games_won += 1
+                        tie_set += 1
+                        if tournament_code == '9210':
+                            self.logger.info(f'(tie set) and Laver Cup; match_id: {match_id}; set_score: {set_score}; match_score_array: {match_score_array}')
+                        else:
+                            self.logger.warning(f'(tie set); match_id: {match_id}; set_score: {set_score}; match_score_array: {match_score_array}')
+                    elif (len(set_score) == 2) or (len(set_score) in (5, 6)):
                         # checks
                         if (len(set_score) == 2) and (set_score[:2] in ('60', '61', '62', '63', '64', '75', '76', '06', '16', '26', '36', '46', '57', '67')):
                             # regular score or tiebreak without small score
                             None
                         elif (tournament_code == '7696') and (len(set_score) == 2) and (set_score[:2] in ('40', '41', '42', '04', '14', '24')):
                             # regular score or tiebreak without small score
-                            logzero.logger.info(f'(small score) and next-gen-atp-finals; match_id: {match_id}; set_score: {set_score}; match_score_array: {match_score_array}')
+                            self.logger.info(f'(small score) and next-gen-atp-finals; match_id: {match_id}; set_score: {set_score}; match_score_array: {match_score_array}')
                         elif (len(set_score) == 2) and (set_score[:2] in ('86', '97', '68', '79') and tournament_code in ['580', '560', '540', '520']):
                             # big score and Grand Slam
-                            logzero.logger.info(f'(big score) and Grand Slam; match_id: {match_id}; set_score: {set_score}; match_score_array: {match_score_array}')
+                            self.logger.info(f'(big score) and Grand Slam; match_id: {match_id}; set_score: {set_score}; match_score_array: {match_score_array}')
                         elif (len(set_score) == 2) and (set_score[:2] in ('86', '97', '68', '79') and tournament_code in ['96']):
                             # big score and Olympic
-                            logzero.logger.warning(f'(big score) and Olympic; match_id: {match_id}; set_score: {set_score}; match_score_array: {match_score_array}')
+                            self.logger.warning(f'(big score) and Olympic; match_id: {match_id}; set_score: {set_score}; match_score_array: {match_score_array}')
                         elif (len(set_score) >= 5) and (set_score[:2] in ('76', '67')):
                             None
                             # tiebreak with small score
                         elif (tournament_code == '7696') and (len(set_score) >= 5) and (set_score[:2] in ('43', '34')):
                             # tiebreak with small score
-                            logzero.logger.info(f'(small score) and next-gen-atp-finals; match_id: {match_id}; set_score: {set_score}; match_score_array: {match_score_array}')
+                            self.logger.info(f'(small score) and next-gen-atp-finals; match_id: {match_id}; set_score: {set_score}; match_score_array: {match_score_array}')
                         else:
                             # exceptional score
-                            logzero.logger.error(f'score not in white list; match_id: {match_id}; set_score: {set_score}')
+                            self.logger.error(f'score not in white list; match_id: {match_id}; set_score: {set_score}')
 
                         if set_score[0] > set_score[1]:
                             winner_sets_won += 1
@@ -93,7 +103,7 @@ class MatchesBaseLoader(BaseLoader):
                                 winner_tiebreaks_won += 1
                             else:
                                 if int(set_score[0]) - int(set_score[1]) < 2:
-                                    logzero.logger.error(f'(win) int(set_score[0]) - int(set_score[1]) < 2; match_id: {match_id}; set_score: {set_score}')
+                                    self.logger.error(f'(win) int(set_score[0]) - int(set_score[1]) < 2; match_id: {match_id}; set_score: {set_score}')
                         elif set_score[0] < set_score[1]:
                             loser_sets_won += 1
                             winner_games_won += int(set_score[0])
@@ -104,9 +114,9 @@ class MatchesBaseLoader(BaseLoader):
                                 loser_tiebreaks_won += 1
                             else:
                                 if int(set_score[1]) - int(set_score[0]) < 2:
-                                    logzero.logger.error(f'(los) int(set_score[1]) - int(set_score[0]) < 2; match_id: {match_id}; set_score: {set_score}')
+                                    self.logger.error(f'(los) int(set_score[1]) - int(set_score[0]) < 2; match_id: {match_id}; set_score: {set_score}')
                         else:
-                            logzero.logger.error(f'len(set_score) == 2; set_score[0] == set_score[1]; match_id: {match_id}; set_score: {set_score}')
+                            self.logger.error(f'len(set_score) == 2; set_score[0] == set_score[1]; match_id: {match_id}; set_score: {set_score}')
                     elif len(set_score) == 3:
                         if set_score == '810':
                             loser_sets_won += 1
@@ -132,30 +142,25 @@ class MatchesBaseLoader(BaseLoader):
                             winner_sets_won += 1
                             winner_games_won += 11
                             loser_games_won += 9
-                        elif tournament_code == '9210':
-                            winner_sets_won += 1
-                            winner_games_won += int(set_score[:2])
-                            loser_games_won += int(set_score[2:])
-                            logzero.logger.warning(f'len(set_score) == 3; tournament_code == {tournament_code}; match_id: {match_id}; set_score: {set_score}')
                         else:
-                            logzero.logger.error(f'len(set_score) == 3; match_id: {match_id}; set_score: {set_score}')
+                            self.logger.error(f'len(set_score) == 3; match_id: {match_id}; set_score: {set_score}')
                     elif len(set_score) == 4:
                         if tournament_code not in ['580', '560', '540', '520'] or set_score > '2200':
-                            logzero.logger.warning(f'(huge score) match_id: {match_id}; set_score: {set_score}; match_score_array: {match_score_array}')
+                            self.logger.warning(f'(huge score) match_id: {match_id}; set_score: {set_score}; match_score_array: {match_score_array}')
                         if set_score[:2] > set_score[2:]:
                             winner_sets_won += 1
                             winner_games_won += int(set_score[:2])
                             loser_games_won += int(set_score[2:])
                             if int(set_score[:2]) - int(set_score[2:]) < 2:
-                                logzero.logger.error(f'(win) int(set_score[:2]) - int(set_score[2:]) < 2; match_id: {match_id}; set_score: {set_score}')
+                                self.logger.error(f'(win) int(set_score[:2]) - int(set_score[2:]) < 2; match_id: {match_id}; set_score: {set_score}')
                         elif set_score[2:] > set_score[:2]:
                             loser_sets_won += 1
                             winner_games_won += int(set_score[:2])
                             loser_games_won += int(set_score[2:])
                             if int(set_score[2:]) - int(set_score[:2]) < 2:
-                                logzero.logger.error(f'(los) int(set_score[2:]) - int(set_score[:2]) < 2; match_id: {match_id}; set_score: {set_score}')
+                                self.logger.error(f'(los) int(set_score[2:]) - int(set_score[:2]) < 2; match_id: {match_id}; set_score: {set_score}')
                         else:
-                            logzero.logger.error(f'len(set_score) == 4; set_score[:2] == set_score[2:]; match_id: {match_id}; set_score[:2]: {set_score[:2]}; set_score[2:]: {set_score[2:]}; set_score: {set_score}')
+                            self.logger.error(f'len(set_score) == 4; set_score[:2] == set_score[2:]; match_id: {match_id}; set_score[:2]: {set_score[:2]}; set_score[2:]: {set_score[2:]}; set_score: {set_score}')
                     elif len(set_score) >= 7:
                         # tiebreak with big score
                         if set_score[:2] > set_score[2:4]:
@@ -169,19 +174,19 @@ class MatchesBaseLoader(BaseLoader):
                             loser_games_won += int(set_score[2:4])
                             loser_tiebreaks_won += 1
                         else:
-                            logzero.logger.error(f'len(set_score) > 7; set_score[:2] == set_score[2:4]; match_id: {match_id}; set_score[:2]: {set_score[:2]}; set_score[2:4]: {set_score[2:4]}; set_score: {set_score}')
+                            self.logger.error(f'len(set_score) > 7; set_score[:2] == set_score[2:4]; match_id: {match_id}; set_score[:2]: {set_score[:2]}; set_score[2:4]: {set_score[2:4]}; set_score: {set_score}')
                     else:
-                        logzero.logger.error(f'match_id: {match_id}; set_score: {set_score}')
+                        self.logger.error(f'match_id: {match_id}; set_score: {set_score}')
                 if str(winner_sets_won) + str(loser_sets_won) not in ('30', '31', '32', '21', '20'):
-                    logzero.logger.error(f'(unexpected match score; score: {winner_sets_won}{loser_sets_won} match_id: {match_id}; match_score_array: {match_score_array}')
+                    self.logger.error(f'(unexpected match score; score: {winner_sets_won}{loser_sets_won} match_id: {match_id}; match_score_array: {match_score_array}')
             return[match_ret, winner_sets_won, loser_sets_won, winner_games_won, loser_games_won, winner_tiebreaks_won, loser_tiebreaks_won]
         except Exception as e:
-            logzero.logger.error(f'match_id: {match_id}; Error: {str(e)}')
+            self.logger.error(f'match_id: {match_id}; Error: {str(e)}')
 
     def adjust_score(self, match_id: str, score: str) -> str:
         if match_id in self._dic_match_scores_adj:
             match_score = self._dic_match_scores_adj[match_id]
-            logzero.logger.warning(f'adjustment of match_id: {match_id}; match_score: {match_score}')
+            self.logger.warning(f'adjustment of match_id: {match_id}; match_score: {match_score}')
         else:
             match_score = score
         return match_score
@@ -204,6 +209,27 @@ class MatchesBaseLoader(BaseLoader):
             match_ret = '(RET)'
         elif 'WEA' in match_score:  # covers '(UNP)' and 'UNP'
             match_ret = '(WEA)'
+        elif 'Played and unfinished' in match_score:
+            match_ret = '(RET)'
+        elif 'Played and abandoned' in match_score:
+            match_ret = '(RET)'
+        elif 'Unfinished' in match_score:
+            match_ret = '(RET)'
         else:
             match_ret = None
         return match_ret
+
+    @staticmethod
+    def normalyze_tie_set_score(tie_set_score: str) -> str:
+        self.logger.info(f'parameter(tie_set_score) : {tie_set_score}')
+        #10[12]
+        if tie_set_score[0] == '[':
+            #[11-9]
+            self.logger.info(f'if-1(tie_set_score) : {tie_set_score}')
+            tie_set_score = tie_set_score.replace('-', '').replace('[', '').replace(']', '')[2:]
+            self.logger.info(f'if-2(tie_set_score) : {tie_set_score}')
+            tie_set_score = '10[' + tie_set_score + ']'
+            self.logger.info(f'if-(tie_set_score) : {tie_set_score}')
+        
+        self.logger.info(f'output(tie_set_score) : {tie_set_score}')
+        return tie_set_score

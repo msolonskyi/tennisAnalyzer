@@ -4,8 +4,9 @@ is
   cv_3_years     constant number(4) := 365 * 3;
   cv_52_weeks    constant number(4) := 52 * 7 - 1;
   vn_qty         number;
+  vn_batch_id    logger.batches.id%type;
 begin
-  pkg_log.sp_start_batch(pv_module => cv_module_name);
+  pkg_log.sp_start_batch(pv_module => cv_module_name, pv_server => pkg_log.sf_get_server_name, pn_batch_id => vn_batch_id);
   --
   merge into atp_matches_enriched d
   using(select i.*,
@@ -83,7 +84,7 @@ begin
                                           pn_loser_3y_points_surface =>     i.loser_3y_points_surface,
                                           pn_loser_1y_points_surface =>     i.loser_1y_points_surface) as delta_hash
         from ( select vw.id,
-                      pkg_log.gn_batch_id as batch_id,
+                      vn_batch_id as batch_id,
                       -- 3 years
                       (select count(*) as qty
                        from vw_matches vi
@@ -860,13 +861,13 @@ begin
   vn_qty := sql%rowcount;
   --
   commit;
-  pkg_log.sp_log_message(pv_text => 'rows processed', pn_qty => vn_qty);
-  pkg_log.sp_finish_batch_successfully;
+  pkg_log.sp_log_message(pn_batch_id => vn_batch_id, pv_text => 'rows processed', pn_qty => vn_qty);
+  pkg_log.sp_finish_batch_successfully(pn_batch_id => vn_batch_id);
 exception
   when others then
     rollback;
-    pkg_log.sp_log_message(pv_text => 'errors stack', pv_clob => dbms_utility.format_error_stack || pkg_utils.CRLF || dbms_utility.format_error_backtrace, pv_type => 'E');
-    pkg_log.sp_finish_batch_with_errors;
+    pkg_log.sp_log_message(pv_text => 'errors stack', pv_clob_text => dbms_utility.format_error_stack || pkg_utils.CRLF || dbms_utility.format_error_backtrace, pv_type => 'E', pn_batch_id => vn_batch_id);
+    pkg_log.sp_finish_batch_with_errors(pn_batch_id => vn_batch_id);
     raise;
 end sp_enrich_atp_matches;
 /

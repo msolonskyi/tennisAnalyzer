@@ -2,7 +2,6 @@ from base_loader import BaseLoader
 from constants import ATP_URL_PREFIX, ATP_TOURNAMENT_SERIES
 from lxml import html
 import os
-import logzero
 import requests
 
 
@@ -15,6 +14,7 @@ class TournamentsATPLoader(BaseLoader):
     def _init(self):
         self.LOGFILE_NAME = os.path.splitext(os.path.basename(__file__))[0] + '.log'
         self.CSVFILE_NAME = ''
+        self.MODULE_NAME = 'load atp tournaments'
         self.TABLE_NAME = 'stg_tournaments'
         self.INSERT_STR = 'insert into stg_tournaments(id, name, year, code, url, slug, location, sgl_draw_url, sgl_pdf_url, indoor_outdoor, surface, series, start_dtm, finish_dtm, sgl_draw_qty, dbl_draw_qty, prize_money, prize_currency, country_name) values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19)'
         self.PROCESS_PROC_NAMES = ['sp_process_atp_tournaments', 'sp_apply_points_rules']
@@ -87,7 +87,7 @@ class TournamentsATPLoader(BaseLoader):
                         tournament_prize_currency = tournament_fin_commit[0:1]
                         tournament_prize_money = tournament_fin_commit[1:].replace(',', '').replace('.', '')
                 else:
-                    logzero.logger.warning(f'tournament_id: {tournament_id}. tournament_fin_commit_details is empty')
+                    self.logger.warning(f'tournament_id: {tournament_id}. tournament_fin_commit_details is empty')
                     tournament_prize_money = None
                     tournament_prize_currency = None
 
@@ -120,13 +120,13 @@ class TournamentsATPLoader(BaseLoader):
                                       tournament_surface, tournament_series_category, tournament_start_dtm, tournament_finish_dtm, tournament_sgl_draw_qty,
                                       tournament_dbl_draw_qty, tournament_prize_money, tournament_prize_currency, tournament_country_name])
             except Exception as e:
-                logzero.logger.error(f'Error: {str(e)}')
+                self.logger.warning(f'Error: {str(e)}')
                 if draw_array:
-                    logzero.logger.error(f'    draw_array: {draw_array}')
+                    self.logger.warning(f'    draw_array: {draw_array}')
                 if surface_array:
-                    logzero.logger.error(f'    surface_array: {surface_array}')
+                    self.logger.warning(f'    surface_array: {surface_array}')
                 if prize_array:
-                    logzero.logger.error(f'    prize_array: {prize_array}')
+                    self.logger.warning(f'    prize_array: {prize_array}')
                 if location_array:
-                    logzero.logger.error(f'    location_array: {location_array}')
+                    self.logger.warning(f'    location_array: {location_array}')
                 continue
