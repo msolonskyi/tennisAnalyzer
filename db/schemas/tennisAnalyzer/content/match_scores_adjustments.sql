@@ -536,8 +536,10 @@ insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2024-96-mw02-sl28-R32', '(W/O)', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2024-337-m0ej-mc65-R16', '(W/O)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2024-2963-gj05-a09u-Q2', '32 (RET)', null, null);
 commit;
-prompt 265 records loaded
+prompt 266 records loaded
 
 set feedback on
 set define on
