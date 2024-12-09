@@ -1,4 +1,4 @@
-from constants import CONNECTION_STRING, INDOOR_OUTDOOR_MAP, SURFACE_MAP, COUNTRY_NAME_MAP, COUNTRY_CODE_MAP, STADIE_CODES_MAP, PLAYERS_ATP_URL_MAP, CITY_COUNTRY_MAP, WEBDRIVER_CHROME_EXECUTABLE_PATH, WEBDRIVER_PHANTOMJS_EXECUTABLE_PATH
+from constants import CONNECTION_STRING, INDOOR_OUTDOOR_MAP, SURFACE_MAP, COUNTRY_NAME_MAP, COUNTRY_CODE_MAP, STADIE_CODES_MAP, PLAYERS_ATP_URL_MAP, CITY_COUNTRY_MAP, WEBDRIVER_PHANTOMJS_EXECUTABLE_PATH
 from ctypes import Array
 from logger.logger import Logger
 import cx_Oracle
@@ -6,6 +6,7 @@ import requests
 import csv
 import os
 import time
+from chromedriver_py import binary_path
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
@@ -157,7 +158,8 @@ class BaseLoader(object):
             self.logger.info(f'processing {url} by Chrome')
             options = Options()
             options.add_argument("--headless")
-            browser = webdriver.Chrome(executable_path=WEBDRIVER_CHROME_EXECUTABLE_PATH, options=options)
+            chromeService = webdriver.ChromeService(executable_path=binary_path)
+            browser = webdriver.Chrome(service=chromeService, options=options)
             browser.get(url)
             time.sleep(timeout)
             content = browser.page_source

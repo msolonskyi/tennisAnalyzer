@@ -3,4 +3,4 @@ requests
 logzero
 cx_Oracle
 selenium
-csv
+chromedriver-py
