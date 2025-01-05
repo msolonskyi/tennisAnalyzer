@@ -25,12 +25,12 @@ class MatchesATPLoader(MatchesBaseLoader):
         try:
             cur = self.con.cursor()
             if self.year is None:
-                sql = "select url from atp_tournaments where start_dtm between sysdate - :duration and sysdate + 5"
+                sql = "select url, year from atp_tournaments where start_dtm between sysdate - :duration and sysdate + 5"
                 self._tournaments_list = cur.execute(sql, {'duration': DURATION_IN_DAYS}).fetchall()
                 self.logger.info(f'loading matches for last {DURATION_IN_DAYS} days')
             else:
                 # historical data
-                sql = "select url from atp_tournaments where year = :year"
+                sql = "select url, year from atp_tournaments where year = :year"
                 self._tournaments_list = cur.execute(sql, {'year': self.year}).fetchall()
                 self.logger.info(f'loading matches for {self.year} year')
         finally:
@@ -41,8 +41,8 @@ class MatchesATPLoader(MatchesBaseLoader):
         self._fill_dic_match_scores_adj()
         self._fill_dic_match_scores_stats_url_adj()
         self._fill_dic_match_scores_skip_adj()
-        for tournament_url in self._tournaments_list:
-            self._parse_tournament(tournament_url[0])
+        for tournament_tpl in self._tournaments_list:
+            self._parse_tournament(tournament_tpl)
 
     def _compose_score_from_score_item_arrays(self, winner_score_array: list, loser_score_array: list, tiebreak_array: list) -> str:
         # Taking data from score-item nodes
@@ -57,14 +57,15 @@ class MatchesATPLoader(MatchesBaseLoader):
         match_score = match_score.strip()
         return match_score
 
-    def _parse_tournament(self, url: str):
+    def _parse_tournament(self, tournament_tpl: tuple):
+        url = tournament_tpl[0]
         try:
             self.url = url
             self._request_url()
             url_split = url.split('/')
             tournament_code = url_split[7]
             if self.year is None:
-                tournament_year = str(datetime.today().year)
+                tournament_year = str(tournament_tpl[1])
             else:
                 tournament_year = str(self.year)
             tournament_id = tournament_year + '-' + tournament_code
