@@ -5,6 +5,10 @@ prompt Loading MATCH_SCORES_ADJUSTMENTS...
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2024-520-m0if-z419-Q2', '61 (RET)', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2025-580-c0bh-mw75-Q1', '46 61 (RET)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2025-580-ki82-lb66-Q1', '63 41(RET)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2018-M-DC-2018-G2-AM-M-VEN-URU-01-800519151-800442783-RR', '57 63 1311', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2019-M-DC-2019-QLS-M-GER-HUN-01-800211560-800331701-RR', '67(5) 63 10[5]', null, null);
@@ -66,6 +70,8 @@ insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2025-339-l0bv-d875-SF', '64 44 (RET)', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2025-339-l0bv-o522-F', '41 (RET)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2025-580-s0s1-mc65-R16', '76(3) 67(3) 76(2) 10 (RET)', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2008-3766-l336-c585-R32', '46 62 64', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
@@ -196,14 +202,14 @@ insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2004-785-n309-b518-R32', '76(1) 20 (RET)', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2004-251-v207-s809-R32', '76(4) 20 (RET)', null, null);
+commit;
+prompt 100 records committed...
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2006-425-f401-mc10-R32', '46 76(4) 61', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2006-425-c556-t315-R64', '46 60 63', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2006-543-g483-f510-R16', '76(5) 64', null, null);
-commit;
-prompt 100 records committed...
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2007-418-r368-w272-R32', '76(1) 41 (RET)', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
@@ -398,14 +404,14 @@ insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('1999-83-h380-m543-R32', '62 46 76(4)', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('1999-509-p395-w254-R16', '76(3) 46 62', null, null);
+commit;
+prompt 200 records committed...
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('1999-403-d316-s636-R128', '76(5) 61', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2000-798-e141-p350-R16', '76 (RET)', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2000-429-g379-s636-QF', '61 57 76(5)', null, null);
-commit;
-prompt 200 records committed...
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2001-588-d291-m824-F', '76(5) 36 62', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
@@ -531,6 +537,20 @@ values ('2024-3503-gg65-lc12-R32', '62 42 (RET)', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2024-M-DC-2024-WG1-M-SUI-PER-01-800332871-800532774-RR', '57 75 10[5]', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2025-580-z355-d643-SF', '76(5) (RET)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2025-407-hb71-l0bv-R16', '75 20 (RET)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2025-499-m0qi-mp01-R16', '67(8) 30 (RET)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2025-506-mo44-m0ej-QF', '(W/O)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2025-807-gc88-pl56-R16', '(W/O)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2025-2981-v821-s0ek-Q2', '76(5) 30 (RET)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2025-2973-b0er-v0dz-QF', '(W/O)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2024-499-h355-q927-RR', '36 63 10[4]', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2024-495-bk92-re44-SF', '67(4) 76(5) 65 RET', null, null);
@@ -544,5 +564,21 @@ insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2024-2963-gj05-a09u-Q2', '32 (RET)', null, null);
 insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
 values ('2024-7696-m0qi-s0re-RR', '41 11 (RET)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2025-580-p0ct-d875-R128', '75 21 (RET)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2025-580-dh50-s0re-R128', '76(1) 52 (RET)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2025-580-mo44-d0fj-R128', '63 41 (RET)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2025-580-l0bv-g09o-R64', '63 31 (RET)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2025-580-c0au-d0cg-R64', '62 10 (RET)', null, null);
+insert into MATCH_SCORES_ADJUSTMENTS (match_id, set_score, stats_url, to_skip)
+values ('2025-580-hh26-f0f1-R32', '46 75 64 10 (RET)', null, null);
 commit;
-prompt 269 records loaded
+prompt 285 records loaded
+
+set feedback on
+set define on
+prompt Done
