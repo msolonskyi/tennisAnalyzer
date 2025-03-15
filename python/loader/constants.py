@@ -10,8 +10,15 @@ DC_TOURNAMENT_SERIES = ['dc',]
 DURATION_IN_DAYS = 22
 ATP_CSV_PATH = ''
 DC_CSV_PATH = ''
+ATP_PDF_PATH = ''
 SLEEP_DURATION = 10
 WEBDRIVER_PHANTOMJS_EXECUTABLE_PATH = ''
+WEBDRIVER_CHROME_EXECUTABLE_PATH = ''
+BYE_PLAYER_NAME = 'Bye'
+BYE_PLAYER_CODE = '0'
+MAIN_DRAW_TYPE = 'main_draw'
+QUAL_DRAW_TYPE = 'qual_draw'
+
 
 MONTHS_MAP = {
     'Jan' : '01',
@@ -94,6 +101,13 @@ PLAYERS_ATP_URL_MAP = {
     '/en/players/vilius-gaubas/sr:competitor:604238/overview': '/en/players/vilius-gaubas/g0fw/overview',
     '/en/players/nishesh-basavareddy/sr:competitor:872497/overview': '/en/players/nishesh-basavareddy/b0nn/overview',
     '/en/players/matthew-forbes/sr:competitor:1052213/overview': '/en/players/matthew-forbes/f0i8/overview',
+    '/en/players/august-holmgren/sr:competitor:226124/overview': '/en/players/august-holmgren/h09n/overview',
+    '/en/players/daniel-vallejo/sr:competitor:622876/overview': '/en/players/daniel-vallejo/v414/overview',
+    '/en/players/ignacio-buse/sr:competitor:604344/overview': '/en/players/ignacio-buse/b0id/overview',
+    '/en/players/rei-sakamoto/sr:competitor:893391/overview': '/en/players/rei-sakamoto/s0uv/overview',
+    '/en/players/matthew-dellavedova/sr:competitor:196440/overview': '/en/players/matthew-dellavedova/d0a2/overview',
+    '/en/players/cruz-hewitt/sr:competitor:1055851/overview': '/en/players/cruz-hewitt/h0k0/overview',
+    '/en/players/elmer-moller/sr:competitor:1084926/overview': '/en/players/elmer-moller/m0k4/overview',
     '': ''}
 
 CITY_COUNTRY_MAP = {
