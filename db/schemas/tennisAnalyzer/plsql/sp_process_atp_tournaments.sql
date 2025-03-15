@@ -28,7 +28,8 @@ begin
                  pn_prize_money        => i.prize_money,
                  pv_prize_currency     => i.prize_currency,
                  pv_country_code       => i.country_code,
-                 pn_points_rule_id     => i.points_rule_id) as delta_hash
+                 pn_points_rule_id     => i.points_rule_id,
+                 pv_draw_template_id   => i.draw_template_id) as delta_hash
         from (select g.id,
                      g.name,
                      g.year,
@@ -53,7 +54,41 @@ begin
                      g.prize_money,
                      g.prize_currency,
                      nvl(c.code, t.country_code) as country_code,
-                     points_rule_id as points_rule_id,
+                     t.points_rule_id as points_rule_id,
+                     nvl(t.draw_template_id, 
+                         case
+                             when g.year >= 2024 and g.sgl_draw_qty = 128 then 'R128'
+                             when g.year >= 2024 and g.sgl_draw_qty = 96 then 'R96'
+                             when g.year >= 2024 and g.sgl_draw_qty = 64 then 'R64'
+                             when g.year >= 2024 and g.sgl_draw_qty = 56 then 'R56'
+                             when g.year >= 2024 and g.sgl_draw_qty = 48 then 'R48'
+                             when
+                               g.year >= 2024 and
+                               g.sgl_draw_qty = 32 and
+                               nvl(g.series, t.series_category_id) in ('atp250', 'atp500') and
+                               g.code in ('339', '425') then 'R32-Q12'
+                             when
+                               g.year >= 2024 and
+                               g.sgl_draw_qty = 32 and
+                               nvl(g.series, t.series_category_id) in ('ch50', 'ch100') and
+                               g.code not in ('2861', '2863', '3824', '7009')  then 'R32-Q12'
+                             when
+                               g.year >= 2024 and
+                               g.sgl_draw_qty = 32 and
+                               nvl(g.series, t.series_category_id) in ('atp250', 'atp500') and
+                               g.code not in ('339', '425') then 'R32-Q8'
+                             when
+                               g.year >= 2024 and
+                               g.sgl_draw_qty = 32 and
+                               nvl(g.series, t.series_category_id) in ('ch50', 'ch100') and
+                               g.code in ('2861', '2863', '3824', '7009') then 'R32-Q8'
+                             when g.year >= 2024 and g.sgl_draw_qty = 28 then 'R28'
+                             when g.year >= 2024 and g.sgl_draw_qty = 18 then 'RR18' -- United Cup
+                             when g.year >= 2024 and g.sgl_draw_qty = 12 then 'RR12' -- Laver Cup
+                             when nvl(g.series, t.series_category_id) = 'nextGen' and g.year >= 2024 and g.sgl_draw_qty = 8 then 'RR8-NG' --Next Gen
+                             when nvl(g.series, t.series_category_id) = 'atpFinal' and g.year >= 2024 and g.sgl_draw_qty = 8 then 'RR8-F' -- ATP Finals
+                             else null
+                         end) as draw_template_id,
                      row_number() over (partition by g.id order by se.id) as rn
               from stg_tournaments g, series se, countries c, atp_tournaments t
               where g.series = se.id(+)
@@ -63,8 +98,8 @@ begin
         where rn = 1) s
   on (s.id = d.id)
   when not matched then
-    insert (d.id, d.delta_hash, d.batch_id,  d.name, d.year, d.code, d.url, d.slug, d.location, d.sgl_draw_url, d.sgl_pdf_url, d.indoor_outdoor, d.surface, d.series_category_id, d.start_dtm, d.finish_dtm, d.sgl_draw_qty, d.dbl_draw_qty, d.prize_money, d.prize_currency, d.country_code)
-    values (s.id, s.delta_hash, vn_batch_id, s.name, s.year, s.code, s.url, s.slug, s.location, s.sgl_draw_url, s.sgl_pdf_url, s.indoor_outdoor, s.surface, s.series_category_id, s.start_dtm, s.finish_dtm, s.sgl_draw_qty, s.dbl_draw_qty, s.prize_money, s.prize_currency, s.country_code)
+    insert (d.id, d.delta_hash, d.batch_id,  d.name, d.year, d.code, d.url, d.slug, d.location, d.sgl_draw_url, d.sgl_pdf_url, d.indoor_outdoor, d.surface, d.series_category_id, d.start_dtm, d.finish_dtm, d.sgl_draw_qty, d.dbl_draw_qty, d.prize_money, d.prize_currency, d.country_code, d.draw_template_id)
+    values (s.id, s.delta_hash, vn_batch_id, s.name, s.year, s.code, s.url, s.slug, s.location, s.sgl_draw_url, s.sgl_pdf_url, s.indoor_outdoor, s.surface, s.series_category_id, s.start_dtm, s.finish_dtm, s.sgl_draw_qty, s.dbl_draw_qty, s.prize_money, s.prize_currency, s.country_code, s.draw_template_id)
   when matched then
     update set
       d.delta_hash         = s.delta_hash,
@@ -86,7 +121,8 @@ begin
       d.dbl_draw_qty       = s.dbl_draw_qty,
       d.prize_money        = s.prize_money,
       d.prize_currency     = s.prize_currency,
-      d.country_code       = s.country_code
+      d.country_code       = s.country_code,
+      d.draw_template_id   = s.draw_template_id
     where d.delta_hash != s.delta_hash;
   vn_qty := sql%rowcount;
   --

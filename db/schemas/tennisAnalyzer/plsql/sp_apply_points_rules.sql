@@ -28,8 +28,9 @@ begin
                  pn_prize_money        => i.prize_money,
                  pv_prize_currency     => i.prize_currency,
                  pv_country_code       => i.country_code,
-                 pn_points_rule_id     => i.points_rule_id) as delta_hash
-        from (select t.id, t.name, t.year, t.code, t.url, t.slug, t.location, t.sgl_draw_url, t.sgl_pdf_url, t.indoor_outdoor, t.surface, t.series_category_id, t.start_dtm, t.finish_dtm, t.sgl_draw_qty, t.dbl_draw_qty, t.prize_money, t.prize_currency, t.country_code, r.id as points_rule_id
+                 pn_points_rule_id     => i.points_rule_id,
+                 pv_draw_template_id   => i.draw_template_id) as delta_hash
+        from (select t.id, t.name, t.year, t.code, t.url, t.slug, t.location, t.sgl_draw_url, t.sgl_pdf_url, t.indoor_outdoor, t.surface, t.series_category_id, t.start_dtm, t.finish_dtm, t.sgl_draw_qty, t.dbl_draw_qty, t.prize_money, t.prize_currency, t.country_code, r.id as points_rule_id, t.draw_template_id
               from (select m.tournament_id, min(m.stadie_ord) as stadie_ord
                     from vw_atp_matches m
                     where m.stadie_draw = 'M'
@@ -43,7 +44,7 @@ begin
                 and r.series_category_id = t.series_category_id
                 and r.first_stadie_id = s.id
               union all
-              select t.id, t.name, t.year, t.code, t.url, t.slug, t.location, t.sgl_draw_url, t.sgl_pdf_url, t.indoor_outdoor, t.surface, t.series_category_id, t.start_dtm, t.finish_dtm, t.sgl_draw_qty, t.dbl_draw_qty, t.prize_money, t.prize_currency, t.country_code, r.id as points_rule_id
+              select t.id, t.name, t.year, t.code, t.url, t.slug, t.location, t.sgl_draw_url, t.sgl_pdf_url, t.indoor_outdoor, t.surface, t.series_category_id, t.start_dtm, t.finish_dtm, t.sgl_draw_qty, t.dbl_draw_qty, t.prize_money, t.prize_currency, t.country_code, r.id as points_rule_id, t.draw_template_id
               from (select m.tournament_id, min(m.stadie_ord) as stadie_ord
                     from vw_atp_matches m
                     where m.stadie_draw = 'M'

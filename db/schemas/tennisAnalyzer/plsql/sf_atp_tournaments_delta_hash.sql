@@ -18,13 +18,14 @@ create or replace function sf_atp_tournaments_delta_hash(
   pn_prize_money        atp_tournaments.prize_money%type,
   pv_prize_currency     atp_tournaments.prize_currency%type,
   pv_country_code       atp_tournaments.country_code%type,
-  pn_points_rule_id     atp_tournaments.points_rule_id%type
+  pn_points_rule_id     atp_tournaments.points_rule_id%type,
+  pv_draw_template_id   atp_tournaments.draw_template_id%type
 )
   return atp_tournaments.delta_hash%type
 is
   vn_delta_hash atp_tournaments.delta_hash%type;
 begin
-  select ora_hash(pv_id || '|' || pv_name || '|' || pn_year || '|' || pv_code || '|' || pv_url || '|' || pv_slug || '|' || pv_location || '|' || pv_sgl_draw_url || '|' || pv_sgl_pdf_url || '|' || pv_indoor_outdoor || '|' || pv_surface || '|' || pv_series_category_id || '|' || to_char(pd_start_dtm, 'yyyymmdd') || '|' || to_char(pd_finish_dtm, 'yyyymmdd') || '|' || pn_sgl_draw_qty || '|' || pn_dbl_draw_qty || '|' || pn_prize_money || '|' || pv_prize_currency || '|' || pv_country_code || '|' || pn_points_rule_id)
+  select ora_hash(pv_id || '|' || pv_name || '|' || pn_year || '|' || pv_code || '|' || pv_url || '|' || pv_slug || '|' || pv_location || '|' || pv_sgl_draw_url || '|' || pv_sgl_pdf_url || '|' || pv_indoor_outdoor || '|' || pv_surface || '|' || pv_series_category_id || '|' || to_char(pd_start_dtm, 'yyyymmdd') || '|' || to_char(pd_finish_dtm, 'yyyymmdd') || '|' || pn_sgl_draw_qty || '|' || pn_dbl_draw_qty || '|' || pn_prize_money || '|' || pv_prize_currency || '|' || pv_country_code || '|' || pn_points_rule_id || '|' || pv_draw_template_id)
   into vn_delta_hash
   from dual;
   return (vn_delta_hash);
