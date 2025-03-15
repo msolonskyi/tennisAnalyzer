@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+  <table owner="tennisAnalyzer" name="draw_template_details" type="normal">
+  <columns>
+    <column name="id" type="varchar2(64)"                             nullable="n"/>
+    <column name="delta_hash"                     type="number"       nullable="n"/>
+    <column name="batch_id"                       type="number(12)"   nullable="n"/>
+    <column name="draw_template_id"               type="varchar2(16)" nullable="n"/>
+    <column name="match_order_number"             type="varchar2(16)" nullable="n"/>
+    <column name="stadie_id"                      type="varchar2(4)"  nullable="n"/>
+    <column name="left_draw_template_details_id"  type="varchar2(16)"/>
+    <column name="right_draw_template_details_id" type="varchar2(16)"/>
+  </columns>
+  <constraints>
+    <constraint name="pk_draw_template_details"                  type="primary key" columns_list="id"/>
+    <constraint name="fk_draw_template_details$draw_template_id" type="foreign key" columns_list="draw_template_id"               foreign_owner="tennisAnalyzer" foreign_table="draw_templates"        foreign_columns_list="id"/>
+    <constraint name="fk_draw_template_details$left"             type="foreign key" columns_list="left_draw_template_details_id"  foreign_owner="tennisAnalyzer" foreign_table="draw_template_details" foreign_columns_list="id"/>
+    <constraint name="fk_draw_template_details$right"            type="foreign key" columns_list="right_draw_template_details_id" foreign_owner="tennisAnalyzer" foreign_table="draw_template_details" foreign_columns_list="id"/>
+    <constraint name="fk_draw_template_details$stadie_id"        type="foreign key" columns_list="stadie_id"                      foreign_owner="tennisAnalyzer" foreign_table="stadies"               foreign_columns_list="id"/>
+  </constraints>
+</table>

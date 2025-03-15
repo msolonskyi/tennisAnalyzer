@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+  <table owner="tennisAnalyzer" name="stg_draws" type="normal">
+  <columns>
+    <column name="id"                type="varchar2(32)" nullable="n"/>
+    <column name="tournament_id"     type="varchar2(64)"/>
+    <column name="left_player_code"  type="varchar2(4)"/>
+    <column name="right_player_code" type="varchar2(4)"/>
+    <column name="stadie_id"         type="varchar2(4)"/>
+    <column name="left_player_url"   type="varchar2(256)"/>
+    <column name="right_player_url"  type="varchar2(256)"/>
+  </columns>
+</table>

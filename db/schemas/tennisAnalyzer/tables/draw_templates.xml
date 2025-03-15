@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+  <table owner="tennisAnalyzer" name="draw_templates" type="normal">
+  <columns>
+    <column name="id"          type="varchar2(16)"  nullable="n"/>
+    <column name="delta_hash"  type="number"        nullable="n"/>
+    <column name="batch_id"    type="number(12)"    nullable="n"/>
+    <column name="draw_size"   type="number(4)"     nullable="n"/>
+    <column name="description" type="varchar2(128)" nullable="n"/>
+  </columns>
+  <constraints>
+    <constraint name="pk_draw_templates" type="primary key" columns_list="id"/>
+  </constraints>
+</table>

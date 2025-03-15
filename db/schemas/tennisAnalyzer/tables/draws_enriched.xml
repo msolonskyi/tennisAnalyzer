@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+  <table owner="tennisAnalyzer" name="draws_enriched" type="normal">
+  <columns>
+    <column name="id"                             type="varchar2(32)" nullable="n"/>
+    <column name="delta_hash"                     type="number"       nullable="n"/>
+    <column name="batch_id"                       type="number(12)"   nullable="n"/>
+    <column name="left_age"                       type="number"/>
+    <column name="left_h2h_qty_3y"                type="number"/>
+    <column name="left_h2h_qty_5y"                type="number"/>
+    <column name="left_win_qty_3y"                type="number"/>
+    <column name="left_los_qty_3y"                type="number"/>
+    <column name="left_win_qty_1y"                type="number"/>
+    <column name="left_los_qty_1y"                type="number"/>
+    <column name="left_avg_tiebreaks_pml_3y"      type="number"/>
+    <column name="left_h2h_qty_3y_sur"            type="number"/>
+    <column name="left_h2h_qty_5y_sur"            type="number"/>
+    <column name="left_win_qty_3y_sur"            type="number"/>
+    <column name="left_los_qty_3y_sur"            type="number"/>
+    <column name="left_win_qty_1y_sur"            type="number"/>
+    <column name="left_los_qty_1y_sur"            type="number"/>
+    <column name="left_avg_tiebreaks_pml_3y_sur"  type="number"/>
+    <column name="left_ace_pml_3y"                type="number"/>
+    <column name="left_df_pml_3y"                 type="number"/>
+    <column name="left_1st_pml_3y"                type="number"/>
+    <column name="left_1st_won_pml_3y"            type="number"/>
+    <column name="left_2nd_won_pml_3y"            type="number"/>
+    <column name="left_bp_saved_pml_3y"           type="number"/>
+    <column name="left_srv_won_pml_3y"            type="number"/>
+    <column name="left_1st_return_won_pml_3y"     type="number"/>
+    <column name="left_2nd_return_won_pml_3y"     type="number"/>
+    <column name="left_bp_won_pml_3y"             type="number"/>
+    <column name="left_return_won_pml_3y"         type="number"/>
+    <column name="left_total_won_pml_3y"          type="number"/>
+    <column name="left_ace_pml_3y_sur"            type="number"/>
+    <column name="left_df_pml_3y_sur"             type="number"/>
+    <column name="left_1st_pml_3y_sur"            type="number"/>
+    <column name="left_1st_won_pml_3y_sur"        type="number"/>
+    <column name="left_2nd_won_pml_3y_sur"        type="number"/>
+    <column name="left_bp_saved_pml_3y_sur"       type="number"/>
+    <column name="left_srv_won_pml_3y_sur"        type="number"/>
+    <column name="left_1st_return_won_pml_3y_sur" type="number"/>
+    <column name="left_2nd_return_won_pml_3y_sur" type="number"/>
+    <column name="left_bp_won_pml_3y_sur"         type="number"/>
+    <column name="left_return_won_pml_3y_sur"     type="number"/>
+    <column name="left_total_won_pml_3y_sur"      type="number"/>
+    <column name="left_points_3y"                 type="number"/>
+    <column name="left_points_1y"                 type="number"/>
+    <column name="left_points_3y_sur"             type="number"/>
+    <column name="left_points_1y_sur"             type="number"/>
+    <column name="left_points_6m_sur"             type="number"/>
+    <column name="right_age"                      type="number"/>
+    <column name="right_h2h_qty_5y"               type="number"/>
+    <column name="right_h2h_qty_3y"               type="number"/>
+    <column name="right_win_qty_3y"               type="number"/>
+    <column name="right_los_qty_3y"               type="number"/>
+    <column name="right_win_qty_1y"               type="number"/>
+    <column name="right_los_qty_1y"               type="number"/>
+    <column name="right_avg_tiebreaks_pml_3y"     type="number"/>
+    <column name="right_h2h_qty_5y_sur"           type="number"/>
+    <column name="right_h2h_qty_3y_sur"           type="number"/>
+    <column name="right_win_qty_3y_sur"           type="number"/>
+    <column name="right_los_qty_3y_sur"           type="number"/>
+    <column name="right_win_qty_1y_sur"           type="number"/>
+    <column name="right_los_qty_1y_sur"           type="number"/>
+    <column name="right_avg_tiebreaks_pml_3y_sur" type="number"/>
+    <column name="right_ace_pml_3y"               type="number"/>
+    <column name="right_df_pml_3y"                type="number"/>
+    <column name="right_1st_pml_3y"               type="number"/>
+    <column name="right_1st_won_pml_3y"           type="number"/>
+    <column name="right_2nd_won_pml_3y"           type="number"/>
+    <column name="right_bp_saved_pml_3y"          type="number"/>
+    <column name="right_srv_won_pml_3y"           type="number"/>
+    <column name="right_1st_return_won_pml_3y"    type="number"/>
+    <column name="right_2nd_return_won_pml_3y"    type="number"/>
+    <column name="right_bp_won_pml_3y"            type="number"/>
+    <column name="right_return_won_pml_3y"        type="number"/>
+    <column name="right_total_won_pml_3y"         type="number"/>
+    <column name="right_ace_pml_3y_sur"           type="number"/>
+    <column name="right_df_pml_3y_sur"            type="number"/>
+    <column name="right_1st_pml_3y_sur"           type="number"/>
+    <column name="right_1st_won_pml_3y_sur"       type="number"/>
+    <column name="right_2nd_won_pml_3y_sur"       type="number"/>
+    <column name="right_bp_saved_pml_3y_sur"      type="number"/>
+    <column name="right_srv_won_pml_3y_sur"       type="number"/>
+    <column name="right_1st_return_won_pml_3y_su" type="number"/>
+    <column name="right_2nd_return_won_pml_3y_su" type="number"/>
+    <column name="right_bp_won_pml_3y_sur"        type="number"/>
+    <column name="right_return_won_pml_3y_sur"    type="number"/>
+    <column name="right_total_won_pml_3y_sur"     type="number"/>
+    <column name="right_points_3y"                type="number"/>
+    <column name="right_points_1y"                type="number"/>
+    <column name="right_points_3y_sur"            type="number"/>
+    <column name="right_points_1y_sur"            type="number"/>
+    <column name="right_points_6m_sur"            type="number"/>
+  </columns>
+  <constraints>
+    <constraint name="pk_draws_enriched"    type="primary key" columns_list="id"/>
+    <constraint name="fk_draws_enriched$id" type="foreign key" columns_list="id" foreign_owner="tennisAnalyzer" foreign_table="draws" foreign_columns_list="id"/>
+  </constraints>
+</table>

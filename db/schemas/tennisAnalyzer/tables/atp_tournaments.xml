@@ -23,15 +23,17 @@
     <column name="prize_currency"     type="varchar2(16)"/>
     <column name="country_code"       type="varchar2(3)"   nullable="n"/>
     <column name="points_rule_id"     type="varchar2(16)"/>
+    <column name="draw_template_id"   type="varchar2(16)"/>
   </columns>
   <constraints>
-    <constraint name="pk_atp_tournaments"           type="primary key" columns_list="id"/>
-    <constraint name="unq_atp_tourn$code$year"      type="unique" columns_list="code, year"/>
-    <constraint name="fk_atp_tourn$series_category" type="foreign key" columns_list="series_category_id" foreign_table="series_category" foreign_columns_list="id"/>
-    <constraint name="fk_atp_tourn$country_code"    type="foreign key" columns_list="country_code"       foreign_table="countries"       foreign_columns_list="code"/>
-    <constraint name="fk_atp_tourn$indoor_outdoor"  type="foreign key" columns_list="indoor_outdoor"     foreign_table="indoor_outdoor"  foreign_columns_list="indoor_outdoor"/>
-    <constraint name="fk_atp_tourn$surface"         type="foreign key" columns_list="surface"            foreign_table="surfaces"        foreign_columns_list="surface"/>
-    <constraint name="fk_atp_tourn$points_rule"     type="foreign key" columns_list="points_rule_id"     foreign_table="points_rules"    foreign_columns_list="id"/>
-    <constraint name="chk_atp_tourn$series_cat_id"  type="check" condition="series_category_id in ('laverCup','atpFinal','atpCup','nextGen','chFinal','gs','1000','atp250','atp500','og','fu15','fu25','ch100','ch50','teamCup','gsCup')"/>
+    <constraint name="pk_atp_tournaments"            type="primary key" columns_list="id"/>
+    <constraint name="unq_atp_tourn$code$year"       type="unique" columns_list="code, year"/>
+    <constraint name="fk_atp_tourn$series_category"  type="foreign key" columns_list="series_category_id" foreign_table="series_category" foreign_columns_list="id"/>
+    <constraint name="fk_atp_tourn$country_code"     type="foreign key" columns_list="country_code"       foreign_table="countries"       foreign_columns_list="code"/>
+    <constraint name="fk_atp_tourn$indoor_outdoor"   type="foreign key" columns_list="indoor_outdoor"     foreign_table="indoor_outdoor"  foreign_columns_list="indoor_outdoor"/>
+    <constraint name="fk_atp_tourn$surface"          type="foreign key" columns_list="surface"            foreign_table="surfaces"        foreign_columns_list="surface"/>
+    <constraint name="fk_atp_tourn$points_rule"      type="foreign key" columns_list="points_rule_id"     foreign_table="points_rules"    foreign_columns_list="id"/>
+    <constraint name="fk_atp_tourn$draw_template_id" type="foreign key" columns_list="draw_template_id"   foreign_table="draw_templates"  foreign_columns_list="id"/>
+    <constraint name="chk_atp_tourn$series_cat_id"   type="check" condition="series_category_id in ('laverCup','atpFinal','atpCup','nextGen','chFinal','gs','1000','atp250','atp500','og','fu15','fu25','ch100','ch50','teamCup','gsCup')"/>
   </constraints>
 </table>
