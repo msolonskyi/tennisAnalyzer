@@ -1,7 +1,7 @@
 from constants import CONNECTION_STRING, INDOOR_OUTDOOR_MAP, SURFACE_MAP, COUNTRY_NAME_MAP, COUNTRY_CODE_MAP, STADIE_CODES_MAP, PLAYERS_ATP_URL_MAP, CITY_COUNTRY_MAP, WEBDRIVER_PHANTOMJS_EXECUTABLE_PATH
 from ctypes import Array
 from logger.logger import Logger
-import cx_Oracle
+import oracledb
 import requests
 import csv
 import os
@@ -169,7 +169,7 @@ class BaseLoader(object):
             return None
 
     def _connect_to_db(self):
-        self.con = cx_Oracle.connect(CONNECTION_STRING, encoding="UTF-8")
+        self.con = oracledb.connect(CONNECTION_STRING)
         self.logger.info('(re)connected to DB.')
 
     def _truncate_table(self):

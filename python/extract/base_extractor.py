@@ -1,6 +1,6 @@
 from constants import CONNECTION_STRING
 from logger.logger import Logger
-import cx_Oracle
+import oracledb
 import csv
 import os
 
@@ -19,7 +19,7 @@ class BaseExtractor(object):
         self._connect_to_db()
 
     def _connect_to_db(self):
-        self.con = cx_Oracle.connect(CONNECTION_STRING, encoding="UTF-8")
+        self.con = oracledb.connect(CONNECTION_STRING)
         self.logger.info('connected to DB.')
 
     @staticmethod

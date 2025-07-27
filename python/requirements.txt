@@ -1,6 +1,6 @@
 ﻿lxml
 requests
 logzero
-cx_Oracle
+oracledb
 selenium
 chromedriver-py

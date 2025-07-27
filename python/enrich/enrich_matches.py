@@ -1,5 +1,5 @@
 from constants import CONNECTION_STRING, DURATION_IN_DAYS
-import cx_Oracle
+import oracledb
 import sys
 import logzero
 
@@ -21,7 +21,7 @@ else:
 logzero.logger.info('')
 
 try:
-    con = cx_Oracle.connect(CONNECTION_STRING, encoding='UTF-8')
+    con = oracledb.connect(CONNECTION_STRING)
     cur = con.cursor()
     if year is None:
         sql = 'select id from tournaments where start_dtm > sysdate - :duration'
