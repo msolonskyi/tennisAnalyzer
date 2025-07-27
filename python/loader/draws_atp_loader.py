@@ -19,7 +19,7 @@ class DrawsATPLoader(BaseLoader):
 #        self.CSVFILE_NAME = 'drwas.csv'
         self.MODULE_NAME = 'load atp draws'
         self.TABLE_NAME = 'stg_draws'
-        self.INSERT_STR = 'insert into stg_draws (id, tournament_id, left_player_code, right_player_code, stadie_id, left_player_url, right_player_url) values (:1, :2, :3, :4, :5, :6, :7)'
+        self.INSERT_STR = 'insert into stg_draws (draw_template_detail_id, tournament_id, left_player_code, right_player_code, left_player_url, right_player_url) values (:1, :2, :3, :4, :5, :6)'
         self.PROCESS_PROC_NAMES = ['sp_populate_atp_draws', 'sp_process_atp_draws', 'sp_evolve_atp_draws', 'sp_enrich_atp_draws']
         super()._init()
 
@@ -31,7 +31,7 @@ class DrawsATPLoader(BaseLoader):
                 sql = """
 select id, sgl_draw_url || '?matchtype=qualifiersingles' as sgl_draw_url, draw_template_id, :qs_match_type as match_type
 from atp_tournaments
-where start_dtm between sysdate - 1 and sysdate + 3
+where start_dtm between sysdate - 2 and sysdate + 3
 """
                 self._tournaments_list = cur.execute(sql, {'qs_match_type': QS_DRAW_TYPE}).fetchall()
                 self.logger.info(f'loading qualifier singles draws for last couple days')
@@ -47,18 +47,6 @@ where start_dtm between sysdate - 2 and sysdate + 2
                 self.logger.info(f'loading main singles draws for last couple days')
         finally:
             cur.close()
-
-    @staticmethod
-    def get_stadie_by_draw_template_id(draw_template_id: str) -> str:
-        match draw_template_id:
-            case 'R128': return 'R128'
-            case 'R96': return 'R128'
-            case 'R64': return 'R64'
-            case 'R56': return 'R64'
-            case 'R48': return 'R64'
-            case 'R32-Q8': return 'R32'
-            case 'R32-Q12': return 'R32'
-            case 'R28': return 'R32'
 
     @staticmethod
     def get_qual_stadie_by_draw_template_id(draw_template_id: str) -> str:
@@ -108,7 +96,6 @@ where start_dtm between sysdate - 2 and sysdate + 2
         draw_template_id = tournament_tpl[2]
         match_no = self.get_beginning_match_no_by_draw_template_id(draw_template_id) if match_type == MS_DRAW_TYPE else self.get_beginning_qual_match_no_by_draw_template_id(draw_template_id)
         self.logger.info(f'match_no: {match_no}.')
-        stadie_id = self.get_stadie_by_draw_template_id(draw_template_id) if match_type == MS_DRAW_TYPE else self.get_qual_stadie_by_draw_template_id(draw_template_id)
         try:
             tournament_id = tournament_tpl[0]
 
@@ -172,10 +159,10 @@ where start_dtm between sysdate - 2 and sysdate + 2
                     self.logger.warning(f'right_player_code: {str(e)}')
                     right_player_code = ''
 
-                match_draw_id = f'{tournament_id}-{draw_template_id}-{match_type}{match_no:>03}'
+                draw_template_detail_id = f'{draw_template_id}-{match_type}{match_no:>03}'
 
                 # Store data
-                self.data.append([match_draw_id, tournament_id, left_player_code, right_player_code, stadie_id, left_url, right_url])
+                self.data.append([draw_template_detail_id, tournament_id, left_player_code, right_player_code, left_url, right_url])
                 match_no += 1
         except Exception as e:
             self.logger.error(f'url: {url}; Error: {str(e)}')

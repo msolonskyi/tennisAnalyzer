@@ -1,26 +1,23 @@
 <?xml version="1.0"?>
   <table owner="tennisAnalyzer" name="draws" type="normal">
   <columns>
-    <column name="id"                  type="varchar2(32)" nullable="n"/>
-    <column name="delta_hash"          type="number"       nullable="n"/>
-    <column name="batch_id"            type="number(12)"   nullable="n"/>
-    <column name="left_match_draw_id"  type="varchar2(32)"/>
-    <column name="right_match_draw_id" type="varchar2(32)"/>
-    <column name="tournament_id"       type="varchar2(64)"/>
-    <column name="left_player_code"    type="varchar2(4)"/>
-    <column name="right_player_code"   type="varchar2(4)"/>
-    <column name="stadie_id"           type="varchar2(4)"/>
-    <column name="match_id"            type="varchar2(32)"/>
+    <column name="id"                      type="varchar2(64)" nullable="n"/>
+    <column name="draw_template_detail_id" type="varchar2(32)" nullable="n"/>
+    <column name="tournament_id"           type="varchar2(64)" nullable="n"/>
+    <column name="delta_hash"              type="number"       nullable="n"/>
+    <column name="batch_id"                type="number(12)"   nullable="n"/>
+    <column name="left_player_code"        type="varchar2(4)"/>
+    <column name="right_player_code"       type="varchar2(4)"/>
+    <column name="match_id"                type="varchar2(32)"/>
   </columns>
   <constraints>
-    <constraint name="pk_draws"                     type="primary key" columns_list="id"/>
-    <constraint name="unq_draws$match_id"           type="unique" columns_list="match_id"/>
-    <constraint name="fk_draws$left_match_draw_id"  type="foreign key" columns_list="left_match_draw_id"  foreign_owner="tennisAnalyzer" foreign_table="draws"           foreign_columns_list="id"/>
-    <constraint name="fk_draws$right_match_draw_id" type="foreign key" columns_list="right_match_draw_id" foreign_owner="tennisAnalyzer" foreign_table="draws"           foreign_columns_list="id"/>
-    <constraint name="fk_draws$left_player_code"    type="foreign key" columns_list="left_player_code"    foreign_owner="tennisAnalyzer" foreign_table="atp_players"     foreign_columns_list="code"/>
-    <constraint name="fk_draws$right_player_code"   type="foreign key" columns_list="right_player_code"   foreign_owner="tennisAnalyzer" foreign_table="atp_players"     foreign_columns_list="code"/>
-    <constraint name="fk_draws$stadie_id"           type="foreign key" columns_list="stadie_id"           foreign_owner="tennisAnalyzer" foreign_table="stadies"         foreign_columns_list="id"/>
-    <constraint name="fk_draws$tournament_id"       type="foreign key" columns_list="tournament_id"       foreign_owner="tennisAnalyzer" foreign_table="atp_tournaments" foreign_columns_list="id"/>
-    <constraint name="fk_draws$match_id"            type="foreign key" columns_list="match_id"            foreign_owner="tennisAnalyzer" foreign_table="atp_matches"     foreign_columns_list="id"/>
+    <constraint name="pk_draws"                         type="primary key" columns_list="id"/>
+    <constraint name="unq_draws$match_id"               type="unique" columns_list="match_id"/>
+    <constraint name="unq_draws$main"                   type="unique" columns_list="draw_template_detail_id,tournament_id"/>
+    <constraint name="fk_draws$draw_template_detail_id" type="foreign key" columns_list="draw_template_detail_id" foreign_owner="tennisAnalyzer" foreign_table="draw_template_details" foreign_columns_list="id"/>
+    <constraint name="fk_draws$left_player_code"        type="foreign key" columns_list="left_player_code"        foreign_owner="tennisAnalyzer" foreign_table="atp_players"           foreign_columns_list="code"/>
+    <constraint name="fk_draws$right_player_code"       type="foreign key" columns_list="right_player_code"       foreign_owner="tennisAnalyzer" foreign_table="atp_players"           foreign_columns_list="code"/>
+    <constraint name="fk_draws$tournament_id"           type="foreign key" columns_list="tournament_id"           foreign_owner="tennisAnalyzer" foreign_table="atp_tournaments"       foreign_columns_list="id"/>
+    <constraint name="fk_draws$match_id"                type="foreign key" columns_list="match_id"                foreign_owner="tennisAnalyzer" foreign_table="atp_matches"           foreign_columns_list="id"/>
   </constraints>
 </table>

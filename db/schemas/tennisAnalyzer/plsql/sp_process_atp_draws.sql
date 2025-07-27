@@ -35,45 +35,36 @@ begin
   pkg_log.sp_log_message(pn_batch_id => vn_batch_id, pv_text => 'add new players (right)', pn_qty => vn_qty);
   --
   merge into draws d
-  using(select id,
-               left_match_draw_id,
-               right_match_draw_id,
-               tournament_id,
-               left_player_code,
-               right_player_code,
-               stadie_id,
-               match_id,
+  using(select i.id,
+               i.draw_template_detail_id,
+               i.tournament_id,
+               i.left_player_code,
+               i.right_player_code,
+               i.match_id,
                sf_atp_draws_delta_hash(
-                 pv_id                  => i.id,
-                 pv_left_player_code    => left_match_draw_id,
-                 pv_right_player_code   => i.right_match_draw_id,
-                 pv_tournament_id       => i.tournament_id,
-                 pv_left_match_draw_id  => i.left_player_code,
-                 pv_right_match_draw_id => i.right_player_code,
-                 pv_stadie_id           => i.stadie_id,
-                 pv_match_id            => i.match_id) as delta_hash
+                 pv_id                      => i.id,
+                 pv_draw_template_detail_id => i.draw_template_detail_id,
+                 pv_tournament_id           => i.tournament_id,
+                 pv_left_player_code        => i.left_player_code,
+                 pv_right_player_code       => i.right_player_code,
+                 pv_match_id                => i.match_id) as delta_hash
         from (select dr.id,
-                     dr.left_match_draw_id,
-                     dr.right_match_draw_id,
+                     sd.draw_template_detail_id,
                      sd.tournament_id,
                      sd.left_player_code,
                      sd.right_player_code,
-                     dr.stadie_id,
                      dr.match_id
               from stg_draws sd, draws dr
-              where sd.id = dr.id) i) s
-  on (s.id = d.id)
+              where sd.draw_template_detail_id = dr.draw_template_detail_id
+                and sd.tournament_id = dr.tournament_id) i) s
+  on (s.draw_template_detail_id = d.draw_template_detail_id and s.tournament_id = d.tournament_id)
   when matched then
     update set
-      d.match_id            = s.match_id,
-      d.tournament_id       = s.tournament_id,
-      d.left_player_code    = s.left_player_code,
-      d.right_player_code   = s.right_player_code,
-      d.stadie_id           = s.stadie_id,
-      d.delta_hash          = s.delta_hash,
-      d.left_match_draw_id  = s.left_match_draw_id,
-      d.right_match_draw_id = s.right_match_draw_id,
-      d.batch_id            = vn_batch_id
+      d.delta_hash        = s.delta_hash,
+      d.batch_id          = vn_batch_id,
+      d.left_player_code  = s.left_player_code,
+      d.right_player_code = s.right_player_code,
+      d.match_id          = s.match_id
     where d.delta_hash != s.delta_hash;
   vn_qty := sql%rowcount;
   --

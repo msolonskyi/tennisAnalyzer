@@ -89,7 +89,9 @@ where m.loser_code = l.code
             # yyyy.mm.dd format
             birthdate_array = tree.xpath("//div[@class='pd_content']/ul[@class='pd_left']/li[1]/span[2]/text()")
             if len(birthdate_array) > 0:
-                birthdate = birthdate_array[0].replace('\n', '').replace('\r', '').replace('\t', '').replace('(', '').replace(')', '').strip()[3:]
+                birthdate = birthdate_array[0].replace('\n', '').replace('\r', '').replace('\t', '').strip()
+                if '(' in birthdate_array[0]:
+                    birthdate = birthdate.replace('(', '').replace(')', '').strip()[3:]
             else:
                 birthdate = ''
             #self.logger.info(f'birthdate: {birthdate}')
@@ -110,7 +112,11 @@ where m.loser_code = l.code
 
             height_cm_array = tree.xpath("//div[@class='pd_content']/ul[@class='pd_left']/li[3]/span[2]/text()")
             if len(height_cm_array) > 0:
-                height_cm = height_cm_array[0].replace('\n', '').replace('\r', '').replace('\t', '').replace('(', '').replace(')', '').replace('cm', '').strip()[-3:]
+                height_cm_str = height_cm_array[0].replace('\n', '').replace('\r', '').replace('\t', '').replace('(', '').replace(')', '').replace('cm', '').strip()
+                if height_cm_str == '0\'0" 0':
+                    height_cm = ''
+                else:
+                    height_cm = height_cm_str[-3:]
             else:
                 height_cm = ''
             #self.logger.info(f'height_cm: {height_cm}')

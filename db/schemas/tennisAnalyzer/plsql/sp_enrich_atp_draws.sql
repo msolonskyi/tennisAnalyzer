@@ -823,12 +823,13 @@ begin
                          and t.start_dtm >= at.start_dtm - cn_6_months
                          and t.start_dtm <  at.start_dtm
                       ) right_points_6m_sur
-              from draws dr, atp_tournaments at, stadies st, atp_players l, atp_players r
+              from draws dr, draw_template_details td, atp_tournaments at, stadies st, atp_players l, atp_players r
               where dr.match_id is null
                 and dr.left_player_code is not null
                 and dr.right_player_code is not null
                 and dr.tournament_id = at.id
-                and dr.stadie_id = st.id
+                and td.id = dr.draw_template_detail_id
+                and td.stadie_id = st.id
                 and dr.left_player_code = l.code
                 and dr.right_player_code = r.code) i) s
   on (s.id = d.id)
