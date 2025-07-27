@@ -108,6 +108,10 @@ PLAYERS_ATP_URL_MAP = {
     '/en/players/matthew-dellavedova/sr:competitor:196440/overview': '/en/players/matthew-dellavedova/d0a2/overview',
     '/en/players/cruz-hewitt/sr:competitor:1055851/overview': '/en/players/cruz-hewitt/h0k0/overview',
     '/en/players/elmer-moller/sr:competitor:1084926/overview': '/en/players/elmer-moller/m0k4/overview',
+    '/en/players/moise-kouame/sr:competitor:1141275/overview': '/en/players/moise-kouame/k0o4/overview',
+    '/en/players/stefano-napolitano/sr:competitor:42152/overview': '/en/players/stefano-napolitano/n679/overview',
+    '/en/players/oliver-tarvet/sr:competitor:812472/overview': '/en/players/oliver-tarvet/t0gr/overview',
+    '/en/players/oliver-bonding/sr:competitor:1017343/overview': '/en/players/oliver-bonding/b0vf/overview',
     '': ''}
 
 CITY_COUNTRY_MAP = {
