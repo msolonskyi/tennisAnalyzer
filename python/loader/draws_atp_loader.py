@@ -14,9 +14,9 @@ class DrawsATPLoader(BaseLoader):
         self.url = ''
 
     def _init(self):
-        self.LOGFILE_NAME = os.path.splitext(os.path.basename(__file__))[0] + '.log'
+        self.LOGFILE_NAME = f'./logs/{os.path.splitext(os.path.basename(__file__))[0]}.log'
         self.CSVFILE_NAME = ''
-#        self.CSVFILE_NAME = 'drwas.csv'
+        #self.CSVFILE_NAME = 'drwas.csv'
         self.MODULE_NAME = 'load atp draws'
         self.TABLE_NAME = 'stg_draws'
         self.INSERT_STR = 'insert into stg_draws (draw_template_detail_id, tournament_id, left_player_code, right_player_code, left_player_url, right_player_url) values (:1, :2, :3, :4, :5, :6)'
@@ -31,7 +31,7 @@ class DrawsATPLoader(BaseLoader):
                 sql = """
 select id, sgl_draw_url || '?matchtype=qualifiersingles' as sgl_draw_url, draw_template_id, :qs_match_type as match_type
 from atp_tournaments
-where start_dtm between sysdate - 2 and sysdate + 3
+where start_dtm between sysdate - 3 and sysdate + 8
 """
                 self._tournaments_list = cur.execute(sql, {'qs_match_type': QS_DRAW_TYPE}).fetchall()
                 self.logger.info(f'loading qualifier singles draws for last couple days')
@@ -40,7 +40,7 @@ where start_dtm between sysdate - 2 and sysdate + 3
                 sql = """
 select id, sgl_draw_url, draw_template_id, :ms_match_type as match_type
 from atp_tournaments
-where start_dtm between sysdate - 2 and sysdate + 2
+where start_dtm between sysdate - 4 and sysdate + 4
 """
 #                self._tournaments_list = cur.execute(sql, {'duration': 8, 'ms_match_type': MS_DRAW_TYPE, 'qs_match_type': QS_DRAW_TYPE}).fetchall()
                 self._tournaments_list = cur.execute(sql, {'ms_match_type': MS_DRAW_TYPE}).fetchall()
@@ -76,10 +76,10 @@ where start_dtm between sysdate - 2 and sysdate + 2
     @staticmethod
     def get_beginning_qual_match_no_by_draw_template_id(draw_template_id: str) -> int:
         match draw_template_id:
-            case 'R128': return 0
+            case 'R128': return 64
             case 'R96': return 32
             case 'R64': return 0
-            case 'R56': return 0
+            case 'R56': return 16
             case 'R48': return 0
             case 'R32-Q8': return 8
             case 'R32-Q12': return 16
@@ -132,7 +132,7 @@ where start_dtm between sysdate - 2 and sysdate + 2
                     if left_player_name == BYE_PLAYER_NAME:
                         left_player_code = BYE_PLAYER_CODE
                         left_url = None
-                    elif left_player_name in ['Qualifier', 'Alternate', 'Qualifier / Lucky Loser']:
+                    elif left_player_name in ['Qualifier', 'Alternate', 'Qualifier / Lucky Loser', 'Lucky Loser']:
                         left_player_code = None
                         left_url = None
                     else:
@@ -148,7 +148,7 @@ where start_dtm between sysdate - 2 and sysdate + 2
                     if right_player_name == BYE_PLAYER_NAME:
                         right_player_code = BYE_PLAYER_CODE
                         right_url = None
-                    elif right_player_name in ['Qualifier', 'Alternate', 'Qualifier / Lucky Loser']:
+                    elif right_player_name in ['Qualifier', 'Alternate', 'Qualifier / Lucky Loser', 'Lucky Loser', 'Qualifier / Special Exempt']:
                         right_player_code = None
                         right_url = None
                     else:

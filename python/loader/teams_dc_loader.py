@@ -5,8 +5,8 @@ import os
 
 class TeamsDCLoader(BaseLoader):
     def _init(self):
+        self.LOGFILE_NAME = f'./logs/{os.path.splitext(os.path.basename(__file__))[0]}.log'
         self.url = 'https://media.itfdataservices.com/nations/dc/en'
-        self.LOGFILE_NAME = os.path.splitext(os.path.basename(__file__))[0] + '.log'
         self.CSVFILE_NAME = ''
         self.MODULE_NAME = 'load dc teams'
         self.TABLE_NAME = 'stg_teams'

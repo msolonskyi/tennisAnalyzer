@@ -10,7 +10,7 @@ class MatchesScoreChecker(MatchesBaseLoader):
         self.url = ''
 
     def _init(self):
-        self.LOGFILE_NAME = os.path.splitext(os.path.basename(__file__))[0] + '.log'
+        self.LOGFILE_NAME = f'./logs/{os.path.splitext(os.path.basename(__file__))[0]}.log'
         super()._init()
         logzero.logfile(self.LOGFILE_NAME, loglevel=logzero.logging.WARNING)
 

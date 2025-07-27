@@ -14,7 +14,7 @@ class MatchesDCLoader(MatchesBaseLoader):
         self.url = ''
 
     def _init(self):
-        self.LOGFILE_NAME = os.path.splitext(os.path.basename(__file__))[0] + '.log'
+        self.LOGFILE_NAME = f'./logs/{os.path.splitext(os.path.basename(__file__))[0]}.log'
         self.CSVFILE_NAME = ''
         self.MODULE_NAME = 'load dc matches'
         self.TABLE_NAME = 'stg_matches'

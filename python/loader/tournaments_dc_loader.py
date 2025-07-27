@@ -14,7 +14,7 @@ class TournamentDCLoader(BaseLoader):
         self.logger.warning(f'country_code: {country_code}')
 
     def _init(self):
-        self.LOGFILE_NAME = os.path.splitext(os.path.basename(__file__))[0] + '.log'
+        self.LOGFILE_NAME = f'./logs/{os.path.splitext(os.path.basename(__file__))[0]}.log'
         self.CSVFILE_NAME = ''
         self.MODULE_NAME = 'load dc tournaments'
         self.TABLE_NAME = 'stg_tournaments'
