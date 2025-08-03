@@ -203,7 +203,7 @@ class BaseLoader(object):
         try:
             self._connect_to_db()
             cur = self.con.cursor()
-            if self.INSERT_STR is not None and self.INSERT_STR != '':
+            if self.INSERT_STR is not None and self.INSERT_STR != '' and len(self.data) > 0:
                 cur.executemany(self.INSERT_STR, self.data)
                 self.con.commit()
                 self.logger.info(f'{len(self.data)} row(s) inserted', len(self.data))
