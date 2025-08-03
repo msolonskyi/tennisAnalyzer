@@ -9,7 +9,7 @@ class BaseExtractor(object):
     def __init__(self):
         self.sql = ''
         self.key = ''
-        self.LOGFILE_NAME = os.path.splitext(self.get_script_name())[0] + '.log'
+        self.LOGFILE_NAME = f'./logs/{os.path.splitext(os.path.basename(__file__))[0]}.log'
         self.CSVFILE_NAME = ''
         self.MODULE_NAME = ''
         self._init()
