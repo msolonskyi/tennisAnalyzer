@@ -11,7 +11,8 @@ DURATION_IN_DAYS = 22
 ATP_CSV_PATH = ''
 DC_CSV_PATH = ''
 ATP_PDF_PATH = ''
-SLEEP_DURATION = 10
+ATP_RAW_STATS_PATH = ''
+SLEEP_DURATION = 40
 WEBDRIVER_PHANTOMJS_EXECUTABLE_PATH = ''
 WEBDRIVER_CHROME_EXECUTABLE_PATH = ''
 BYE_PLAYER_NAME = 'Bye'
@@ -112,6 +113,7 @@ PLAYERS_ATP_URL_MAP = {
     '/en/players/stefano-napolitano/sr:competitor:42152/overview': '/en/players/stefano-napolitano/n679/overview',
     '/en/players/oliver-tarvet/sr:competitor:812472/overview': '/en/players/oliver-tarvet/t0gr/overview',
     '/en/players/oliver-bonding/sr:competitor:1017343/overview': '/en/players/oliver-bonding/b0vf/overview',
+    '/en/players/jack-satterfield/sr:competitor:1230409/overview': '/en/players/jack-satterfield/s1cn/overview',
     '': ''}
 
 CITY_COUNTRY_MAP = {
@@ -119,8 +121,10 @@ CITY_COUNTRY_MAP = {
     'Burnie': 'Australia',
     'Canberra': 'Australia',
     'Cincinnati': 'United States',
+    'Costa do Sauipe': 'Brazil',
     'Glasgow': 'Great Britain',
     'Hamburg': 'Germany',
+    'Hersonissos': 'Greece',
     'Indian Wells': 'United States',
     'Lugano': 'Switzerland',
     'Naples': 'Italy',

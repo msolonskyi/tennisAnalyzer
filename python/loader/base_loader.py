@@ -128,6 +128,23 @@ class BaseLoader(object):
 
         return (start_date, finish_date)
 
+    @staticmethod
+    def _strip(val: str) -> str:
+        return val.replace('\n', '').replace('\r', '').replace('\t', '').replace('<span>', '').replace('</span>', '').strip()
+
+    @staticmethod
+    def _strip_array(arr: list) -> list:
+        return [BaseLoader._strip(x) for x in arr]
+
+    @staticmethod
+    def safe_int_conversion(value: str) -> int:
+        if value == '':
+            return None
+        try:
+            return int(value)
+        except (ValueError, TypeError):
+            return None
+                      
     def _request_url_by_webdriver(self, url: str) -> str:
         if url is None and url == '':
             self.logger.info(f'input url is empty, replacing by self.url {self.url}')
@@ -150,14 +167,15 @@ class BaseLoader(object):
         else:
             self.responce_str = None
 
-    def _request_url_by_chrome(self, url: str, timeout: int = 0) -> str:
+    def _request_url_by_chrome(self, url: str, timeout: int = 0, options_arguments: list = ['--headless',]) -> str:
         if url is None and url == '':
             self.logger.info(f'input url is empty, replacing by self.url {self.url}')
             url = self.url
         if url is not None and url != '':
             self.logger.info(f'processing {url} by Chrome')
             options = Options()
-            options.add_argument("--headless")
+            for argument in options_arguments:
+                options.add_argument(argument)
             chromeService = webdriver.ChromeService(executable_path=binary_path)
             browser = webdriver.Chrome(service=chromeService, options=options)
             browser.get(url)

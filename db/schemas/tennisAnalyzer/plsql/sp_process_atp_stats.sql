@@ -15,7 +15,7 @@ begin
   pkg_log.sp_log_message(pn_batch_id => vn_batch_id, pv_text => 'empty atp stats', pn_qty => vn_qty);
   --
   merge into atp_matches d
-  using(select m.stats_url,
+  using(select m.id,
                nvl(s.win_aces,                      m.win_aces)                      as win_aces,
                nvl(s.win_double_faults,             m.win_double_faults)             as win_double_faults,
                nvl(s.win_first_serves_in,           m.win_first_serves_in)           as win_first_serves_in,
@@ -44,6 +44,11 @@ begin
                nvl(s.win_forced_errors,             m.win_forced_errors)             as win_forced_errors,
                nvl(s.win_unforced_errors,           m.win_unforced_errors)           as win_unforced_errors,
                nvl(s.win_net_points_won,            m.win_net_points_won)            as win_net_points_won,
+               nvl(s.win_net_points_total,          m.win_net_points_total)          as win_net_points_total,
+               nvl(s.win_fastest_first_serves_kmh,  m.win_fastest_first_serves_kmh)  as win_fastest_first_serves_kmh,
+               nvl(s.win_average_first_serves_kmh,  m.win_average_first_serves_kmh)  as win_average_first_serves_kmh,
+               nvl(s.win_fastest_second_serve_kmh,  m.win_fastest_second_serve_kmh)  as win_fastest_second_serve_kmh,
+               nvl(s.win_average_second_serve_kmh,  m.win_average_second_serve_kmh)  as win_average_second_serve_kmh,
                nvl(s.los_aces,                      m.los_aces)                      as los_aces,
                nvl(s.los_double_faults,             m.los_double_faults)             as los_double_faults,
                nvl(s.los_first_serves_in,           m.los_first_serves_in)           as los_first_serves_in,
@@ -72,6 +77,11 @@ begin
                nvl(s.los_forced_errors,             m.los_forced_errors)             as los_forced_errors,
                nvl(s.los_unforced_errors,           m.los_unforced_errors)           as los_unforced_errors,
                nvl(s.los_net_points_won,            m.los_net_points_won)            as los_net_points_won,
+               nvl(s.los_net_points_total,          m.los_net_points_total)          as los_net_points_total,
+               nvl(s.los_fastest_first_serves_kmh,  m.los_fastest_first_serves_kmh)  as los_fastest_first_serves_kmh,
+               nvl(s.los_average_first_serves_kmh,  m.los_average_first_serves_kmh)  as los_average_first_serves_kmh,
+               nvl(s.los_fastest_second_serve_kmh,  m.los_fastest_second_serve_kmh)  as los_fastest_second_serve_kmh,
+               nvl(s.los_average_second_serve_kmh,  m.los_average_second_serve_kmh)  as los_average_second_serve_kmh,
                sf_atp_matches_delta_hash(
                  pv_id                         => m.id,
                  pv_tournament_id              => m.tournament_id,
@@ -159,8 +169,8 @@ begin
                  pn_los_average_second_serve_k => nvl(s.los_average_second_serve_kmh,  m.los_average_second_serve_kmh)) as delta_hash
         from stg_matches s, atp_matches m
         where s.match_duration || s.win_aces || s.win_double_faults || s.win_first_serves_in || s.win_first_serves_total || s.win_first_serve_points_won || s.win_first_serve_points_total || s.win_second_serve_points_won || s.win_second_serve_points_total || s.win_break_points_saved || s.win_break_points_serve_total || s.win_service_points_won || s.win_service_points_total || s.win_first_serve_return_won || s.win_first_serve_return_total || s.win_second_serve_return_won || s.win_second_serve_return_total || s.win_break_points_converted || s.win_break_points_return_total || s.win_service_games_played || s.win_return_games_played || s.win_return_points_won || s.win_return_points_total || s.win_total_points_won || s.win_total_points_total || s.los_aces || s.los_double_faults || s.los_first_serves_in || s.los_first_serves_total || s.los_first_serve_points_won || s.los_first_serve_points_total || s.los_second_serve_points_won || s.los_second_serve_points_total || s.los_break_points_saved || s.los_break_points_serve_total || s.los_service_points_won || s.los_service_points_total || s.los_first_serve_return_won || s.los_first_serve_return_total || s.los_second_serve_return_won || s.los_second_serve_return_total || s.los_break_points_converted || s.los_break_points_return_total || s.los_service_games_played || s.los_return_games_played || s.los_return_points_won || s.los_return_points_total || s.los_total_points_won || s.los_total_points_total is not null
-          and s.stats_url = m.stats_url or s.stats_url = replace(m.stats_url, 'stats-centre', 'match-stats')) s
-  on (s.stats_url = d.stats_url)
+          and s.id = m.id) s
+  on (s.id = d.id)
   when matched then
     update set
       d.delta_hash                    = s.delta_hash,
@@ -193,6 +203,11 @@ begin
       d.win_forced_errors             = s.win_forced_errors,
       d.win_unforced_errors           = s.win_unforced_errors,
       d.win_net_points_won            = s.win_net_points_won,
+      d.win_net_points_total          = s.win_net_points_total,
+      d.win_fastest_first_serves_kmh  = s.win_fastest_first_serves_kmh,
+      d.win_average_first_serves_kmh  = s.win_average_first_serves_kmh,
+      d.win_fastest_second_serve_kmh  = s.win_fastest_second_serve_kmh,
+      d.win_average_second_serve_kmh  = s.win_average_second_serve_kmh,
       d.los_aces                      = s.los_aces,
       d.los_double_faults             = s.los_double_faults,
       d.los_first_serves_in           = s.los_first_serves_in,
@@ -220,7 +235,12 @@ begin
       d.los_winners                   = s.los_winners,
       d.los_forced_errors             = s.los_forced_errors,
       d.los_unforced_errors           = s.los_unforced_errors,
-      d.los_net_points_won            = s.los_net_points_won
+      d.los_net_points_won            = s.los_net_points_won,
+      d.los_net_points_total          = s.los_net_points_total,
+      d.los_fastest_first_serves_kmh  = s.los_fastest_first_serves_kmh,
+      d.los_average_first_serves_kmh  = s.los_average_first_serves_kmh,
+      d.los_fastest_second_serve_kmh  = s.los_fastest_second_serve_kmh,
+      d.los_average_second_serve_kmh  = s.los_average_second_serve_kmh
     where d.delta_hash != s.delta_hash;
   vn_qty := sql%rowcount;
   --
