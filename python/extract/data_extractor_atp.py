@@ -30,7 +30,7 @@ order by code'''
 
     def _init(self):
         self.MODULE_NAME = 'atp players extractor'
-        self.LOGFILE_NAME = os.path.splitext(self.get_script_name())[0] + '.log'
+        self.LOGFILE_NAME = f'./logs/{os.path.splitext(os.path.basename(__file__))[0]}.log'
         super()._init()
 
 
@@ -66,7 +66,7 @@ order by t.start_dtm, t.code'''
 
     def _init(self):
         self.MODULE_NAME = 'atp tournaments extractor'
-        self.LOGFILE_NAME = os.path.splitext(self.get_script_name())[0] + '.log'
+        self.LOGFILE_NAME = f'./logs/{os.path.splitext(os.path.basename(__file__))[0]}.log'
         super()._init()
 
 
@@ -172,5 +172,5 @@ order by tournament_start_dtm, tournament_code, stadie_ord, id'''
 
     def _init(self):
         self.MODULE_NAME = 'atp matches extractor'
-        self.LOGFILE_NAME = os.path.splitext(self.get_script_name())[0] + '.log'
+        self.LOGFILE_NAME = f'./logs/{os.path.splitext(os.path.basename(__file__))[0]}.log'
         super()._init()

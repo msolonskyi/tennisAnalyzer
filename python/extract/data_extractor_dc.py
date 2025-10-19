@@ -20,7 +20,7 @@ order by id'''
 
     def _init(self):
         self.MODULE_NAME = 'dc players extractor'
-        self.LOGFILE_NAME = os.path.splitext(self.get_script_name())[0] + '.log'
+        self.LOGFILE_NAME = f'./logs/{os.path.splitext(os.path.basename(__file__))[0]}.log'
         super()._init()
 
 
@@ -49,7 +49,7 @@ order by start_dtm, code'''
 
     def _init(self):
         self.MODULE_NAME = 'dc tournaments extractor'
-        self.LOGFILE_NAME = os.path.splitext(self.get_script_name())[0] + '.log'
+        self.LOGFILE_NAME = f'./logs/{os.path.splitext(os.path.basename(__file__))[0]}.log'
         super()._init()
 
 
@@ -165,5 +165,5 @@ order by t.start_dtm, t.code, st.ord, m.id'''
 
     def _init(self):
         self.MODULE_NAME = 'dc matches extractor'
-        self.LOGFILE_NAME = os.path.splitext(self.get_script_name())[0] + '.log'
+        self.LOGFILE_NAME = f'./logs/{os.path.splitext(os.path.basename(__file__))[0]}.log'
         super()._init()
