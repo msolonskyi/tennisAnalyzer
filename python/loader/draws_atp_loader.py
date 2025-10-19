@@ -6,6 +6,7 @@ import time
 
 MS_DRAW_TYPE = 'MS'
 QS_DRAW_TYPE = 'QS'
+PLAYER_NAMES_TO_SKIP = ['Qualifier', 'Alternate', 'Qualifier / Lucky Loser', 'Lucky Loser', 'Qualifier / Special Exempt']
 
 class DrawsATPLoader(BaseLoader):
     def __init__(self, draw_type: str):
@@ -132,7 +133,7 @@ where start_dtm between sysdate - 4 and sysdate + 4
                     if left_player_name == BYE_PLAYER_NAME:
                         left_player_code = BYE_PLAYER_CODE
                         left_url = None
-                    elif left_player_name in ['Qualifier', 'Alternate', 'Qualifier / Lucky Loser', 'Lucky Loser']:
+                    elif left_player_name in PLAYER_NAMES_TO_SKIP:
                         left_player_code = None
                         left_url = None
                     else:
@@ -148,7 +149,7 @@ where start_dtm between sysdate - 4 and sysdate + 4
                     if right_player_name == BYE_PLAYER_NAME:
                         right_player_code = BYE_PLAYER_CODE
                         right_url = None
-                    elif right_player_name in ['Qualifier', 'Alternate', 'Qualifier / Lucky Loser', 'Lucky Loser', 'Qualifier / Special Exempt']:
+                    elif right_player_name in PLAYER_NAMES_TO_SKIP:
                         right_player_code = None
                         right_url = None
                     else:

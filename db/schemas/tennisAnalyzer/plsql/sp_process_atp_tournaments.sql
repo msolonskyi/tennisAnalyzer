@@ -58,31 +58,16 @@ begin
                      nvl(t.draw_template_id, 
                          case
                              when g.year >= 2024 and g.sgl_draw_qty = 128 then 'R128'
+                             when
+                               g.year >= 2024 and
+                               g.sgl_draw_qty = 96 and
+                               g.id in ('2025-421') then 'R128-Q1'
                              when g.year >= 2024 and g.sgl_draw_qty = 96 then 'R96'
                              when g.year >= 2024 and g.sgl_draw_qty = 64 then 'R64'
-                             when g.year >= 2024 and g.sgl_draw_qty = 56 then 'R56'
-                             when g.year >= 2024 and g.sgl_draw_qty = 48 then 'R48'
-                             when
-                               g.year >= 2024 and
-                               g.sgl_draw_qty = 32 and
-                               nvl(g.series, t.series_category_id) in ('atp250', 'atp500') and
-                               g.code in ('339', '425') then 'R32-Q12'
-                             when
-                               g.year >= 2024 and
-                               g.sgl_draw_qty = 32 and
-                               nvl(g.series, t.series_category_id) in ('ch50', 'ch100') and
-                               g.code not in ('2861', '2863', '3824', '7009')  then 'R32-Q12'
-                             when
-                               g.year >= 2024 and
-                               g.sgl_draw_qty = 32 and
-                               nvl(g.series, t.series_category_id) in ('atp250', 'atp500') and
-                               g.code not in ('339', '425') then 'R32-Q8'
-                             when
-                               g.year >= 2024 and
-                               g.sgl_draw_qty = 32 and
-                               nvl(g.series, t.series_category_id) in ('ch50', 'ch100') and
-                               g.code in ('2861', '2863', '3824', '7009') then 'R32-Q8'
-                             when g.year >= 2024 and g.sgl_draw_qty = 28 then 'R28'
+                             when g.year >= 2024 and g.sgl_draw_qty = 56 then 'R64'
+                             when g.year >= 2024 and g.sgl_draw_qty = 48 then 'R64'
+                             when g.year >= 2024 and g.sgl_draw_qty = 32 then 'R32'
+                             when g.year >= 2024 and g.sgl_draw_qty = 28 then 'R32'
                              when g.year >= 2024 and g.sgl_draw_qty = 18 then 'RR18' -- United Cup
                              when g.year >= 2024 and g.sgl_draw_qty = 12 then 'RR12' -- Laver Cup
                              when nvl(g.series, t.series_category_id) = 'nextGen' and g.year >= 2024 and g.sgl_draw_qty = 8 then 'RR8-NG' --Next Gen

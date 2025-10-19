@@ -200,7 +200,8 @@ begin
                 and dr.tournament_id = dr_next.tournament_id
                 and td.id = td_next.left_draw_template_details_id
                 and dr_next.match_id is null
-                and dr.match_id is not null) i) s
+                and dr.match_id is not null
+                and dr.match_id != cv_bye_match_id) i) s
   on (s.id = d.id)
   when matched then
     update set
@@ -246,7 +247,8 @@ begin
                 and dr.tournament_id = dr_next.tournament_id
                 and td.id = td_next.right_draw_template_details_id
                 and dr_next.match_id is null
-                and dr.match_id is not null) i) s
+                and dr.match_id is not null
+                and dr.match_id != cv_bye_match_id) i) s
   on (s.id = d.id)
   when matched then
     update set
