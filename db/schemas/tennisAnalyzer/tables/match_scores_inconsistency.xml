@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+  <table name="match_scores_inconsistency" type="normal">
+  <columns>
+    <column name="match_id"   type="varchar2(64)"  nullable="n"/>
+    <column name="to_skip"    type="varchar2(1)"/>
+  </columns>
+  <constraints>
+    <constraint name="pk_match_scores_inconsistency"  type="primary key" columns_list="match_id"/>
+  </constraints>
+</table>
