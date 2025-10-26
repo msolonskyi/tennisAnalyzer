@@ -21,7 +21,7 @@ class StatsATPLoader(BaseLoader):
         self.MODULE_NAME = 'load atp stats from stored files to db'
         self.TABLE_NAME = 'stg_matches'
         self.INSERT_STR = 'insert into stg_matches (id, win_aces, win_double_faults, win_first_serves_in, win_first_serves_total, win_first_serve_points_won, win_first_serve_points_total, win_second_serve_points_won, win_second_serve_points_total, win_break_points_saved, win_break_points_serve_total, win_service_points_won, win_service_points_total, win_first_serve_return_won, win_first_serve_return_total, win_second_serve_return_won, win_second_serve_return_total, win_break_points_converted, win_break_points_return_total, win_service_games_played, win_return_games_played, win_return_points_won, win_return_points_total, win_total_points_won, win_total_points_total, win_winners, win_forced_errors, win_unforced_errors, win_net_points_won, win_net_points_total, win_fastest_first_serves_kmh, win_average_first_serves_kmh, win_fastest_second_serve_kmh, win_average_second_serve_kmh, los_aces, los_double_faults, los_first_serves_in, los_first_serves_total, los_first_serve_points_won, los_first_serve_points_total, los_second_serve_points_won, los_second_serve_points_total, los_break_points_saved, los_break_points_serve_total, los_service_points_won, los_service_points_total, los_first_serve_return_won, los_first_serve_return_total, los_second_serve_return_won, los_second_serve_return_total, los_break_points_converted, los_break_points_return_total, los_service_games_played, los_return_games_played, los_return_points_won, los_return_points_total, los_total_points_won, los_total_points_total, los_winners, los_forced_errors, los_unforced_errors, los_net_points_won, los_net_points_total, los_fastest_first_serves_kmh, los_average_first_serves_kmh, los_fastest_second_serve_kmh, los_average_second_serve_kmh) values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, :21, :22, :23, :12, :25, :26, :27, :28, :29, :30, :31, :32, :33, :34, :35, :36, :37, :38, :39, :40, :41, :42, :43, :44, :45, :46, :47, :48, :49, :50, :51, :52, :53, :54, :55, :56, :57, :58, :59, :60, :61, :62, :63, :64, :65, :66, :67)'
-        self.PROCESS_PROC_NAMES = ['sp_process_atp_stats', 'sp_enrich_atp_matches_recent', 'sp_enrich_atp_draws']
+        self.PROCESS_PROC_NAMES = ['sp_process_atp_stats', 'sp_enrich_atp_matches_recent', 'sp_evolve_atp_draws', 'sp_enrich_atp_draws']
         self._file_list = []
         super()._init()
 
@@ -33,6 +33,7 @@ class StatsATPLoader(BaseLoader):
                 sql = '''select id, winner_code, loser_code, stats_url, winner_games_won, loser_games_won, winner_tiebreaks_won, loser_tiebreaks_won, score
 from vw_matches
 where stats_url is not null
+  and match_ret is null
   and series_id != 'dc'
   and tournament_start_dtm > sysdate - :duration'''
                 self._stats_tpl_list = cur.execute(sql, {'duration': DURATION_IN_DAYS}).fetchall()
@@ -42,6 +43,7 @@ where stats_url is not null
                 sql = '''select id, winner_code, loser_code, stats_url, winner_games_won, loser_games_won, winner_tiebreaks_won, loser_tiebreaks_won, score
 from vw_matches
 where stats_url is not null
+  and match_ret is null
   and series_id != 'dc'
   and tournament_year = :year
 '''
@@ -217,7 +219,7 @@ where stats_url is not null
         #self.logger.info(f'loser_code: {loser_code}')
 
         try:
-            with open(full_stats_file_name, 'r') as file:
+            with open(full_stats_file_name, 'r', encoding='windows-1252') as file:
                 data = file.read().rstrip()
                 data = data.replace('labelBold', 'label').replace('desktopView top-stat', 'desktopView ')
             tree = html.fromstring(data)

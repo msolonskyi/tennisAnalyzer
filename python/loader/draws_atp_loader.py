@@ -29,21 +29,20 @@ class DrawsATPLoader(BaseLoader):
             cur = self.con.cursor()
             if self.draw_type == QUAL_DRAW_TYPE:
                 # qualifier singles draws
-                sql = """
+                sql = '''
 select id, sgl_draw_url || '?matchtype=qualifiersingles' as sgl_draw_url, draw_template_id, :qs_match_type as match_type
 from atp_tournaments
-where start_dtm between sysdate - 3 and sysdate + 8
-"""
+where start_dtm between sysdate - 4 and sysdate + 7
+'''
                 self._tournaments_list = cur.execute(sql, {'qs_match_type': QS_DRAW_TYPE}).fetchall()
                 self.logger.info(f'loading qualifier singles draws for last couple days')
             else:
                 # main draws
-                sql = """
+                sql = '''
 select id, sgl_draw_url, draw_template_id, :ms_match_type as match_type
 from atp_tournaments
 where start_dtm between sysdate - 4 and sysdate + 4
-"""
-#                self._tournaments_list = cur.execute(sql, {'duration': 8, 'ms_match_type': MS_DRAW_TYPE, 'qs_match_type': QS_DRAW_TYPE}).fetchall()
+'''
                 self._tournaments_list = cur.execute(sql, {'ms_match_type': MS_DRAW_TYPE}).fetchall()
                 self.logger.info(f'loading main singles draws for last couple days')
         finally:
@@ -53,38 +52,28 @@ where start_dtm between sysdate - 4 and sysdate + 4
     def get_qual_stadie_by_draw_template_id(draw_template_id: str) -> str:
         match draw_template_id:
             case 'R128': return 'Q1'
+            case 'R128-Q1': return 'Q1'
             case 'R96': return 'Q1'
             case 'R64': return 'Q1'
-            case 'R56': return 'Q1'
-            case 'R48': return 'Q1'
-            case 'R32-Q8': return 'Q1'
-            case 'R32-Q12': return 'Q1'
-            case 'R28': return 'Q1'
+            case 'R32': return 'Q1'
 
     @staticmethod
     def get_beginning_match_no_by_draw_template_id(draw_template_id: str) -> int:
         match draw_template_id:
             case 'R128': return 64
+            case 'R128-Q1': return 64
             case 'R96': return 64
             case 'R64': return 32
-            case 'R56': return 32
-            case 'R48': return 32
-            case 'R32-Q8': return 16
-            case 'R32-Q12': return 16
             case 'R32': return 16
-            case 'R28': return 16
 
     @staticmethod
     def get_beginning_qual_match_no_by_draw_template_id(draw_template_id: str) -> int:
         match draw_template_id:
             case 'R128': return 64
+            case 'R128-Q1': return 32
             case 'R96': return 32
-            case 'R64': return 0
-            case 'R56': return 16
-            case 'R48': return 0
-            case 'R32-Q8': return 8
-            case 'R32-Q12': return 16
-            case 'R28': return 8
+            case 'R64': return 16
+            case 'R32': return 16
 
     def _parse(self):
         self._fill_tournaments_list()
