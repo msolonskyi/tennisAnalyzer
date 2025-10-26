@@ -1,7 +1,6 @@
 #!/bin/bash
 
-cd ..
-python ./load_atp_tournaments.py 
+cd /home/opc/projects/.tennis
 python ./load_atp_matches.py
 python ./load_atp_players.py
 python ./load_atp_stat_files.py

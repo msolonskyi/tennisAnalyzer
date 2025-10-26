@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd ..
+cd /home/opc/projects/.tennis
 python ./store_data_in_csv_atp.py
 cd /home/opc/projects/ManTennisData/atp
 DATE="`date +%Y-%m-%d`"
