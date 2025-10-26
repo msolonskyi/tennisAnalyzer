@@ -17,7 +17,7 @@ class DrawsATPLoader(BaseLoader):
     def _init(self):
         self.LOGFILE_NAME = f'./logs/{os.path.splitext(os.path.basename(__file__))[0]}.log'
         self.CSVFILE_NAME = ''
-        #self.CSVFILE_NAME = 'drwas.csv'
+        #self.CSVFILE_NAME = './csv/drwas.csv'
         self.MODULE_NAME = 'load atp draws'
         self.TABLE_NAME = 'stg_draws'
         self.INSERT_STR = 'insert into stg_draws (draw_template_detail_id, tournament_id, left_player_code, right_player_code, left_player_url, right_player_url) values (:1, :2, :3, :4, :5, :6)'

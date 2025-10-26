@@ -12,6 +12,7 @@ class MatchesDCScoreUpdater(MatchesBaseLoader):
     def _init(self):
         self.LOGFILE_NAME = os.path.splitext(os.path.basename(__file__))[0] + '.log'
         self.CSVFILE_NAME = ''
+        #self.CSVFILE_NAME = './csv/score_updates.csv'
         self.TABLE_NAME = 'stg_matches'
         self.INSERT_STR = 'insert into stg_matches(id, match_score, match_ret, winner_sets_won, loser_sets_won, winner_games_won, loser_games_won, winner_tiebreaks_won, loser_tiebreaks_won) values (:1, :2, :3, :4, :5, :6, :7, :8, :9)'
         self.PROCESS_PROC_NAME = 'sp_process_updated_matches'

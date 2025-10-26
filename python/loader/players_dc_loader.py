@@ -12,6 +12,7 @@ class PlayersDCLoader(BaseLoader):
     def _init(self):
         self.LOGFILE_NAME = f'./logs/{os.path.splitext(os.path.basename(__file__))[0]}.log'
         self.CSVFILE_NAME = ''
+        #self.CSVFILE_NAME = './csv/players.csv'
         self.MODULE_NAME = 'load dc players'
         self.TABLE_NAME = 'stg_players'
         self.INSERT_STR = 'insert into stg_players(player_dc_id, first_name, last_name, player_url, flag_code, birthdate) values (:1, :2, :3, :4, :5, :6)'

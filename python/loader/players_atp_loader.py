@@ -13,6 +13,7 @@ class PlayersATPLoader(BaseLoader):
     def _init(self):
         self.LOGFILE_NAME = f'./logs/{os.path.splitext(os.path.basename(__file__))[0]}.log'
         self.CSVFILE_NAME = ''
+        #self.CSVFILE_NAME = './csv/players.csv'
         self.TABLE_NAME = 'stg_players'
         self.MODULE_NAME = 'load atp players'
         self.INSERT_STR = 'insert into stg_players(player_code, player_slug, first_name, last_name, player_url, flag_code, residence, birthplace, birthdate, turned_pro, weight_kg, height_cm, handedness, backhand) values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14)'

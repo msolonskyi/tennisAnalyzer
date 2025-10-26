@@ -16,6 +16,7 @@ class TournamentDCLoader(BaseLoader):
     def _init(self):
         self.LOGFILE_NAME = f'./logs/{os.path.splitext(os.path.basename(__file__))[0]}.log'
         self.CSVFILE_NAME = ''
+        #self.CSVFILE_NAME = './csv/tournaments.csv'
         self.MODULE_NAME = 'load dc tournaments'
         self.TABLE_NAME = 'stg_tournaments'
         self.INSERT_STR = 'insert into stg_tournaments(id, name, year, code, url, location, indoor_outdoor, surface, series, start_dtm, finish_dtm, country_code) values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12)'
