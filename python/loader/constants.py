@@ -96,7 +96,7 @@ PLAYERS_ATP_URL_MAP = {
     '/en/players/joao-fonseca/sr:competitor:863319/overview': '/en/players/joao-fonseca/f0fv/overview',
     '/en/players/henry-searle/sr:competitor:871807/overview': '/en/players/henry-searle/s0tx/overview',
     '/en/players/federico agustin-gomez/sr:competitor:146040/overview': '/en/players/federico-agustin-gomez/gj16/overview',
-    '/en/players/jack-kennedy/sr:competitor:1140995/overview': '/en/players/jack-kennedy/x519/overview',
+    '/en/players/jack-kennedy/sr:competitor:1140995/overview': '/en/players/jack-kennedy/k0np/overview',
     '/en/players/kaylan-bigun/sr:competitor:878709/overview': '/en/players/kaylan-bigun/b0pw/overview',
     '/en/players/alvaro-guillen meza/sr:competitor:389114/overview': '/en/players/alvaro-guillen-meza/g0dh/overview',
     '/en/players/vilius-gaubas/sr:competitor:604238/overview': '/en/players/vilius-gaubas/g0fw/overview',
