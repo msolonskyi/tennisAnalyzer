@@ -45,7 +45,7 @@ begin
                i.winner_seed,
                i.loser_seed,
                case
-                 when nvl(length(i.score), 0) > nvl(length(m.score), 0) then i.score
+                 when nvl(length(i.score), 0) >= nvl(length(m.score), 0) then i.score
                  else m.score
                end as score,
                i.winner_sets_won,
@@ -67,7 +67,7 @@ begin
                  pv_winner_seed                => i.winner_seed,
                  pv_loser_seed                 => i.loser_seed,
                  pv_score                      => case
-                                                    when nvl(length(i.score), 0) > nvl(length(m.score), 0) then i.score
+                                                    when nvl(length(i.score), 0) >= nvl(length(m.score), 0) then i.score
                                                     else m.score
                                                   end,
                  pn_winner_sets_won            => i.winner_sets_won,

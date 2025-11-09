@@ -552,7 +552,7 @@ where stats_url is not null
                 los_fastest_second_serve_kmh = None
                 los_average_second_serve_kmh = None
                 #
-                self.logger.error(f'Error: {str(e)}')
+                self.logger.error(f'Match {match_id}. Error: {str(e)}')
 
             self.data.append([match_id, win_aces, win_double_faults, win_first_serves_in, win_first_serves_total,
                               win_first_serve_points_won, win_first_serve_points_total, win_second_serve_points_won, win_second_serve_points_total,

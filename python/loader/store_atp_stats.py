@@ -68,8 +68,11 @@ order by 1 desc
         try:
             #respond_html = self._request_url_by_chrome(url, SLEEP_DURATION, []).replace('labelBold', 'label').replace('desktopView top-stat', 'desktopView ')
             respond_html = self._request_url_by_chrome(url, SLEEP_DURATION).replace('labelBold', 'label').replace('desktopView top-stat', 'desktopView ')
-            with open(stats_xml_file_name, 'w') as text_file:
-                text_file.write(respond_html)
+            if 'Return Games Played' in respond_html:
+                with open(stats_xml_file_name, 'w') as text_file:
+                    text_file.write(respond_html)
+            else:
+                self.logger.error(f'Match {match_id}. Return Games Played check failed.')
 
         except Exception as e:
             self.logger.error(f'Error: {str(e)}')
