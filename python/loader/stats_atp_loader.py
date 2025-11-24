@@ -24,6 +24,7 @@ class StatsATPLoader(BaseLoader):
         self.PROCESS_PROC_NAMES = ['sp_process_atp_stats', 'sp_enrich_atp_matches_recent', 'sp_evolve_atp_draws', 'sp_enrich_atp_draws']
         self._file_list = []
         super()._init()
+        self.LOG_EVERY_N_ROWS = 1000
 
     def _fill_stats_tpl_list(self):
         try:
@@ -63,7 +64,7 @@ where stats_url is not null
         row_number = 1
         n = len(self._file_list)
         for stats_file_name in self._file_list:
-            if row_number % 500 == 0:
+            if row_number % self.LOG_EVERY_N_ROWS == 0:
                 self.logger.info(f'processing {row_number} row out of {n}...')
 
             self._parse_stats_file(stats_file_name)

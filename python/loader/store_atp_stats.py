@@ -72,7 +72,7 @@ order by 1 desc
                 with open(stats_xml_file_name, 'w') as text_file:
                     text_file.write(respond_html)
             else:
-                self.logger.error(f'Match {match_id}. Return Games Played check failed.')
+                self.logger.warning(f'Match {match_id}. Return Games Played check failed.')
 
         except Exception as e:
             self.logger.error(f'Error: {str(e)}')
