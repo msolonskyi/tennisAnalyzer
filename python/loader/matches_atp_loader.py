@@ -13,8 +13,7 @@ class MatchesATPLoader(MatchesBaseLoader):
 
     def _init(self):
         self.LOGFILE_NAME = f'./logs/{os.path.splitext(os.path.basename(__file__))[0]}.log'
-        self.CSVFILE_NAME = ''
-        #self.CSVFILE_NAME = './csv/matches.csv'
+        self.CSVFILE_NAME = f'./csv/matches_{datetime.now().strftime("%Y-%m-%d %H-%M-%S")}.csv'
         self.MODULE_NAME = 'load atp matches'
         self.TABLE_NAME = 'stg_matches'
         self.INSERT_STR = 'insert into stg_matches (id, tournament_id, stadie_id, match_order, winner_code, winner_url, loser_code, loser_url, winner_seed, loser_seed, score, stats_url, match_ret, winner_sets_won, loser_sets_won, winner_games_won, loser_games_won, winner_tiebreaks_won, loser_tiebreaks_won, match_duration) values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20)'

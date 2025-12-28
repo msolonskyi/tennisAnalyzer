@@ -1,5 +1,6 @@
 from base_loader import BaseLoader
 from constants import ATP_URL_PREFIX, ATP_TOURNAMENT_SERIES
+from datetime import datetime
 from lxml import html
 import os
 import requests
@@ -13,8 +14,7 @@ class TournamentsATPLoader(BaseLoader):
 
     def _init(self):
         self.LOGFILE_NAME = f'./logs/{os.path.splitext(os.path.basename(__file__))[0]}.log'
-        self.CSVFILE_NAME = ''
-        #self.CSVFILE_NAME = './csv/tournaments.csv'
+        self.CSVFILE_NAME = f'./csv/tournaments_{datetime.now().strftime("%Y-%m-%d %H-%M-%S")}.csv'
         self.MODULE_NAME = 'load atp tournaments'
         self.TABLE_NAME = 'stg_tournaments'
         self.INSERT_STR = 'insert into stg_tournaments(id, name, year, code, url, slug, location, sgl_draw_url, sgl_pdf_url, indoor_outdoor, surface, series, start_dtm, finish_dtm, sgl_draw_qty, dbl_draw_qty, prize_money, prize_currency, country_name) values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19)'

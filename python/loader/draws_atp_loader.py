@@ -1,5 +1,6 @@
 from base_loader import BaseLoader
 from constants import ATP_URL_PREFIX, DURATION_IN_DAYS, BYE_PLAYER_NAME, BYE_PLAYER_CODE, QUAL_DRAW_TYPE, MAIN_DRAW_TYPE
+from datetime import datetime
 from lxml import html
 import os
 import time
@@ -16,8 +17,7 @@ class DrawsATPLoader(BaseLoader):
 
     def _init(self):
         self.LOGFILE_NAME = f'./logs/{os.path.splitext(os.path.basename(__file__))[0]}.log'
-        self.CSVFILE_NAME = ''
-        #self.CSVFILE_NAME = './csv/drwas.csv'
+        self.CSVFILE_NAME = f'./csv/drwas_{datetime.now().strftime("%Y-%m-%d %H-%M-%S")}.csv'
         self.MODULE_NAME = 'load atp draws'
         self.TABLE_NAME = 'stg_draws'
         self.INSERT_STR = 'insert into stg_draws (draw_template_detail_id, tournament_id, left_player_code, right_player_code, left_player_url, right_player_url) values (:1, :2, :3, :4, :5, :6)'
