@@ -113,6 +113,7 @@ PLAYERS_ATP_URL_MAP = {
     '/en/players/oliver-tarvet/sr:competitor:812472/overview': '/en/players/oliver-tarvet/t0gr/overview',
     '/en/players/oliver-bonding/sr:competitor:1017343/overview': '/en/players/oliver-bonding/b0vf/overview',
     '/en/players/jack-satterfield/sr:competitor:1230409/overview': '/en/players/jack-satterfield/s1cn/overview',
+    '/en/players/rafael-jodar/sr:competitor:972327/overview': '/en/players/rafael-jodar/j0dz/overview',
     '': ''}
 
 CITY_COUNTRY_MAP = {
@@ -129,4 +130,5 @@ CITY_COUNTRY_MAP = {
     'Naples': 'Italy',
     'Nottingham': 'Great Britain',
     'Tenerife': 'Spain',
+    'Hong Kong': 'Hong Kong',
     '': ''}

@@ -86,6 +86,9 @@ class MatchesATPLoader(MatchesBaseLoader):
                 if 'International Jr Event' in stadie_name:
                     continue
                 stadie_id = self.remap_stadie_code(stadie_name)
+                if stadie_id == 'RR' and tournament_id == '2026-580':
+                    stadie_id = 'Q3'
+                    self.logger.info(f'stadie_id(replaces): {stadie_id}')
 
                 player_info_array = match_node.findall("./div[@class='match-content']/div[@class='match-stats']/div[@class='stats-item']/div[@class='player-info']")
                 if len(player_info_array) != 2:
@@ -243,6 +246,7 @@ class MatchesATPLoader(MatchesBaseLoader):
                 match_order = ''
                 # Match duration
                 #self.logger.info('Match duration')
+                year = datetime.today().year if self.year is None else self.year
                 match_duration_array = match_node.xpath("./div[@class='match-header']/span[2]/text()")
                 if len(match_duration_array) > 0:
                     try:
@@ -252,6 +256,8 @@ class MatchesATPLoader(MatchesBaseLoader):
                     except Exception as e:
                         self.logger.warning(f'match time: {str(e)}')
                         match_duration = None
+                elif tournament_id in [f'{year}-520', f'{year}-540', f'{year}-560', f'{year}-580']: # Grand slam
+                    match_duration = None
                 else:
                     self.logger.warning(f'len(match_duration_array) == 0: {match_id}')
                     match_duration = None
