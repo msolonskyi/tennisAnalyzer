@@ -258,6 +258,8 @@ class MatchesATPLoader(MatchesBaseLoader):
                         match_duration = None
                 elif tournament_id in [f'{year}-520', f'{year}-540', f'{year}-560', f'{year}-580']: # Grand slam
                     match_duration = None
+                elif match_score in ['(W/O)', 'W/O']:
+                    match_duration = None
                 else:
                     self.logger.warning(f'len(match_duration_array) == 0: {match_id}')
                     match_duration = None
